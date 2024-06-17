@@ -1,18 +1,22 @@
 import { Input } from "@nextui-org/react";
 import { axiosPrivate } from "../../api/axios";
 import { useState } from "react";
+import { bearerToken } from "../../atom/atoms";
+import { useAtom } from "jotai";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [token, setToken] = useAtom(bearerToken);
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     axiosPrivate
-      .post("/users/sign_in", { 'user': {'email': email, 'password': password} })
+      .post("/users/sign_in", { user: { email: email, password: password } })
       .then((response) => {
         console.log(response);
+        setToken(response.headers.authorization);
       })
       .catch((error) => {
         if (error.response) {
