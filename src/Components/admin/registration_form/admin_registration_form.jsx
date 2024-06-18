@@ -1,11 +1,12 @@
 import { useState } from "react";
+import { axiosPrivate } from "../../../api/axios";
 
 const AdminRegisterForm = () => {
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [role, setRole] = useState("");
-  const [isSubsciber, setIsSubscriber] = useState("");
+  const [isSubscriber, setIsSubscriber] = useState("");
   const [subscriptionEndDate, setSubscriptionEndDate] = useState("");
   const [password, setPassword] = useState("");
 
@@ -47,25 +48,39 @@ const AdminRegisterForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const userData = {
-      email,
-      role,
-      firstName,
-      lastName,
-      isSubsciber,
-      subscriptionEndDate,
-      password,
-    };
 
-    console.log("User data", userData);
+    axiosPrivate
+    .post("/users", { user: { email: email, password: password, first_name: firstName, last_name: lastName, role: role, subscription_end_date: subscriptionEndDate, is_subscriber: isSubscriber } })
+    .then((response) => {
+      console.log(response);
+    })
+    .catch((error) => {
+      if (error.response) {
+        console.log(error.response);
+      } else {
+        console.error(error);
+      }
+    });
 
-    setEmail("");
-    setRole("");
-    setFirstName("");
-    setLastName("");
-    setIsSubscriber("");
-    setSubscriptionEndDate("");
-    setPassword("");
+    // const userData = {
+    //   email,
+    //   role,
+    //   firstName,
+    //   lastName,
+    //   isSubsciber,
+    //   subscriptionEndDate,
+    //   password,
+    // };
+
+    // console.log("User data", userData);
+
+    // setEmail("");
+    // setRole("");
+    // setFirstName("");
+    // setLastName("");
+    // setIsSubscriber("");
+    // setSubscriptionEndDate("");
+    // setPassword("");
   };
 
   return (
@@ -167,7 +182,7 @@ const AdminRegisterForm = () => {
                   <select
                     name="isSubsciber"
                     id="isSubsciber"
-                    value={isSubsciber}
+                    value={isSubscriber}
                     onChange={(e) => setIsSubscriber(e.target.value)}
                     className="bg-gray-50 border border-primary-main text-grey-main text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="est adhérent ?"
