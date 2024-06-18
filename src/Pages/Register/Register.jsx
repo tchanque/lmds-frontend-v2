@@ -1,9 +1,11 @@
-
+import AdminRegisterForm from "../../Components/admin/registration_form/admin_registration_form"
+import RegisterForm from "../../Components/registration_form/registration_form"
 
 function Register() {
   return (
     <div>
-      <h1>Register</h1>
+      <RegisterForm />
+      <AdminRegisterForm />
     </div>
   )
 }

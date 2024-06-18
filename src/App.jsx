@@ -7,6 +7,8 @@ import Register from './Pages/Register/Register'
 import Login from './Pages/Login/Login'
 import Nav from './Components/navbar/Nav'
 import Footer from './Components/footer/footer'
+import Terms from './Pages/Terms/Terms'
+import Privacy from './Pages/Privacy/Privacy'
 
 function App() {
   
@@ -21,6 +23,8 @@ function App() {
             <Route path="/users/:id" element={<Profile />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/privacy" element={<Privacy/>} />
         </Routes>
         <Footer />
       </BrowserRouter>
