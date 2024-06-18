@@ -5,9 +5,9 @@ const RegisterForm = () => {
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [status, setStatus] = useState("Etudiant");
-  const [adherent, setAdherent] = useState("Non");
-  const [subscriptionEnd, setSubscriptionEnd] = useState("2999-12-31");
+  const [role, setRole] = useState("Etudiant");
+  const [isSubscriber, setIsSubscriber] = useState("False");
+  const [subscriptionEndDate, setSubscriptionEndDate] = useState("2999-12-31");
   const [password, setPassword] = useState("");
 
 
@@ -15,22 +15,22 @@ const RegisterForm = () => {
     e.preventDefault();
     const userData = {
       email,
-      status,
+      role,
       firstName,
       lastName,
-      adherent,
-      subscriptionEnd,
+      isSubscriber,
+      subscriptionEndDate,
       password,
     };
 
     console.log("User data", userData);
 
     setEmail("");
-    setStatus("Etudiant");
+    setRole("Etudiant");
     setFirstName("");
     setLastName("");
-    setAdherent("Non");
-    setSubscriptionEnd("2999-12-31");
+    setIsSubscriber("False");
+    setSubscriptionEndDate("2999-12-31");
     setPassword("");
   };
 
@@ -80,8 +80,6 @@ const RegisterForm = () => {
                   />
                   <span className="tooltiptext">Votre mot de passe doit contenir au minimum : <br /> - 8 caractères <br /> - 1 chiffre <br /> - 1 lettre minuscule <br /> - 1 lettre majuscule <br /> - 1 caractère spécial </span>
                 </div>
-
-
                 <div>
                   <label
                     htmlFor="first_name"
@@ -127,8 +125,7 @@ const RegisterForm = () => {
                   Créer
                 </button>
               </div>
-            </form>
-          
+            </form>         
           </div>
         </div>
       </div>

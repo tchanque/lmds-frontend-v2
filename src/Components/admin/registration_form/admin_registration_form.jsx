@@ -4,9 +4,9 @@ const AdminRegisterForm = () => {
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [status, setStatus] = useState("");
-  const [adherent, setAdherent] = useState("");
-  const [subscriptionEnd, setSubscriptionEnd] = useState("");
+  const [role, setRole] = useState("");
+  const [isSubsciber, setIsSubscriber] = useState("");
+  const [subscriptionEndDate, setSubscriptionEndDate] = useState("");
   const [password, setPassword] = useState("");
 
   // Password Generation
@@ -49,22 +49,22 @@ const AdminRegisterForm = () => {
     e.preventDefault();
     const userData = {
       email,
-      status,
+      role,
       firstName,
       lastName,
-      adherent,
-      subscriptionEnd,
+      isSubsciber,
+      subscriptionEndDate,
       password,
     };
 
     console.log("User data", userData);
 
     setEmail("");
-    setStatus("");
+    setRole("");
     setFirstName("");
     setLastName("");
-    setAdherent("");
-    setSubscriptionEnd("");
+    setIsSubscriber("");
+    setSubscriptionEndDate("");
     setPassword("");
   };
 
@@ -99,16 +99,16 @@ const AdminRegisterForm = () => {
                 </div>
                 <div>
                   <label
-                    htmlFor="statut"
+                    htmlFor="role"
                     className="block mb-2 font-hind-vadodara text-center text-sm font-medium text-grey-main dark:text-white"
                   >
                     Statut
                   </label>
                   <select
-                    name="statut"
-                    id="statut"
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value)}
+                    name="role"
+                    id="role"
+                    value={role}
+                    onChange={(e) => setRole(e.target.value)}
                     className="bg-gray-50 border border-primary-main text-grey-main text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="statut"
                     required
@@ -116,9 +116,9 @@ const AdminRegisterForm = () => {
                     <option value="">
                       Choisissez une option
                     </option>
-                    <option value="student">Étudiant</option>
-                    <option value="teacher">Professeur</option>
-                    <option value="admin">Admin</option>
+                    <option value="Etudiant">Étudiant</option>
+                    <option value="Professeur">Professeur</option>
+                    <option value="Admin">Admin</option>
                   </select>
                 </div>
                 <div>
@@ -159,16 +159,16 @@ const AdminRegisterForm = () => {
                 </div>
                 <div>
                   <label
-                    htmlFor="adhérent?"
+                    htmlFor="isSubsciber"
                     className="block mb-2 font-hind-vadodara text-center text-sm font-medium text-grey-main dark:text-white"
                   >
                     Est adhérent ?
                   </label>
                   <select
-                    name="adhérent?"
-                    id="adhérent?"
-                    value={adherent}
-                    onChange={(e) => setAdherent(e.target.value)}
+                    name="isSubsciber"
+                    id="isSubsciber"
+                    value={isSubsciber}
+                    onChange={(e) => setIsSubscriber(e.target.value)}
                     className="bg-gray-50 border border-primary-main text-grey-main text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="est adhérent ?"
                     required
@@ -176,23 +176,23 @@ const AdminRegisterForm = () => {
                     <option value="">
                       Choisissez une option
                     </option>
-                    <option value="oui">Oui</option>
-                    <option value="non">Non</option>
+                    <option value="true">Oui</option>
+                    <option value="false">Non</option>
                   </select>
                 </div>
                 <div>
                   <label
-                    htmlFor="subscription_end"
+                    htmlFor="subscriptionEndDate"
                     className="block mb-2 font-hind-vadodara text-center text-sm font-medium text-grey-main dark:text-white"
                   >
                     Fin de Souscription
                   </label>
                   <input
                     type="date"
-                    name="subscription_end"
-                    id="subscription_end"
-                    value={subscriptionEnd}
-                    onChange={(e) => setSubscriptionEnd(e.target.value)}
+                    name="subscriptionEndDate"
+                    id="subscriptionEndDate"
+                    value={subscriptionEndDate}
+                    onChange={(e) => setSubscriptionEndDate(e.target.value)}
                     className="bg-gray-50 border border-primary-main text-grey-main text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="fin de souscription"
                     required
@@ -233,7 +233,6 @@ const AdminRegisterForm = () => {
                 </button>
               </div>
             </form>
-          
           </div>
         </div>
       </div>
