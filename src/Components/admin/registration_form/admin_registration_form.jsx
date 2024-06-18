@@ -50,37 +50,27 @@ const AdminRegisterForm = () => {
     e.preventDefault();
 
     axiosPrivate
-    .post("/users", { user: { email: email, password: password, first_name: firstName, last_name: lastName, role: role, subscription_end_date: subscriptionEndDate, is_subscriber: isSubscriber } })
-    .then((response) => {
-      console.log(response);
-    })
-    .catch((error) => {
-      if (error.response) {
-        console.log(error.response);
-      } else {
-        console.error(error);
-      }
-    });
-
-    // const userData = {
-    //   email,
-    //   role,
-    //   firstName,
-    //   lastName,
-    //   isSubsciber,
-    //   subscriptionEndDate,
-    //   password,
-    // };
-
-    // console.log("User data", userData);
-
-    // setEmail("");
-    // setRole("");
-    // setFirstName("");
-    // setLastName("");
-    // setIsSubscriber("");
-    // setSubscriptionEndDate("");
-    // setPassword("");
+      .post("/users", {
+        user: {
+          email: email,
+          password: password,
+          first_name: firstName,
+          last_name: lastName,
+          role: role,
+          subscription_end_date: subscriptionEndDate,
+          is_subscriber: isSubscriber,
+        },
+      })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        if (error.response) {
+          console.log(error.response);
+        } else {
+          console.error(error);
+        }
+      });
   };
 
   return (
@@ -91,7 +81,7 @@ const AdminRegisterForm = () => {
             <h1 className="text-xl font-bold font-Ubuntu leading-tight text-center tracking-tight text-primary-dark md:text-2xl dark:text-white">
               CRÉATION DE COMPTE
             </h1>
-            
+
             <form action="#" onSubmit={handleSubmit}>
               <div className="grid grid-cols-2 gap-x-8 gap-y-6">
                 <div>
@@ -128,9 +118,7 @@ const AdminRegisterForm = () => {
                     placeholder="statut"
                     required
                   >
-                    <option value="">
-                      Choisissez une option
-                    </option>
+                    <option value="">Choisissez une option</option>
                     <option value="Etudiant">Étudiant</option>
                     <option value="Professeur">Professeur</option>
                     <option value="Admin">Admin</option>
@@ -188,9 +176,7 @@ const AdminRegisterForm = () => {
                     placeholder="est adhérent ?"
                     required
                   >
-                    <option value="">
-                      Choisissez une option
-                    </option>
+                    <option value="">Choisissez une option</option>
                     <option value="true">Oui</option>
                     <option value="false">Non</option>
                   </select>
@@ -213,7 +199,7 @@ const AdminRegisterForm = () => {
                     required
                   />
                 </div>
-                </div>
+              </div>
               <div className="flex justify-evenly mt-5 gap-x-3">
                 <div className="flex-grow">
                   <label
