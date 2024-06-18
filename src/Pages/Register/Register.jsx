@@ -7,7 +7,7 @@ function Register() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [role, setRole] = useState("Etudiant");
-  const [isSubscriber, setIsSubscriber] = useState(true);
+  const [isSubscriber, setIsSubscriber] = useState(false);
   const [subscriptionEndDate, setSubscriptionEndDate] = useState("2999-12-31");
   const [password, setPassword] = useState("");
 
