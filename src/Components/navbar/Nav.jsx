@@ -29,7 +29,8 @@ const Nav = () => {
       .delete("/users/sign_out", {
         headers: {
           Authorization: `${token}`,
-        },
+          "Content-Type": "application/json",
+        }, withCredentials: true,
       })
       .then((response) => {
         console.log(response)
