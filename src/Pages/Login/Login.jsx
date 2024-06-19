@@ -1,4 +1,3 @@
-import { Input } from "@nextui-org/react";
 import { axiosPrivate } from "../../api/axios";
 import { useState } from "react";
 import { bearerToken } from "../../atom/atoms";
@@ -75,13 +74,13 @@ function Login() {
                 </div>
               </div>
               <div className="flex justify-center">
-                  <button
-                    type="submit"
-                    className="w-48 mt-10 text-white bg-success-main hover:bg-success-light font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-                  >
-                    Se connecter
-                  </button>
-                </div>
+                <button
+                  type="submit"
+                  className="w-48 mt-10 text-white bg-success-main hover:bg-success-light font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                >
+                  Se connecter
+                </button>
+              </div>
             </form>
           </div>
         </div>
