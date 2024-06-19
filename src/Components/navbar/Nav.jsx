@@ -8,21 +8,13 @@ import {
 } from "@nextui-org/react";
 import { axiosPrivate } from "../../api/axios";
 import { useAtom } from "jotai";
-import { bearerToken } from "../../atom/atoms";
+import { bearerToken, currentUserAtom } from "../../atom/atoms";
 import { useEffect, useState } from "react";
 
 const Nav = () => {
   const [token, setToken] = useAtom(bearerToken);
-  const [currentUser, setCurrentUser] = useState(false);
-
-  useEffect(() => {
-    if (token) {
-      setCurrentUser(true);
-    } else {
-      setCurrentUser(false);
-    }
-  }, [token])
-
+  const [currentUser, setCurrentUser] = useAtom(currentUserAtom);
+  
   const logout = () => {
     console.log(token)
     axiosPrivate
@@ -35,7 +27,6 @@ const Nav = () => {
       .then((response) => {
         console.log(response)
         setToken(null);
-        setCurrentUser(false);
       })
       .catch(error => {
         console.error('Logout failed:', error);
@@ -54,18 +45,23 @@ const Nav = () => {
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">
-        <NavbarItem>
-          <Link to="/register">S'inscrire</Link>
-        </NavbarItem>
-        {currentUser ? (
+        {token ? (
+          <>
           <NavbarItem>
-          <Button onClick={logout}>Se déconnecter</Button>
-        </NavbarItem>
-        ) : (
-          <NavbarItem className="hidden lg:flex">
-          <Link to="/login">Se connecter</Link>
-        </NavbarItem>
-        )}       
+            <Button onClick={logout}>Se déconnecter</Button>
+          </NavbarItem>
+          {currentUser.role === "Admin" && (
+            <NavbarItem>
+              <Link to="/admin">Dashboard Admin</Link>
+            </NavbarItem>
+        )}
+        </>
+      ) : (
+          <NavbarItem>
+            <Link to="/register">S'inscrire</Link>
+            <Link to="/login">Se connecter</Link>
+          </NavbarItem> 
+        )}
       </NavbarContent>
     </Navbar>
   );

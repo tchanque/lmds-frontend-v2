@@ -1,12 +1,13 @@
 import { axiosPrivate } from "../../api/axios";
 import { useState } from "react";
-import { bearerToken } from "../../atom/atoms";
+import { bearerToken, currentUserAtom } from "../../atom/atoms";
 import { useAtom } from "jotai";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [token, setToken] = useAtom(bearerToken);
+  const [currentUser, setCurrentUser] = useAtom(currentUserAtom);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -16,6 +17,9 @@ function Login() {
       .then((response) => {
         console.log(response);
         setToken(response.headers.authorization);
+        setCurrentUser(response.data.user)
+        console.log(currentUser)
+        console.log(currentUser.role)
       })
       .catch((error) => {
         if (error.response) {
