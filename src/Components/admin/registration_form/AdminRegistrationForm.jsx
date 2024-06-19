@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { axiosPrivate } from "../../../api/axios";
 
-const AdminRegisterForm = () => {
+const AdminRegistrationForm = () => {
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -241,4 +241,4 @@ const AdminRegisterForm = () => {
   );
 };
 
-export default AdminRegisterForm;
+export default AdminRegistrationForm;
