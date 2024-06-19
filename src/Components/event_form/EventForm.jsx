@@ -68,14 +68,34 @@ const EventForm = () => {
       )
       .then((response) => {
         console.log("Event created successfully:", response.data);
+        if (eventInstruments.length > 0) {
+          eventInstruments.map((eventInstrumentData, index) => {
+            axiosPrivate
+              .post("/event_instruments", {
+                event_instrument: {
+                  event_id: response.data.id,
+                  instrument_name: eventInstrumentData.instrument,
+                  level: eventInstrumentData.level,
+                  total_spots: eventInstrumentData.totalSpots,
+                  available_spots: eventInstrumentData.totalSpots,
+                },
+              },
+              {
+                headers: {
+                  Authorization: `${token}`,
+                  "Content-Type": "application/json",
+                },
+                withCredentials: true,
+              })
+              .then((response) => {
+                console.log(response);
+              });
+          });
+        }
       })
       .catch((error) => {
         console.error("Error creating event:", error);
       });
-
-    if (eventInstruments.length > 0) {
-      // there are instruments
-    }
   };
 
   return (
@@ -105,6 +125,9 @@ const EventForm = () => {
                     placeholder="Catégorie de votre évènement"
                     required
                   >
+                    <option hidden value="">
+                      Choisissez une catégorie
+                    </option>
                     <option value="Atelier">Atelier</option>
                     <option value="Concert">Concert</option>
                     <option value="Permanence">Permanence</option>
@@ -175,7 +198,7 @@ const EventForm = () => {
                     Prix
                   </label>
                   <input
-                    type="numeric"
+                    type="number"
                     name="price"
                     id="price"
                     value={price}
@@ -239,7 +262,9 @@ const EventForm = () => {
               <button onClick={printInstruments}>Print les instruments</button>
               <div className="flex justify-center flex-direction-column">
                 <button
+                id="btnCreateEvent"
                   type="submit"
+                  disabled
                   className="w-24 mt-10 text-white bg-success-main hover:bg-success-light font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
                 >
                   Créer

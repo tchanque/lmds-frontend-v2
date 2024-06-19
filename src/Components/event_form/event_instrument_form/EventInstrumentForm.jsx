@@ -6,12 +6,20 @@ const EventInstrumentForm = ({ id, instrument, onInstrumentChange }) => {
   const [localLevel, setLocalLevel] = useState(instrument.level);
   const [localTotalSpots, setLocalTotalSpots] = useState(instrument.totalSpots);
 
+  const btnCreateEvent = document.getElementById('btnCreateEvent')
+
   useEffect(() => {
     onInstrumentChange(id, "instrument", localInstrument);
   }, [localInstrument]);
 
   useEffect(() => {
     onInstrumentChange(id, "level", localLevel);
+
+    if(localLevel.length > 0){
+      btnCreateEvent.removeAttribute('disabled')
+    } else {
+      btnCreateEvent.addAttribute('disabled')
+    }
   }, [localLevel]);
 
   useEffect(() => {
@@ -39,6 +47,7 @@ const EventInstrumentForm = ({ id, instrument, onInstrumentChange }) => {
           placeholder="Instrument"
           required
         >
+          <option hidden value="">Choisissez un instrument</option>
           <option value="Guitare">Guitare</option>
           <option value="Batterie">Batterie</option>
           <option value="Piano">Piano</option>
@@ -63,7 +72,7 @@ const EventInstrumentForm = ({ id, instrument, onInstrumentChange }) => {
           selectionMode="multiple"
           className="text-grey-main"
           onSelectionChange={(selected) => setLocalLevel(selected)}
-          defaultValue={localLevel}
+          required
         >
           {levelOptions.map((option, index) => (
             <SelectItem key={index}>{`${option}`}</SelectItem>

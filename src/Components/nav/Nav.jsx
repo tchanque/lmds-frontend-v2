@@ -24,7 +24,6 @@ const Nav = () => {
   }, [token])
 
   const logout = () => {
-    console.log(token)
     axiosPrivate
       .delete("/users/sign_out", {
         headers: {
