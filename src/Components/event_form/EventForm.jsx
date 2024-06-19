@@ -55,7 +55,7 @@ const EventForm = () => {
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
         <div className="bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-            <h1 className="text-xl font-bold font-Ubuntu leading-tight text-center tracking-tight text-primary-dark md:text-2xl dark:text-white">
+            <h1 className="text-xl font-bold leading-tight tracking-tight text-center font-Ubuntu text-primary-dark md:text-2xl dark:text-white">
               CRÉATION D'ÉVÈNEMENT
             </h1>
 
@@ -64,7 +64,7 @@ const EventForm = () => {
                 <div>
                   <label
                     htmlFor="category"
-                    className="block mb-2 font-hind-vadodara text-center text-sm font-medium text-grey-main dark:text-white"
+                    className="block mb-2 text-sm font-medium text-center font-hind-vadodara text-grey-main dark:text-white"
                   >
                     Catégorie
                   </label>
@@ -88,7 +88,7 @@ const EventForm = () => {
                 <div>
                   <label
                     htmlFor="title"
-                    className="block mb-2 font-hind-vadodara text-center text-sm font-medium text-grey-main dark:text-white"
+                    className="block mb-2 text-sm font-medium text-center font-hind-vadodara text-grey-main dark:text-white"
                   >
                     Titre
                   </label>
@@ -106,7 +106,7 @@ const EventForm = () => {
                 <div>
                   <label
                     htmlFor="start_date"
-                    className="block mb-2 font-hind-vadodara text-center text-sm font-medium text-grey-main dark:text-white"
+                    className="block mb-2 text-sm font-medium text-center font-hind-vadodara text-grey-main dark:text-white"
                   >
                     Date de début
                   </label>
@@ -124,7 +124,7 @@ const EventForm = () => {
                 <div>
                   <label
                     htmlFor="end_date"
-                    className="block mb-2 font-hind-vadodara text-center text-sm font-medium text-grey-main dark:text-white"
+                    className="block mb-2 text-sm font-medium text-center font-hind-vadodara text-grey-main dark:text-white"
                   >
                     Date de fin
                   </label>
@@ -142,7 +142,7 @@ const EventForm = () => {
                 <div>
                   <label
                     htmlFor="price"
-                    className="block mb-2 font-hind-vadodara text-center text-sm font-medium text-grey-main dark:text-white"
+                    className="block mb-2 text-sm font-medium text-center font-hind-vadodara text-grey-main dark:text-white"
                   >
                     Prix
                   </label>
@@ -160,7 +160,7 @@ const EventForm = () => {
                 <div>
                   <label
                     htmlFor="location"
-                    className="block mb-2 font-hind-vadodara text-center text-sm font-medium text-grey-main dark:text-white"
+                    className="block mb-2 text-sm font-medium text-center font-hind-vadodara text-grey-main dark:text-white"
                   >
                     Lieu
                   </label>
@@ -176,11 +176,11 @@ const EventForm = () => {
                   />
                 </div>
               </div>
-              <div className="flex justify-center flex-direction-column mt-5">
+              <div className="flex justify-center mt-5 flex-direction-column">
                 <div className="w-full">
                   <label
                     htmlFor="description"
-                    className="block mb-2 font-hind-vadodara text-center text-sm font-medium text-grey-main dark:text-white"
+                    className="block mb-2 text-sm font-medium text-center font-hind-vadodara text-grey-main dark:text-white"
                   >
                     Description
                   </label>
