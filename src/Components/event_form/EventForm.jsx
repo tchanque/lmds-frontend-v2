@@ -19,37 +19,64 @@ const EventForm = () => {
   const [description, setDescription] = useState("");
   const [token, setToken] = useAtom(bearerToken);
 
+  const [eventInstruments, setEventInstruments] = useState([]);
+
+  const addEventInstrumentForm = (e) => {
+    e.preventDefault();
+    setEventInstruments([
+      ...eventInstruments,
+      { id: eventInstruments.length, instrument: "", level: [], totalSpots: 0 },
+    ]);
+  };
+
+  const handleInstrumentChange = (id, field, value) => {
+    setEventInstruments((prev) =>
+      prev.map((instrument) =>
+        instrument.id === id ? { ...instrument, [field]: value } : instrument
+      )
+    );
+  };
+
+  const printInstruments = () => {
+    eventInstruments.map((instrument) => console.log(instrument));
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    axiosPrivate.post(
-      "/events",
-      {
-        event: {  // Nesting the event data under the 'event' key
-          category: category,
-          title: title,
-          start_date: startDate,
-          end_date: endDate,
-          price: price,
-          location: location,
-          description: description,
-        }
-      },
-      {
-        headers: {
-          Authorization: `${token}`,
-          "Content-Type": "application/json",
+    axiosPrivate
+      .post(
+        "/events",
+        {
+          event: {
+            // Nesting the event data under the 'event' key
+            category: category,
+            title: title,
+            start_date: startDate,
+            end_date: endDate,
+            price: price,
+            location: location,
+            description: description,
+          },
         },
-        withCredentials: true,
-      }
-    )
-    .then((response) => {
-      console.log("Event created successfully:", response.data);
-    })
-    .catch((error) => {
-      console.error("Error creating event:", error);
-    });
+        {
+          headers: {
+            Authorization: `${token}`,
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      )
+      .then((response) => {
+        console.log("Event created successfully:", response.data);
+      })
+      .catch((error) => {
+        console.error("Error creating event:", error);
+      });
+
+    if (eventInstruments.length > 0) {
+      // there are instruments
+    }
   };
-  
 
   return (
     <section className="dark:bg-gray-900">
@@ -195,14 +222,27 @@ const EventForm = () => {
                     required
                   />
                 </div>
-                <EventInstrumentForm></EventInstrumentForm>
               </div>
+              <div id="EventInstrumentForm">
+                {eventInstruments.map((instrument, index) => (
+                  <EventInstrumentForm
+                    key={index}
+                    id={instrument.id}
+                    instrument={instrument}
+                    onInstrumentChange={handleInstrumentChange}
+                  />
+                ))}
+              </div>
+              <button onClick={addEventInstrumentForm}>
+                Ajouter un instrument
+              </button>
+              <button onClick={printInstruments}>Print les instruments</button>
               <div className="flex justify-center flex-direction-column">
                 <button
                   type="submit"
                   className="w-24 mt-10 text-white bg-success-main hover:bg-success-light font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
                 >
-                  Prochaine étape
+                  Créer
                 </button>
               </div>
             </form>

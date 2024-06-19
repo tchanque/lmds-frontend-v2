@@ -5,7 +5,7 @@ const Home = () => {
   return (
     <>
       <div>
-        <h1>Homfdsejgj</h1>
+        <h1>Home</h1>
         <EventForm></EventForm>
       </div>
     </>
