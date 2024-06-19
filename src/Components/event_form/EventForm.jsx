@@ -3,6 +3,7 @@ import { format } from "date-fns";
 import { axiosPrivate } from "../../api/axios";
 import { useAtom } from "jotai";
 import { bearerToken } from "../../atom/atoms";
+import EventInstrumentForm from "./event_instrument_form/EventInstrumentForm";
 
 const EventForm = () => {
   const [category, setCategory] = useState("");
@@ -194,6 +195,7 @@ const EventForm = () => {
                     required
                   />
                 </div>
+                <EventInstrumentForm></EventInstrumentForm>
               </div>
               <div className="flex justify-center flex-direction-column">
                 <button
