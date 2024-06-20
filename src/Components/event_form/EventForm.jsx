@@ -28,7 +28,7 @@ const EventForm = () => {
       { id: eventInstruments.length, instrument: "", level: [], totalSpots: 0 },
     ]);
   };
-  
+
   const handleInstrumentChange = (id, field, value) => {
     setEventInstruments((prev) =>
       prev.map((instrument) =>
@@ -94,7 +94,9 @@ const EventForm = () => {
                   event_instrument: {
                     event_id: response.data.id,
                     instrument_name: eventInstrumentData.instrument,
-                    level: Array.from(eventInstrumentData.level).sort().join(', '),
+                    level: Array.from(eventInstrumentData.level)
+                      .sort()
+                      .join(", "),
                     total_spots: eventInstrumentData.totalSpots,
                     available_spots: eventInstrumentData.totalSpots,
                   },
@@ -119,15 +121,15 @@ const EventForm = () => {
   };
 
   return (
-    <section className="bg-green-500 dark:bg-gray-900">
+    <section className="dark:bg-gray-900">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-        <div className="bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+        <div className="bg-white rounded-lg shadow w-200 dark:border md:mt-0 sm:max-w-2xl xl:p-0 dark:bg-gray-800 dark:border-gray-700">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
             <h1 className="text-xl font-bold leading-tight tracking-tight text-center font-Ubuntu text-primary-dark md:text-2xl dark:text-white">
               CRÉATION D'ÉVÈNEMENT
             </h1>
 
-            <form onSubmit={handleSubmit} className="bg-red-500">
+            <form onSubmit={handleSubmit}>
               <div className="grid grid-cols-2 gap-x-8 gap-y-6">
                 <div>
                   <label
@@ -266,7 +268,10 @@ const EventForm = () => {
                   />
                 </div>
               </div>
-              <div id="EventInstrumentForm">
+              <div
+                id="EventInstrumentForm"
+                className="flex flex-col items-center mt-5"
+              >
                 {eventInstruments.map((instrument, index) => (
                   <EventInstrumentForm
                     key={index}
@@ -276,11 +281,25 @@ const EventForm = () => {
                     onInstrumentDestroy={handleInstrumentDestroy}
                   />
                 ))}
+                <h6>Ajouter un instrument</h6>
+                <button onClick={addEventInstrumentForm} className="">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="#17A964"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="#FFFF"
+                    className="size-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                    />
+                  </svg>
+                </button>
               </div>
-              <button onClick={addEventInstrumentForm}>
-                Ajouter un instrument
-              </button>
-              <button onClick={printInstruments}>Print les instruments</button>
+              {/* <button onClick={printInstruments}>Print les instruments</button> */}
               <div className="flex justify-center flex-direction-column">
                 <button
                   type="submit"
