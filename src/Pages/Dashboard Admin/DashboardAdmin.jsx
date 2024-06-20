@@ -1,9 +1,9 @@
-import AdminRegisterForm from "../../Components/admin/registration_form/admin_registration_form";
+import AdminRegistrationForm from "../../Components/admin/registration_form/AdminRegistrationForm";
 
 const DashboardAdmin = () => {
   return (
     <>
-      <AdminRegisterForm />
+      <AdminRegistrationForm />
     </>
   );
 }
