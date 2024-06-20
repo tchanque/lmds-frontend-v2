@@ -8,7 +8,7 @@ const EventInstrumentForm = ({
   onInstrumentDestroy,
 }) => {
   const [localInstrument, setLocalInstrument] = useState(instrument.instrument);
-  const [localLevel, setLocalLevel] = useState(instrument.level);
+  const [localLevel, setLocalLevel] = useState([]);
   const [localTotalSpots, setLocalTotalSpots] = useState(instrument.totalSpots);
   // const [isClicked, setIsClicked] = useState(false)
 
@@ -24,7 +24,15 @@ const EventInstrumentForm = ({
     onInstrumentChange(id, "totalSpots", localTotalSpots);
   }, [localTotalSpots]);
 
-  const levelOptions = [0, 1, 2, 3, 4, 5];
+  const handleCheckboxChange = (event) => {
+    const { value, checked } = event.target;
+    if (checked) {
+      setLocalLevel(prevLevels => [...prevLevels, value]);
+    } else {
+      setLocalLevel(prevLevels => prevLevels.filter(level => level !== value));
+    }
+    
+  };
 
   return (
     <div className="mt-5">
@@ -61,28 +69,54 @@ const EventInstrumentForm = ({
           </select>
         </div>
 
-        <div>
+        {/* <div>
         <label
           htmlFor="level"
           className="block mb-2 text-sm font-medium text-center font-hind-vadodara text-grey-main dark:text-white"
         >
           Niveau
         </label>
+          <select
+            name="level"
+            label="level"
+            placeholder="Coucou"
+            // multiple
+            className="bg-gray-50 border border-primary-main text-grey-main text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            onChange={(selected) => setLocalLevel(selected)}
 
-        <Select
-        variant="bordered"
-          name="level"
-          label="level"
-          placeholder="Choisissez un/des niveau(x)"
-          selectionMode="multiple"
-          className="min-w-xs text-grey-main"
-          onSelectionChange={(selected) => setLocalLevel(selected)}
-          required
-        >
-          {levelOptions.map((option, index) => (
-            <SelectItem key={index}>{`${option}`}</SelectItem>
-          ))}
-        </Select>
+            required
+          >
+          
+            <option hidden value="">
+              Choisissez un niveau
+            </option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>  
+        </div> */}
+        
+        <div>
+        <label htmlFor="level" className="block mb-2 text-sm font-medium text-center font-hind-vadodara text-grey-main dark:text-white">Choisissez un niveau:</label>
+          <div id="level" className="flex gap-1 bg-gray-50 border border-primary-main text-grey-main text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+            
+            <input type="checkbox" name="level1" value="1" checked={localLevel.includes("1")} onChange={handleCheckboxChange} />
+            <label htmlFor="1">1</label><br />
+
+            <input type="checkbox" name="level2" value="2" checked={localLevel.includes("2")} onChange={handleCheckboxChange} />
+            <label htmlFor="2">2</label><br />
+
+            <input type="checkbox" name="level3" value="3" checked={localLevel.includes("3")} onChange={handleCheckboxChange} />
+            <label htmlFor="3">3</label><br />
+
+            <input type="checkbox" name="level4" value="4" checked={localLevel.includes("4")} onChange={handleCheckboxChange} />
+            <label htmlFor="4">4</label><br />
+
+            <input type="checkbox" name="level5" value="5" checked={localLevel.includes("5")} onChange={handleCheckboxChange} />
+            <label htmlFor="5">5</label><br />
+          </div>
         </div>
 
         <div>
