@@ -27,6 +27,7 @@ const Nav = () => {
       .then((response) => {
         console.log(response)
         setToken(null);
+        setCurrentUser(null);
       })
       .catch(error => {
         console.error('Logout failed:', error);
@@ -45,7 +46,7 @@ const Nav = () => {
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">
-        {token ? (
+        {currentUser ? (
           <>
           <NavbarItem>
             <Link to={`users/${currentUser.id}`}>Mon Profil</Link>
@@ -60,12 +61,14 @@ const Nav = () => {
         )}
         </>
       ) : (
+        <>
           <NavbarItem>
             <Link to="/register">S'inscrire</Link>
             <Link to="/login">Se connecter</Link>
           </NavbarItem> 
+          </>
         )}
-      </NavbarContent>
+        </NavbarContent>
     </Navbar>
   );
 };

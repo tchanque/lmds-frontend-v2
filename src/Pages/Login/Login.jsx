@@ -15,11 +15,11 @@ function Login() {
     axiosPrivate
       .post("/users/sign_in", { user: { email: email, password: password } })
       .then((response) => {
-        console.log(response);
+        // console.log(response);
         setToken(response.headers.authorization);
         setCurrentUser(response.data.user)
-        console.log(currentUser)
-        console.log(currentUser.role)
+        // console.log(currentUser)
+        // console.log(currentUser.role)
       })
       .catch((error) => {
         if (error.response) {

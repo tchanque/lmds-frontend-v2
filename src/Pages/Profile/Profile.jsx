@@ -24,8 +24,8 @@ function Profile () {
     })
     .then((response) => {
       setUser(response.data)
-      console.log(id)
-      console.log(user)
+      // console.log(id)
+      // console.log(user)
     })
     .catch(error => {
       setError(error);
