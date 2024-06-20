@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { axiosPrivate } from "../../api/axios";
 import { useAtom } from "jotai";
@@ -41,6 +41,16 @@ const EventForm = () => {
     eventInstruments.map((instrument) => console.log(instrument));
   };
 
+  useEffect(() => {
+    validateForm();
+  }, [category, eventInstruments]);
+  const validateForm = () => {
+    if ( eventInstruments.some(instrument => instrument.level.length === 0)) {
+      return true
+    }
+    return false;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     axiosPrivate
@@ -71,22 +81,25 @@ const EventForm = () => {
         if (eventInstruments.length > 0) {
           eventInstruments.map((eventInstrumentData, index) => {
             axiosPrivate
-              .post("/event_instruments", {
-                event_instrument: {
-                  event_id: response.data.id,
-                  instrument_name: eventInstrumentData.instrument,
-                  level: eventInstrumentData.level,
-                  total_spots: eventInstrumentData.totalSpots,
-                  available_spots: eventInstrumentData.totalSpots,
+              .post(
+                "/event_instruments",
+                {
+                  event_instrument: {
+                    event_id: response.data.id,
+                    instrument_name: eventInstrumentData.instrument,
+                    level: eventInstrumentData.level,
+                    total_spots: eventInstrumentData.totalSpots,
+                    available_spots: eventInstrumentData.totalSpots,
+                  },
                 },
-              },
-              {
-                headers: {
-                  Authorization: `${token}`,
-                  "Content-Type": "application/json",
-                },
-                withCredentials: true,
-              })
+                {
+                  headers: {
+                    Authorization: `${token}`,
+                    "Content-Type": "application/json",
+                  },
+                  withCredentials: true,
+                }
+              )
               .then((response) => {
                 console.log(response);
               });
@@ -262,10 +275,13 @@ const EventForm = () => {
               <button onClick={printInstruments}>Print les instruments</button>
               <div className="flex justify-center flex-direction-column">
                 <button
-                id="btnCreateEvent"
                   type="submit"
-                  disabled
-                  className="w-24 mt-10 text-white bg-success-main hover:bg-success-light font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                  disabled={validateForm()}
+                  className={`w-24 mt-10 text-white ${
+                    validateForm()
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-success-main hover:bg-success-light"
+                  } font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800`}
                 >
                   Créer
                 </button>
