@@ -14,12 +14,6 @@ const EventInstrumentForm = ({ id, instrument, onInstrumentChange }) => {
 
   useEffect(() => {
     onInstrumentChange(id, "level", localLevel);
-
-    if(localLevel.length > 0){
-      btnCreateEvent.removeAttribute('disabled')
-    } else {
-      btnCreateEvent.addAttribute('disabled')
-    }
   }, [localLevel]);
 
   useEffect(() => {
