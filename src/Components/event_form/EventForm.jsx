@@ -28,7 +28,7 @@ const EventForm = () => {
       { id: eventInstruments.length, instrument: "", level: [], totalSpots: 0 },
     ]);
   };
-
+  
   const handleInstrumentChange = (id, field, value) => {
     setEventInstruments((prev) =>
       prev.map((instrument) =>
@@ -37,7 +37,14 @@ const EventForm = () => {
     );
   };
 
-  const printInstruments = () => {
+  const handleInstrumentDestroy = (id) => {
+    setEventInstruments((prev) =>
+      prev.filter((instrument) => instrument.id !== id)
+    );
+  };
+
+  const printInstruments = (e) => {
+    e.preventDefault();
     eventInstruments.map((instrument) => console.log(instrument));
   };
 
@@ -45,8 +52,8 @@ const EventForm = () => {
     validateForm();
   }, [category, eventInstruments]);
   const validateForm = () => {
-    if ( eventInstruments.some(instrument => instrument.level.length === 0)) {
-      return true
+    if (eventInstruments.some((instrument) => instrument.level.length === 0)) {
+      return true;
     }
     return false;
   };
@@ -79,7 +86,7 @@ const EventForm = () => {
       .then((response) => {
         console.log("Event created successfully:", response.data);
         if (eventInstruments.length > 0) {
-          eventInstruments.map((eventInstrumentData, index) => {
+          eventInstruments.map((eventInstrumentData) => {
             axiosPrivate
               .post(
                 "/event_instruments",
@@ -87,7 +94,7 @@ const EventForm = () => {
                   event_instrument: {
                     event_id: response.data.id,
                     instrument_name: eventInstrumentData.instrument,
-                    level: eventInstrumentData.level,
+                    level: Array.from(eventInstrumentData.level).sort().join(', '),
                     total_spots: eventInstrumentData.totalSpots,
                     available_spots: eventInstrumentData.totalSpots,
                   },
@@ -112,7 +119,7 @@ const EventForm = () => {
   };
 
   return (
-    <section className="dark:bg-gray-900">
+    <section className="bg-green-500 dark:bg-gray-900">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
         <div className="bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
@@ -120,7 +127,7 @@ const EventForm = () => {
               CRÉATION D'ÉVÈNEMENT
             </h1>
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className="bg-red-500">
               <div className="grid grid-cols-2 gap-x-8 gap-y-6">
                 <div>
                   <label
@@ -266,6 +273,7 @@ const EventForm = () => {
                     id={instrument.id}
                     instrument={instrument}
                     onInstrumentChange={handleInstrumentChange}
+                    onInstrumentDestroy={handleInstrumentDestroy}
                   />
                 ))}
               </div>
@@ -282,6 +290,7 @@ const EventForm = () => {
                       ? "bg-gray-400 cursor-not-allowed"
                       : "bg-success-main hover:bg-success-light"
                   } font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800`}
+                  // onClick={() => handleSubmit}
                 >
                   Créer
                 </button>

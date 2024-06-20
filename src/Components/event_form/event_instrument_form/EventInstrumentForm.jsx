@@ -1,12 +1,16 @@
 import { useState, useEffect } from "react";
 import { Select, SelectItem } from "@nextui-org/react";
 
-const EventInstrumentForm = ({ id, instrument, onInstrumentChange }) => {
+const EventInstrumentForm = ({
+  id,
+  instrument,
+  onInstrumentChange,
+  onInstrumentDestroy,
+}) => {
   const [localInstrument, setLocalInstrument] = useState(instrument.instrument);
   const [localLevel, setLocalLevel] = useState(instrument.level);
   const [localTotalSpots, setLocalTotalSpots] = useState(instrument.totalSpots);
-
-  const btnCreateEvent = document.getElementById('btnCreateEvent')
+  // const [isClicked, setIsClicked] = useState(false)
 
   useEffect(() => {
     onInstrumentChange(id, "instrument", localInstrument);
@@ -41,7 +45,9 @@ const EventInstrumentForm = ({ id, instrument, onInstrumentChange }) => {
           placeholder="Instrument"
           required
         >
-          <option hidden value="">Choisissez un instrument</option>
+          <option hidden value="">
+            Choisissez un instrument
+          </option>
           <option value="Guitare">Guitare</option>
           <option value="Batterie">Batterie</option>
           <option value="Piano">Piano</option>
@@ -91,6 +97,7 @@ const EventInstrumentForm = ({ id, instrument, onInstrumentChange }) => {
             required
           />
         </div>
+        <button onClick={() => onInstrumentDestroy(id)}>Supprimer</button>
       </div>
     </div>
   );
