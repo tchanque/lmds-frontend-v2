@@ -2,7 +2,7 @@ import { useState } from "react";
 import { format } from "date-fns";
 import { axiosPrivate } from "../../api/axios";
 import { useAtom } from "jotai";
-import { bearerToken } from "../../atom/atoms";
+import { bearerTokenAtom } from "../../atom/atoms";
 
 const EventForm = () => {
   const [category, setCategory] = useState("");
@@ -16,7 +16,7 @@ const EventForm = () => {
   const [price, setPrice] = useState("");
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
-  const [token, setToken] = useAtom(bearerToken);
+  const [token, setToken] = useAtom(bearerTokenAtom);
 
   const handleSubmit = (e) => {
     e.preventDefault();

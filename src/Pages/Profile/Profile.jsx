@@ -1,59 +1,48 @@
-import { useParams } from "react-router-dom"
-import { axiosPrivate } from "../../api/axios"
-import { useState } from "react";
-import { useEffect } from "react";
-import { bearerToken, currentUserAtom } from "../../atom/atoms";
+import { useParams } from "react-router-dom";
+import { axiosPrivate } from "../../api/axios";
+import { useEffect, useState } from "react";
+import { bearerTokenAtom } from "../../atom/atoms";
 import { useAtom } from "jotai";
 
-function Profile () {
+function Profile() {
   const { id } = useParams();
+  const [token, setToken] = useAtom(bearerTokenAtom);
   const [user, setUser] = useState(null);
-  const [currentUser] = useAtom(currentUserAtom);
-  const [error, setError] = useState(null);
-  const [token] = useAtom(bearerToken);
-  const [loading, setLoading] = useState(true);
+  const storedToken = localStorage.getItem("token");
 
   useEffect(() => {
-  
+    console.log(storedToken);
     axiosPrivate
-    .get(`users/${id}`, { 
-      headers: {
-        Authorization: `${token}`,
-        "Content-Type": "application/json",
-      }, withCredentials: true,
-    })
-    .then((response) => {
-      setUser(response.data)
-      console.log(id)
-      console.log(user)
-    })
-    .catch(error => {
-      setError(error);
-    });
-  }, [id])
+      .get(`/users/${id}`, {
+        headers: {
+          Authorization: `${storedToken}`,
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      })
+      .then((response) => {
+        console.log(response.data);
+        setUser(response.data.user)
+      });
+  }, []);
 
-
-
-
+  if (!storedToken) {
+    return (
+      <div>Vous n'êtes pas autorisé</div>
+    )
+  }
 
   if (!user) {
-    return <div>No user data</div>
+    return (
+      <div>Pas de profil correspondant</div>
+    )
   }
-  
+
   return (
     <div>
-      <h1>Profile of {user.first_name} {user.last_name}</h1>
-      <p>{user.email}</p>
-      <p>{user.description}</p>
-      <p>{user.role}</p>
-      {currentUser.role === "Admin" || currentUser.id === user.id ? (
-        <>
-        <button>Update</button>
-        <button>Delete</button>
-        </>
-      ) : <a>Non</a>}
+      <h1>{user.first_name}</h1>
     </div>
-  )
+  );
 }
 
-export default Profile
+export default Profile;

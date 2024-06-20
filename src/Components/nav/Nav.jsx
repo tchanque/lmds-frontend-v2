@@ -8,30 +8,13 @@ import {
 } from "@nextui-org/react";
 import { axiosPrivate } from "../../api/axios";
 import { useAtom } from "jotai";
-import { bearerToken, currentUserAtom } from "../../atom/atoms";
+import { bearerTokenAtom, currentUserAtom } from "../../atom/atoms";
 import { useEffect, useState } from "react";
+import LogoutButton from "../logout/LogoutButton";
 
 const Nav = () => {
-  const [token, setToken] = useAtom(bearerToken);
+  const [token, setToken] = useAtom(bearerTokenAtom);
   const [currentUser, setCurrentUser] = useAtom(currentUserAtom);
-  
-  const logout = () => {
-    console.log(token)
-    axiosPrivate
-      .delete("/users/sign_out", {
-        headers: {
-          Authorization: `${token}`,
-          "Content-Type": "application/json",
-        }, withCredentials: true,
-      })
-      .then((response) => {
-        console.log(response)
-        setToken(null);
-      })
-      .catch(error => {
-        console.error('Logout failed:', error);
-      })
-  };
 
   return (
     <Navbar>
@@ -45,25 +28,25 @@ const Nav = () => {
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">
-        {token ? (
+        {currentUser ? (
           <>
-          <NavbarItem>
-            <Link to={`users/${currentUser.id}`}>Mon Profil</Link>
-          </NavbarItem>
-          <NavbarItem>
-            <Button onClick={logout}>Se déconnecter</Button>
-          </NavbarItem>
-          {currentUser.role === "Admin" && (
             <NavbarItem>
-              <Link to="/admin">Dashboard Admin</Link>
+              <Link to={`users/${currentUser.id}`}>Mon Profil</Link>
             </NavbarItem>
-        )}
-        </>
-      ) : (
+            <NavbarItem>
+              <LogoutButton></LogoutButton>
+            </NavbarItem>
+            {currentUser.role === "Admin" && (
+              <NavbarItem>
+                <Link to="/admin">Dashboard Admin</Link>
+              </NavbarItem>
+            )}
+          </>
+        ) : (
           <NavbarItem>
             <Link to="/register">S'inscrire</Link>
             <Link to="/login">Se connecter</Link>
-          </NavbarItem> 
+          </NavbarItem>
         )}
       </NavbarContent>
     </Navbar>

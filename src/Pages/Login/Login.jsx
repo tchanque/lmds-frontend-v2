@@ -1,33 +1,34 @@
 import { axiosPrivate } from "../../api/axios";
 import { useState } from "react";
-import { bearerToken, currentUserAtom } from "../../atom/atoms";
+import { setBearerTokenAtom, currentUserAtom } from "../../atom/atoms";
 import { useAtom } from "jotai";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [token, setToken] = useAtom(bearerToken);
+  const [token, setToken] = useAtom(setBearerTokenAtom);
   const [currentUser, setCurrentUser] = useAtom(currentUserAtom);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleLogin = async (event) => {
+    event.preventDefault();
 
     axiosPrivate
-      .post("/users/sign_in", { user: { email: email, password: password } })
-      .then((response) => {
-        console.log(response);
-        setToken(response.headers.authorization);
-        setCurrentUser(response.data.user)
-        console.log(currentUser)
-        console.log(currentUser.role)
-      })
-      .catch((error) => {
-        if (error.response) {
-          console.log(error.response);
-        } else {
-          console.error(error);
-        }
-      });
+    .post("/users/sign_in", { user: { email: email, password: password } })
+    .then((response) => {
+      // maybe not necessary to set a token atom as well as storing it in local storage
+      // rather use a storage atom?
+      setToken(response.headers.authorization);
+      localStorage.setItem("token", response.headers.authorization);
+      setCurrentUser(response.data.user)
+      console.log("Welcome ", currentUser.first_name)
+    })
+    .catch((error) => {
+      if (error.response) {
+        console.log(error.response);
+      } else {
+        console.error(error);
+      }
+    });
   };
 
   return (
@@ -38,7 +39,7 @@ function Login() {
             <h1 className="text-xl font-bold leading-tight tracking-tight text-center font-Ubuntu text-primary-dark md:text-2xl dark:text-white">
               CONNEXION
             </h1>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleLogin}>
               <div className="grid grid-cols-2 gap-x-8 gap-y-6">
                 <div>
                   <label
