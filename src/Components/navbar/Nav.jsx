@@ -48,6 +48,9 @@ const Nav = () => {
         {token ? (
           <>
           <NavbarItem>
+            <Link to={`users/${currentUser.id}`}>Mon Profil</Link>
+          </NavbarItem>
+          <NavbarItem>
             <Button onClick={logout}>Se déconnecter</Button>
           </NavbarItem>
           {currentUser.role === "Admin" && (
