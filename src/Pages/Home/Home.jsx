@@ -1,5 +1,5 @@
 
-import EventForm from '../../Components/event_form/eventForm';
+import EventForm from '../../Components/event_form/EventForm';
 
 const Home = () => {
   return (
