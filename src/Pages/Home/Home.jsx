@@ -3,7 +3,8 @@ import EventForm from "../../Components/event_form/EventForm";
 import "./Home.css";
 import { useAtom } from "jotai";
 import { popUpAtom } from "../../atom/atoms";
-
+import EventForm from '../../Components/event_form/EventForm';
+import AllEvents from '../../Components/show_events/AllEvents';
 
 const Home = () => {
   const [popUp, setPopUp] = useAtom(popUpAtom);
@@ -43,6 +44,9 @@ const Home = () => {
           )}
         </div>
         {popUp && <EventForm />}
+      </div>
+      <div>
+        <AllEvents />
       </div>
     </>
   );
