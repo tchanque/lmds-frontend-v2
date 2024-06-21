@@ -1,28 +1,24 @@
 import { useAtom } from "jotai";
-import { userAtom } from "../../atom";
-import Cookies from "js-cookie";
 import { axiosPrivate } from "../../api/axios";
+import { currentUserAtom, bearerTokenAtom } from "../../atom/atoms";
 
 function LogoutButton() {
-  const [, setUser] = useAtom(userAtom);
+  const [, setUser] = useAtom(currentUserAtom);
+  const [token, setToken] = useAtom(bearerTokenAtom);
 
   const handleLogout = async () => {
     try {
       const response = await axiosPrivate.delete("/users/sign_out", {
         headers: {
-          Authorization: Cookies.get("token"),
+          Authorization: token,
+          "Content-Type": "application/json",
         },
+        withCredentials: true,
       });
-      console.log(response);
-
-      setUser({
-        id: "",
-        isLoggedIn: false,
-        token: "",
-      });
-
-      Cookies.remove("token");
-      Cookies.remove("id");
+      localStorage.removeItem("token");
+      setToken("");
+      setUser(null);
+      console.log(response.data);
       console.log("You are logged out");
     } catch (error) {
       console.error("Logout failed:", error);

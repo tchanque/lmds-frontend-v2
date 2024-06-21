@@ -8,38 +8,14 @@ import {
 } from "@nextui-org/react";
 import { axiosPrivate } from "../../api/axios";
 import { useAtom } from "jotai";
-import { bearerToken } from "../../atom/atoms";
+import { bearerTokenAtom, currentUserAtom } from "../../atom/atoms";
 import { useEffect, useState } from "react";
+import LogoutButton from "../logout/LogoutButton";
 
 const Nav = () => {
-  const [token, setToken] = useAtom(bearerToken);
-  const [currentUser, setCurrentUser] = useState(false);
+  const [token, setToken] = useAtom(bearerTokenAtom);
+  const [currentUser, setCurrentUser] = useAtom(currentUserAtom);
 
-  useEffect(() => {
-    if (token) {
-      setCurrentUser(true);
-    } else {
-      setCurrentUser(false);
-    }
-  }, [token])
-
-  const logout = () => {
-    axiosPrivate
-      .delete("/users/sign_out", {
-        headers: {
-          Authorization: `${token}`,
-          "Content-Type": "application/json",
-        }, withCredentials: true,
-      })
-      .then((response) => {
-        console.log(response)
-        setToken(null);
-        setCurrentUser(false);
-      })
-      .catch(error => {
-        console.error('Logout failed:', error);
-      })
-  };
 
   return (
     <Navbar>
@@ -53,18 +29,26 @@ const Nav = () => {
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">
-        <NavbarItem>
-          <Link to="/register">S'inscrire</Link>
-        </NavbarItem>
         {currentUser ? (
-          <NavbarItem>
-          <Button onClick={logout}>Se déconnecter</Button>
-        </NavbarItem>
+          <>
+            <NavbarItem>
+              <Link to={`users/${currentUser.id}`}>Mon Profil</Link>
+            </NavbarItem>
+            <NavbarItem>
+              <LogoutButton></LogoutButton>
+            </NavbarItem>
+            {currentUser.role === "Admin" && (
+              <NavbarItem>
+                <Link to="/admin">Dashboard Admin</Link>
+              </NavbarItem>
+            )}
+          </>
         ) : (
-          <NavbarItem className="hidden lg:flex">
-          <Link to="/login">Se connecter</Link>
-        </NavbarItem>
-        )}       
+          <NavbarItem>
+            <Link to="/register">S'inscrire</Link>
+            <Link to="/login">Se connecter</Link>
+          </NavbarItem>
+        )}
       </NavbarContent>
     </Navbar>
   );

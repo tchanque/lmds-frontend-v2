@@ -1,30 +1,33 @@
 import { axiosPrivate } from "../../api/axios";
-import { useState } from "react";
-import { bearerToken } from "../../atom/atoms";
+import { useEffect, useState } from "react";
 import { useAtom } from "jotai";
+import { bearerTokenAtom, currentUserAtom } from "../../atom/atoms";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [token, setToken] = useAtom(bearerToken);
+  const [token, setToken] = useAtom(bearerTokenAtom);
+  const [currentUser, setCurrentUser] = useAtom(currentUserAtom);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    axiosPrivate
-      .post("/users/sign_in", { user: { email: email, password: password } })
-      .then((response) => {
-        console.log(response);
-        setToken(response.headers.authorization);
-      })
-      .catch((error) => {
-        if (error.response) {
-          console.log(error.response);
-        } else {
-          console.error(error);
-        }
-      });
+  const handleLogin = async (event) => {
+    event.preventDefault();
+    try {
+      const response = await axiosPrivate.post("/users/sign_in", { user: { email, password } });
+      setToken(response.headers.authorization);
+      setCurrentUser(response.data.user);
+    } catch (error) {
+      console.error(error.response || error);
+    }
   };
+
+  useEffect(() => {
+    if (token) {
+      console.log('This is your Token', token)
+    }
+    if(currentUser) {
+      console.log('This is your Current User', currentUser)
+    }
+  },[token])
 
   return (
     <section className="dark:bg-gray-900">
@@ -34,7 +37,7 @@ function Login() {
             <h1 className="text-xl font-bold leading-tight tracking-tight text-center font-Ubuntu text-primary-dark md:text-2xl dark:text-white">
               CONNEXION
             </h1>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleLogin}>
               <div className="grid grid-cols-2 gap-x-8 gap-y-6">
                 <div>
                   <label
