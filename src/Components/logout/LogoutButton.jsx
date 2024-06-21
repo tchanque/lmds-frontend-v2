@@ -1,14 +1,13 @@
 import { useAtom } from "jotai";
 import { axiosPrivate } from "../../api/axios";
-import { userAtom, bearerTokenAtom } from "../../atom/atoms";
+import { currentUserAtom, bearerTokenAtom } from "../../atom/atoms";
 
 function LogoutButton() {
-  const [, setUser] = useAtom(userAtom);
-  const [, setToken] = useAtom(bearerTokenAtom);
+  const [, setUser] = useAtom(currentUserAtom);
+  const [token, setToken] = useAtom(bearerTokenAtom);
 
   const handleLogout = async () => {
     try {
-      const token = localStorage.getItem("token");
       const response = await axiosPrivate.delete("/users/sign_out", {
         headers: {
           Authorization: token,
@@ -16,18 +15,10 @@ function LogoutButton() {
         },
         withCredentials: true,
       });
-      console.log(response);
-
-      // Clear token from localStorage and atom
       localStorage.removeItem("token");
       setToken("");
-
-      setUser({
-        id: "",
-        isLoggedIn: false,
-        token: "",
-      });
-
+      setUser(null);
+      console.log(response.data);
       console.log("You are logged out");
     } catch (error) {
       console.error("Logout failed:", error);

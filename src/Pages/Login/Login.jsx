@@ -1,35 +1,33 @@
 import { axiosPrivate } from "../../api/axios";
-import { useState } from "react";
-import { setBearerTokenAtom, currentUserAtom } from "../../atom/atoms";
+import { useEffect, useState } from "react";
 import { useAtom } from "jotai";
+import { bearerTokenAtom, currentUserAtom } from "../../atom/atoms";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [token, setToken] = useAtom(setBearerTokenAtom);
+  const [token, setToken] = useAtom(bearerTokenAtom);
   const [currentUser, setCurrentUser] = useAtom(currentUserAtom);
 
   const handleLogin = async (event) => {
     event.preventDefault();
-
-    axiosPrivate
-    .post("/users/sign_in", { user: { email: email, password: password } })
-    .then((response) => {
-      // maybe not necessary to set a token atom as well as storing it in local storage
-      // rather use a storage atom?
+    try {
+      const response = await axiosPrivate.post("/users/sign_in", { user: { email, password } });
       setToken(response.headers.authorization);
-      localStorage.setItem("token", response.headers.authorization);
-      setCurrentUser(response.data.user)
-      console.log("Welcome ", currentUser.first_name)
-    })
-    .catch((error) => {
-      if (error.response) {
-        console.log(error.response);
-      } else {
-        console.error(error);
-      }
-    });
+      setCurrentUser(response.data.user);
+    } catch (error) {
+      console.error(error.response || error);
+    }
   };
+
+  useEffect(() => {
+    if (token) {
+      console.log('This is your Token', token)
+    }
+    if(currentUser) {
+      console.log('This is your Current User', currentUser)
+    }
+  },[token])
 
   return (
     <section className="dark:bg-gray-900">
