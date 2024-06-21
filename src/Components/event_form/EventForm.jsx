@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { axiosPrivate } from "../../api/axios";
 import { useAtom } from "jotai";
-import { bearerTokenAtom, popUpAtom } from "../../atom/atoms";
+import { bearerTokenAtom, popUpEventAtom } from "../../atom/atoms";
 import EventInstrumentForm from "./event_instrument_form/EventInstrumentForm";
 import "./eventForm.css";
 
@@ -22,7 +22,7 @@ const EventForm = () => {
 
   const [eventInstruments, setEventInstruments] = useState([]);
 
-  const [popUp, setPopUp] = useAtom(popUpAtom);
+  const [popUpEvent, setPopUpEvent] = useAtom(popUpEventAtom);
 
   const addEventInstrumentForm = (e) => {
     e.preventDefault();
@@ -51,8 +51,8 @@ const EventForm = () => {
     eventInstruments.map((instrument) => console.log(instrument));
   };
 
-  const handleClosePopUp = () => {
-    setPopUp(false);
+  const handleClosePopUpEvent = () => {
+    setPopUpEvent(false);
   };
 
   useEffect(() => {
@@ -118,13 +118,13 @@ const EventForm = () => {
                 }
               )
               .then((response) => {
-                handleClosePopUp();
+                handleClosePopUpEvent();
                 window.location.reload();
                 console.log(response);
               });
           });
         } else {
-          handleClosePopUp();
+          handleClosePopUpEvent();
           window.location.reload();
         }
       })
@@ -133,13 +133,13 @@ const EventForm = () => {
       });
   };
 
-  if (popUp)
+  if (popUpEvent)
   return (
     <section className="dark:bg-gray-900">
-      <div className={`modal ${popUp ? 'is-active' : ''}`}>
+      <div className={`modal ${popUpEvent ? 'is-active' : ''}`}>
         <div className=" modal-overlay">
           <div className="modal-content">
-            <button onClick={handleClosePopUp} className="modal-close">
+            <button onClick={handleClosePopUpEvent} className="modal-close">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 x="0px"
