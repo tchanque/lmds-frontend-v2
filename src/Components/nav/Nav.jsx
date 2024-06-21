@@ -20,7 +20,7 @@ const Nav = () => {
   return (
     <Navbar>
       <NavbarBrand></NavbarBrand>
-      <NavbarContent className="hidden sm:flex gap-4" justify="center">
+      <NavbarContent className="hidden gap-4 sm:flex" justify="center">
         <NavbarItem>
           <Link to="/">Home</Link>
         </NavbarItem>
@@ -32,7 +32,7 @@ const Nav = () => {
         {currentUser ? (
           <>
             <NavbarItem>
-              <Link to={`users/${currentUser.id}`}>Mon Profil</Link>
+              <Link to={`users/${currentUser.id}`}>{currentUser.first_name} {currentUser.last_name}</Link>
             </NavbarItem>
             <NavbarItem>
               <LogoutButton></LogoutButton>
