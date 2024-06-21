@@ -28,7 +28,7 @@ function App() {
             <Route path="/" element={< Home/>} />
             <Route path="/agenda/:id" element={<Agenda/>} />
             <Route path="/users/:id" element={<Profile />} />
-              <Route path='/profile' element={currentUser ? <Navigate to={`users/${currentUser.id}`} replace/> : <Navigate to="/login" replace/>}/>
+            <Route path='/profile' element={currentUser ? <Navigate to={`users/${currentUser.id}`} replace/> : <Navigate to="/login" replace/>}/>
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
             {isAdmin() ? (
