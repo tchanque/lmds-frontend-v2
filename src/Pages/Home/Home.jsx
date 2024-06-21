@@ -1,6 +1,6 @@
 import { useState } from "react";
 import EventForm from "../../Components/event_form/EventForm";
-import "./Home.css";
+import "./home.css";
 import { useAtom } from "jotai";
 import { popUpAtom } from "../../atom/atoms";
 

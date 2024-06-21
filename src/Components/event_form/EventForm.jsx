@@ -4,7 +4,7 @@ import { axiosPrivate } from "../../api/axios";
 import { useAtom } from "jotai";
 import { bearerTokenAtom, popUpAtom } from "../../atom/atoms";
 import EventInstrumentForm from "./event_instrument_form/EventInstrumentForm";
-import "./EventForm.css";
+import "./eventForm.css";
 
 const EventForm = () => {
   const [category, setCategory] = useState("");
