@@ -2,8 +2,41 @@
 @tailwind components;
 @tailwind utilities;
 
-main{
+main {
   height: 100%;
-  background: linear-gradient(0deg, hsl(var(--nextui-gradientColor1)) 0%, hsl(var(--nextui-gradientColor2)) 100%);
+  background: linear-gradient(
+    0deg,
+    hsl(var(--nextui-gradientColor1)) 0%,
+    hsl(var(--nextui-gradientColor2)) 100%
+  );
   flex: 1;
+}
+
+/* global.css */
+h1 {
+  @apply my-4 text-4xl text-primary-dark font-Ubuntu;
+}
+
+h2 {
+  @apply my-3 text-3xl text-primary-dark font-Ubuntu;
+}
+
+h3 {
+  @apply my-3 text-2xl text-primary-dark font-Ubuntu;
+}
+
+h4 {
+  @apply my-2 text-xl text-primary-dark font-Ubuntu;
+}
+
+h5 {
+  @apply my-2 text-lg text-primary-dark font-Ubuntu;
+}
+
+h6 {
+  @apply my-1 text-base text-primary-dark font-Ubuntu;
+}
+
+p {
+  @apply my-2 text-base text-grey-main font-Ubuntu;
 }
