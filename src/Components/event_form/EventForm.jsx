@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { axiosPrivate } from "../../api/axios";
 import { useAtom } from "jotai";
 import { bearerToken } from "../../atom/atoms";
+import EventInstrumentForm from "./event_instrument_form/EventInstrumentForm";
 
 const EventForm = () => {
   const [category, setCategory] = useState("");
@@ -18,42 +19,111 @@ const EventForm = () => {
   const [description, setDescription] = useState("");
   const [token, setToken] = useAtom(bearerToken);
 
+  const [eventInstruments, setEventInstruments] = useState([]);
+
+  const addEventInstrumentForm = (e) => {
+    e.preventDefault();
+    setEventInstruments([
+      ...eventInstruments,
+      { id: eventInstruments.length, instrument: "", level: [], totalSpots: 0 },
+    ]);
+  };
+
+  const handleInstrumentChange = (id, field, value) => {
+    setEventInstruments((prev) =>
+      prev.map((instrument) =>
+        instrument.id === id ? { ...instrument, [field]: value } : instrument
+      )
+    );
+  };
+
+  const handleInstrumentDestroy = (id) => {
+    setEventInstruments((prev) =>
+      prev.filter((instrument) => instrument.id !== id)
+    );
+  };
+
+  const printInstruments = (e) => {
+    e.preventDefault();
+    eventInstruments.map((instrument) => console.log(instrument));
+  };
+
+  useEffect(() => {
+    validateForm();
+  }, [category, eventInstruments]);
+  const validateForm = () => {
+    if (eventInstruments.some((instrument) => instrument.level.length === 0)) {
+      return true;
+    }
+    return false;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    axiosPrivate.post(
-      "/events",
-      {
-        event: {  // Nesting the event data under the 'event' key
-          category: category,
-          title: title,
-          start_date: startDate,
-          end_date: endDate,
-          price: price,
-          location: location,
-          description: description,
-        }
-      },
-      {
-        headers: {
-          Authorization: `${token}`,
-          "Content-Type": "application/json",
+    axiosPrivate
+      .post(
+        "/events",
+        {
+          event: {
+            // Nesting the event data under the 'event' key
+            category: category,
+            title: title,
+            start_date: startDate,
+            end_date: endDate,
+            price: price,
+            location: location,
+            description: description,
+          },
         },
-        withCredentials: true,
-      }
-    )
-    .then((response) => {
-      console.log("Event created successfully:", response.data);
-    })
-    .catch((error) => {
-      console.error("Error creating event:", error);
-    });
+        {
+          headers: {
+            Authorization: `${token}`,
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      )
+      .then((response) => {
+        console.log("Event created successfully:", response.data);
+        if (eventInstruments.length > 0) {
+          eventInstruments.map((eventInstrumentData) => {
+            axiosPrivate
+              .post(
+                "/event_instruments",
+                {
+                  event_instrument: {
+                    event_id: response.data.id,
+                    instrument_name: eventInstrumentData.instrument,
+                    level: Array.from(eventInstrumentData.level)
+                      .sort()
+                      .join(", "),
+                    total_spots: eventInstrumentData.totalSpots,
+                    available_spots: eventInstrumentData.totalSpots,
+                  },
+                },
+                {
+                  headers: {
+                    Authorization: `${token}`,
+                    "Content-Type": "application/json",
+                  },
+                  withCredentials: true,
+                }
+              )
+              .then((response) => {
+                console.log(response);
+              });
+          });
+        }
+      })
+      .catch((error) => {
+        console.error("Error creating event:", error);
+      });
   };
-  
 
   return (
     <section className="dark:bg-gray-900">
-      <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-        <div className="bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+      <div className="flex flex-col items-center justify-center my-32 px-6 py-8 mx-auto lg:py-0">
+        <div className="bg-white rounded-lg shadow w-200 dark:border md:mt-0 sm:max-w-2xl xl:p-0 dark:bg-gray-800 dark:border-gray-700">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
             <h1 className="text-xl font-bold leading-tight tracking-tight text-center font-Ubuntu text-primary-dark md:text-2xl dark:text-white">
               CRÉATION D'ÉVÈNEMENT
@@ -77,6 +147,9 @@ const EventForm = () => {
                     placeholder="Catégorie de votre évènement"
                     required
                   >
+                    <option hidden value="">
+                      Choisissez une catégorie
+                    </option>
                     <option value="Atelier">Atelier</option>
                     <option value="Concert">Concert</option>
                     <option value="Permanence">Permanence</option>
@@ -147,7 +220,7 @@ const EventForm = () => {
                     Prix
                   </label>
                   <input
-                    type="numeric"
+                    type="number"
                     name="price"
                     id="price"
                     value={price}
@@ -195,12 +268,50 @@ const EventForm = () => {
                   />
                 </div>
               </div>
+              <div
+                id="EventInstrumentForm"
+                className="flex flex-col items-center mt-5"
+              >
+                {eventInstruments.map((instrument, index) => (
+                  <EventInstrumentForm
+                    key={index}
+                    id={instrument.id}
+                    instrument={instrument}
+                    onInstrumentChange={handleInstrumentChange}
+                    onInstrumentDestroy={handleInstrumentDestroy}
+                  />
+                ))}
+                <h6>Ajouter un instrument</h6>
+                <button onClick={addEventInstrumentForm} className="">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="#17A964"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="#FFFF"
+                    className="size-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                    />
+                  </svg>
+                </button>
+              </div>
+              {/* <button onClick={printInstruments}>Print les instruments</button> */}
               <div className="flex justify-center flex-direction-column">
                 <button
                   type="submit"
-                  className="w-24 mt-10 text-white bg-success-main hover:bg-success-light font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                  disabled={validateForm()}
+                  className={`w-24 mt-10 text-white ${
+                    validateForm()
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-success-main hover:bg-success-light"
+                  } font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800`}
+                  // onClick={() => handleSubmit}
                 >
-                  Prochaine étape
+                  Créer
                 </button>
               </div>
             </form>
