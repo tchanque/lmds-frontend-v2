@@ -23,8 +23,8 @@ function App() {
             <Route path="/users/:id" element={<Profile />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/privacy" element={<Privacy/>} />
+            <Route path="/CGU" element={<Terms />} />
+            <Route path="/Mentions" element={<Privacy/>} />
         </Routes>
         <Footer />
       </BrowserRouter>
