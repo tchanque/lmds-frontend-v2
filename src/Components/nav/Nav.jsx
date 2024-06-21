@@ -16,6 +16,7 @@ const Nav = () => {
   const [token, setToken] = useAtom(bearerTokenAtom);
   const [currentUser, setCurrentUser] = useAtom(currentUserAtom);
 
+
   return (
     <Navbar>
       <NavbarBrand></NavbarBrand>

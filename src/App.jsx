@@ -31,15 +31,14 @@ function App() {
               <Route path='/profile' element={currentUser ? <Navigate to={`users/${currentUser.id}`} replace/> : <Navigate to="/login" replace/>}/>
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/privacy" element={<Privacy/>} />
             {isAdmin() ? (
               <Route path="/admin" element={<DashboardAdmin/>}/>
             ) : (
               <Route path="/admin" element={<Navigate to="/" replace />}
             />
             )}
-            
+            <Route path="/CGU" element={<Terms />} />
+            <Route path="/Mentions" element={<Privacy/>} />
         </Routes>
         <Footer />
       </BrowserRouter>
