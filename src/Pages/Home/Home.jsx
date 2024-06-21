@@ -1,17 +1,37 @@
 import "./home.css";
 import { useAtom } from "jotai";
-import { popUpAtom } from "../../atom/atoms";
+import { bearerTokenAtom, currentUserAtom, popUpAtom } from "../../atom/atoms";
 import EventForm from '../../Components/event_form/EventForm';
 import AllEvents from '../../Components/show_events/AllEvents';
+import { useEffect } from "react";
+import { useState } from "react";
 
 const Home = () => {
   const [popUp, setPopUp] = useAtom(popUpAtom);
+  const [currentUser, setCurrentUser] = useAtom(currentUserAtom);
+  const [token, setToken] = useAtom(bearerTokenAtom)
+  const [loading, setLoading] = useState(true)
   
 
   const handlePopUp = () => {
     setPopUp(true);
   };
 
+  useEffect(() => {
+    if (currentUser) {
+      setLoading(false);
+    }
+    if (!token) {
+      setLoading(false)
+    }
+  }, [currentUser])
+
+  if (loading)
+    return (
+      <p>Ca charge (du bourg palette)</p>
+    )
+
+ 
   return (
     <>
       <div className="content">
@@ -20,9 +40,8 @@ const Home = () => {
           <h2 className="text-xl font-bold leading-tight tracking-tight font-Ubuntu text-primary-dark md:text-2xl dark:text-white">
             Événements
           </h2>
-          {popUp == true ? (
-            <></>
-          ) : (
+          
+          {currentUser && ( !popUp && (currentUser.role === "Admin" || currentUser.role === "Professeur") && (
             <button onClick={handlePopUp} className="">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -39,6 +58,7 @@ const Home = () => {
                 />
               </svg>
             </button>
+            )
           )}
         </div>
         {popUp && <EventForm />}

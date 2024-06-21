@@ -58,8 +58,9 @@ const EventForm = () => {
   useEffect(() => {
     validateForm();
   }, [category, eventInstruments]);
+
   const validateForm = () => {
-    if (eventInstruments.some((instrument) => instrument.level.length === 0)) {
+    if (eventInstruments.some((instrument) => instrument.level.length === 0 || !instrument.instrument || instrument.totalSpots <1 || !instrument.totalSpots) || !category || !title || !startDate || !endDate || !price || !location || !description )  { 
       return true;
     }
     return false;
