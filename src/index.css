@@ -12,7 +12,6 @@ main {
   flex: 1;
 }
 
-/* global.css */
 h1 {
   @apply text-primary-dark font-Ubuntu text-4xl my-4;
 }
