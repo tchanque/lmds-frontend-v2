@@ -27,26 +27,6 @@ function Register() {
         console.error(error);
       }
     });
-
-    /*const userData = {
-      email,
-      role,
-      firstName,
-      lastName,
-      isSubscriber,
-      subscriptionEndDate,
-      password,
-    };
-
-    console.log("User data", userData);
-
-    setEmail("");
-    setRole("Etudiant");
-    setFirstName("");
-    setLastName("");
-    setIsSubscriber("False");
-    setSubscriptionEndDate("2999-12-31");
-    setPassword("");*/
   };
 
   return (
