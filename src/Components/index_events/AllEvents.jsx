@@ -4,11 +4,15 @@ import { bearerTokenAtom, currentUserAtom } from "../../atom/atoms";
 import { useAtom } from "jotai";
 import { Card, Skeleton } from "@nextui-org/react";
 import {Button} from "@nextui-org/react";
+import PopUpEvent from "../pop_up_event/PopUpEvent";
 
 const AllEvents = () => {
   const [token, setToken] = useAtom(bearerTokenAtom);
   const [currentUser, setCurrentUser] = useAtom(currentUserAtom);
   const [allEvents, setAllEvents] = useState([]);
+  
+  const [showPopup, setShowPopup] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
   const formatDate = (date) => {
     const options = {
@@ -42,14 +46,23 @@ const AllEvents = () => {
         })
         .then((response) => {
           setAllEvents([...response.data]);
-          console.log("this is ALL the events :", allEvents);
         })
         .catch((error) => {
           console.error(error);
         });
     }, [token]);
 
-  console.log("this is ALL the events :", allEvents);
+
+  const openPopUp = (event) => {
+    setShowPopup(true);
+    setSelectedEvent(event);
+  }
+
+  const closePopUp = () => {
+    setShowPopup(false);
+    setSelectedEvent(null);
+  }
+
   return (
     <>
       <h1>ALL EVENTS HERE</h1>
@@ -98,10 +111,10 @@ const AllEvents = () => {
                 <p>{event.description}</p>
                 <div className="flex gap-10">
                   <Button className="text-white bg-success-main">INSCRIPTION</Button>
-                  <Button className="text-white bg-danger-main">DÉSCRIPTION</Button>
+                  <Button className="text-white bg-info-main" onClick={() => openPopUp(event)}>Voir Plus</Button>
                 </div>
               </div>
-              {event.event_instruments.length > 0 && (
+              {/* {event.event_instruments.length > 0 && (
                 <div className="flex flex-col">
                   {event.event_instruments.map((event_instrument) => (
                     <p className="text-sm" key={event_instrument.id}>
@@ -109,9 +122,10 @@ const AllEvents = () => {
                     </p>
                   ))}
                 </div>
-              )}
+              )} */}
             </div>
           ))}
+          {showPopup && selectedEvent && <PopUpEvent selectedEvent={selectedEvent} isVisible={showPopup} closePoPup={closePopUp}/>}
         </div>
       </div>
     </>
