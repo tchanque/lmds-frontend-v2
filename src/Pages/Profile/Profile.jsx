@@ -17,6 +17,10 @@ function Profile() {
   const [loading, setLoading] = useState(true);
   const [modifyMenu, setModifyMenu] = useState(false);
 
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [description, setDescription] = useState("");
+
   useEffect(() => {
     if (token) {
       axiosPrivate
@@ -30,6 +34,9 @@ function Profile() {
         .then((response) => {
           console.log(response.data);
           setUser(response.data);
+          setFirstName(response.data.first_name);
+          setLastName(response.data.last_name);
+          setDescription(response.data.description);
           setLoading(false);
         })
         .catch((error) => {
@@ -49,7 +56,7 @@ function Profile() {
   if (!token) return <div>Vous n'êtes pas autorisé</div>;
   if (!user) return <div>Pas de profil correspondant</div>;
 
-  // display the component as show information (not modification mode)
+  // display the component as show information (not edit mode)
   if (!modifyMenu)
     return (
       <section className="h-full">
@@ -71,7 +78,7 @@ function Profile() {
             </div>
             <div className="flex flex-col items-center">
               <p>
-                {user.first_name} {user.last_name}
+                {firstName} {lastName}
               </p>
               <p>{user.email}</p>
             </div>
@@ -87,7 +94,7 @@ function Profile() {
             </div>
             <div className="description">
               <h4>Description</h4>
-              <p>{user.description}</p>
+              <p>{description}</p>
             </div>
             <div className="absolute bottom-0 right-10">
               <button
@@ -102,10 +109,9 @@ function Profile() {
       </section>
     );
 
-    // display the component as edit mode
+  // display the component as edit mode
   return (
     <section className="h-full">
-      <form action=""></form>
       <div className="title">
         {user.id === currentUser.id ? (
           <h1>MON COMPTE</h1>
@@ -123,43 +129,53 @@ function Profile() {
             />
           </div>
           <div className="flex flex-col items-center">
-            <p>
-              {user.first_name} {user.last_name}
-            </p>
-            <p>{user.email}</p>
+            <input
+              type="text"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              placeholder={firstName}
+            />
+            <input
+              type="text"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              placeholder={lastName}
+            />
           </div>
         </div>
         <div className="secondaryInformationSection ml-10 relative">
-            <div className="flex">
-              {user.skills.map((skill, index) => (
-                <div className="mr-13" key={`instruments${index}`}>
-                  <p>{skill.instrument.name}</p>
-                  <p>{`Niveau ${skill.level}`}</p>
-                </div>
-              ))}
-            </div>
-            <div className="description">
-              <h4>Description</h4>
-              <p>{user.description}</p>
-            </div>
-            <div className="absolute bottom-0 right-10">
-              <button
-                onClick={() => setModifyMenu(true)}
-                className="w-24 mt-10 text-white bg-info-main hover:bg-info-light font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-              >
-                Modifier
-              </button>
-            </div>
+          <div className="flex">
+            {user.skills.map((skill, index) => (
+              <div className="mr-13" key={`instruments${index}`}>
+                <p>{skill.instrument.name}</p>
+                <p>{`Niveau ${skill.level}`}</p>
+              </div>
+            ))}
           </div>
+          <div className="description">
+            <h4>Description</h4>
+            <p>{user.description}</p>
+          </div>
+          <div className="absolute bottom-0 right-10">
+            <button
+              onClick={() => setModifyMenu(true)}
+              className="w-24 mt-10 text-white bg-info-main hover:bg-info-light font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+            >
+              Modifier
+            </button>
+          </div>
+        </div>
       </div>
-      {/* <div className="flex flex-col">
-            <h4>Changer mon mot de passe</h4>
-            <input className="w-1/2 my-2 px-4 py-2 border rounded-md" type="text" placeholder="Ancien mot de passe" />
-            <input className="w-1/2 my-2 px-4 py-2 border rounded-md" placeholder="Nouveau mot de passe" />
-            <input className="w-1/2 my-2 px-4 py-2 border rounded-md" placeholder="Confirmer nouveau mot de passe" />
-          </div> */}
     </section>
   );
 }
 
+{
+  /* <div className="flex flex-col">
+      <h4>Changer mon mot de passe</h4>
+      <input className="w-1/2 my-2 px-4 py-2 border rounded-md" type="text" placeholder="Ancien mot de passe" />
+      <input className="w-1/2 my-2 px-4 py-2 border rounded-md" placeholder="Nouveau mot de passe" />
+      <input className="w-1/2 my-2 px-4 py-2 border rounded-md" placeholder="Confirmer nouveau mot de passe" />
+    </div> */
+}
 export default Profile;
