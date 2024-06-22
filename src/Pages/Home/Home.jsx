@@ -1,7 +1,7 @@
 import "./home.css";
 import { useAtom } from "jotai";
 import { bearerTokenAtom, currentUserAtom, popUpEventAtom, popUpPublicationAtom } from "../../atom/atoms";
-import EventForm from '../../Components/event_form/EventForm';
+import EventForm from "../../Components/event_form/EventForm";
 import AllEvents from '../../Components/show_events/AllEvents';
 import { useEffect } from "react";
 import { useState } from "react";

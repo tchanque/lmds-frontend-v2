@@ -28,8 +28,8 @@ function Profile() {
           withCredentials: true,
         })
         .then((response) => {
-          console.log(response.data)
-          setUser(response.data.user);
+          console.log(response.data);
+          setUser(response.data);
           setLoading(false);
         })
         .catch((error) => {
@@ -49,6 +49,7 @@ function Profile() {
   if (!token) return <div>Vous n'êtes pas autorisé</div>;
   if (!user) return <div>Pas de profil correspondant</div>;
 
+  // display the component as show information (not modification mode)
   if (!modifyMenu)
     return (
       <section className="h-full">
@@ -77,19 +78,12 @@ function Profile() {
           </div>
           <div className="secondaryInformationSection ml-10 relative">
             <div className="flex">
-              {
-                user.skills.map((skill) => (
-                  <h1>skill.instrument</h1>
-                ))
-              }
-              <div className="mr-13" id="instrument1">
-                <p>Piano</p>
-                <p>Niveau 3</p>
-              </div>
-              <div className="mr-13" id="instrument2">
-                <p>Guitare</p>
-                <p>Niveau 4</p>
-              </div>
+              {user.skills.map((skill, index) => (
+                <div className="mr-13" key={`instruments${index}`}>
+                  <p>{skill.instrument.name}</p>
+                  <p>{`Niveau ${skill.level}`}</p>
+                </div>
+              ))}
             </div>
             <div className="description">
               <h4>Description</h4>
@@ -108,6 +102,7 @@ function Profile() {
       </section>
     );
 
+    // display the component as edit mode
   return (
     <section className="h-full">
       <form action=""></form>
@@ -135,35 +130,27 @@ function Profile() {
           </div>
         </div>
         <div className="secondaryInformationSection ml-10 relative">
-          <div className="flex">
-            <div className="mr-13" id="instrument1">
-              <p>Piano</p>
-              <p>Niveau 3</p>
+            <div className="flex">
+              {user.skills.map((skill, index) => (
+                <div className="mr-13" key={`instruments${index}`}>
+                  <p>{skill.instrument.name}</p>
+                  <p>{`Niveau ${skill.level}`}</p>
+                </div>
+              ))}
             </div>
-            <div className="mr-13" id="instrument2">
-              <p>Guitare</p>
-              <p>Niveau 4</p>
+            <div className="description">
+              <h4>Description</h4>
+              <p>{user.description}</p>
+            </div>
+            <div className="absolute bottom-0 right-10">
+              <button
+                onClick={() => setModifyMenu(true)}
+                className="w-24 mt-10 text-white bg-info-main hover:bg-info-light font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+              >
+                Modifier
+              </button>
             </div>
           </div>
-          <div className="description">
-            <h4>Description</h4>
-            <input type="text" placeholder={user.description} />
-          </div>
-          <div className="absolute bottom-0 right-10 flex space-x-5">
-            <button
-              onClick={() => setModifyMenu(false)}
-              className="w-24 text-white bg-warning-main hover:bg-warning-light font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-            >
-              Retour
-            </button>
-            <button
-              onClick={() => setModifyMenu(false)}
-              className="w-24 text-white bg-success-main hover:bg-success-light font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-            >
-              Valider
-            </button>
-          </div>
-        </div>
       </div>
       {/* <div className="flex flex-col">
             <h4>Changer mon mot de passe</h4>
