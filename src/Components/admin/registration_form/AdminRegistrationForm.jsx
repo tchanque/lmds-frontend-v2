@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { axiosPrivate } from "../../../api/axios";
+import SkillsForm from "../../skills/SkillsForm";
+import { useAtom } from "jotai";
+import { bearerTokenAtom } from "../../../atom/atoms";
 
 const AdminRegistrationForm = () => {
   const [email, setEmail] = useState("");
@@ -9,6 +12,8 @@ const AdminRegistrationForm = () => {
   const [isSubscriber, setIsSubscriber] = useState("");
   const [subscriptionEndDate, setSubscriptionEndDate] = useState("");
   const [password, setPassword] = useState("");
+  const [skills, setSkills] = useState([]);
+  const [token, setToken] = useAtom(bearerTokenAtom)
 
   // Password Generation
   const generatePassword = () => {
@@ -46,6 +51,28 @@ const AdminRegistrationForm = () => {
   };
   // END Password Generation
 
+  const addSkillsForm = (e) => {
+    e.preventDefault();
+    setSkills([
+      ...skills,
+      { id: skills.length, instrument: "", level: [] },
+    ]);
+  };
+
+  const handleSkillsChange = (id, field, value) => {
+    setSkills((prev) =>
+      prev.map((instrument) =>
+        instrument.id === id ? { ...instrument, [field]: value } : instrument
+      )
+    );
+  };
+
+  const handleSkillsDestroy = (id) => {
+    setSkills((prev) =>
+      prev.filter((instrument) => instrument.id !== id)
+    );
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -62,7 +89,37 @@ const AdminRegistrationForm = () => {
         },
       })
       .then((response) => {
-        console.log(response);
+        console.log("User created successfully:", response.data);
+        if (skills.length > 0) {
+          skills.map((skillData) => {
+            axiosPrivate
+              .post(
+                "/skills",
+                {
+                  skill: {
+                    musician_id: response.data.user.id,
+                    instrument_name: skillData.instrument,
+                    level: Array.from(skillData.level)
+                      .sort()
+                      .join(", "),
+                  },
+                },
+                {
+                  headers: {
+                    Authorization: `${token}`,
+                    "Content-Type": "application/json",
+                  },
+                  withCredentials: true,
+                }
+              )
+              .then((response) => {
+                window.location.reload();
+                console.log(response);
+              });
+          });
+        } else {
+          window.location.reload();
+        }
       })
       .catch((error) => {
         if (error.response) {
@@ -225,6 +282,39 @@ const AdminRegistrationForm = () => {
                   Générer
                 </button>
               </div>
+
+              <div
+                id="SkillsForm"
+                className="flex flex-col items-center mt-5"
+              >
+                {skills.map((instrument, index) => (
+                  <SkillsForm
+                    key={index}
+                    id={instrument.id}
+                    instrument={instrument}
+                    onInstrumentChange={handleSkillsChange}
+                    onInstrumentDestroy={handleSkillsDestroy}
+                  />
+                ))}
+                <h6>Ajouter un skill</h6>
+                <button onClick={addSkillsForm} className="">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="#17A964"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="#FFFF"
+                    className="size-6"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                    />
+                  </svg>
+                </button>
+              </div>
+
               <div className="flex justify-center">
                 <button
                   type="submit"
