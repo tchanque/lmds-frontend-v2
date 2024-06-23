@@ -48,68 +48,42 @@ function Profile() {
     }
   }, [id, token]);
 
-  if (loading) return;
-  <div>
-    <h1>Chargement</h1>
-  </div>;
+  const handleSave = () => {
+    const updatedUser = {
+      first_name: firstName,
+      last_name: lastName,
+      description: description,
+    };
+
+    axiosPrivate
+      .patch(`/users/${id}`, {user: updatedUser}, {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      })
+      .then((response) => {
+        console.log(response.data)
+        setUser(response.data);
+        setModifyMenu(false);
+      })
+      .catch((error) => {
+        console.error("There was an error updating the user:", error);
+      });
+  };
+
+  if (loading) {
+    return (
+      <div>
+        <h1>Chargement</h1>
+      </div>
+    );
+  }
 
   if (!token) return <div>Vous n'êtes pas autorisé</div>;
   if (!user) return <div>Pas de profil correspondant</div>;
 
-  // display the component as show information (not edit mode)
-  if (!modifyMenu)
-    return (
-      <section className="h-full">
-        <div className="title">
-          {user.id === currentUser.id ? (
-            <h1>MON COMPTE</h1>
-          ) : (
-            <h1>PROFIL MUSICIEN</h1>
-          )}
-        </div>
-        <div className="userProfileDetails bg-white mx-13 mt-24 p-10 rounded-lg">
-          <div className="mainInformationSection flex flex-col justify-center items-center">
-            <div className="w-64 h-64 rounded-full overflow-hidden justify-center">
-              <img
-                className="w-full h-full object-cover"
-                src={avatar}
-                alt="Logo"
-              />
-            </div>
-            <div className="flex flex-col items-center">
-              <p>
-                {firstName} {lastName}
-              </p>
-              <p>{user.email}</p>
-            </div>
-          </div>
-          <div className="secondaryInformationSection ml-10 relative">
-            <div className="flex">
-              {user.skills.map((skill, index) => (
-                <div className="mr-13" key={`instruments${index}`}>
-                  <p>{skill.instrument.name}</p>
-                  <p>{`Niveau ${skill.level}`}</p>
-                </div>
-              ))}
-            </div>
-            <div className="description">
-              <h4>Description</h4>
-              <p>{description}</p>
-            </div>
-            <div className="absolute bottom-0 right-10">
-              <button
-                onClick={() => setModifyMenu(true)}
-                className="w-24 mt-10 text-white bg-info-main hover:bg-info-light font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-              >
-                Modifier
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-    );
-
-  // display the component as edit mode
   return (
     <section className="h-full">
       <div className="title">
@@ -129,18 +103,32 @@ function Profile() {
             />
           </div>
           <div className="flex flex-col items-center">
-            <input
-              type="text"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              placeholder={firstName}
-            />
-            <input
-              type="text"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              placeholder={lastName}
-            />
+            {modifyMenu ? (
+              <>
+                <input
+                  type="text"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  placeholder="First Name"
+                  className="w-1/2 my-2 px-4 py-2 border rounded-md"
+                />
+                <input
+                  type="text"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  placeholder="Last Name"
+                  className="w-1/2 my-2 px-4 py-2 border rounded-md"
+                />
+                <p>{user.email}</p>
+              </>
+            ) : (
+              <>
+                <p>
+                  {firstName} {lastName}
+                </p>
+                <p>{user.email}</p>
+              </>
+            )}
           </div>
         </div>
         <div className="secondaryInformationSection ml-10 relative">
@@ -154,20 +142,166 @@ function Profile() {
           </div>
           <div className="description">
             <h4>Description</h4>
-            <p>{user.description}</p>
+            {modifyMenu ? (
+              <input
+                type="text"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Description"
+                className="w-full my-2 px-4 py-2 border rounded-md"
+              />
+            ) : (
+              <p>{description}</p>
+            )}
           </div>
           <div className="absolute bottom-0 right-10">
-            <button
-              onClick={() => setModifyMenu(true)}
-              className="w-24 mt-10 text-white bg-info-main hover:bg-info-light font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-            >
-              Modifier
-            </button>
+            {modifyMenu ? (
+              <>
+                <button
+                  onClick={() => setModifyMenu(false)}
+                  className="w-24 mt-10 text-white bg-danger-main hover:bg-danger-light font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                >
+                  Annuler
+                </button>
+                <button
+                  onClick={handleSave}
+                  className="w-24 mt-10 text-white bg-success-main hover:bg-success-light font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 ml-5"
+                >
+                  Sauvegarder
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={() => setModifyMenu(true)}
+                className="w-24 mt-10 text-white bg-info-main hover:bg-info-light font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+              >
+                Modifier
+              </button>
+            )}
           </div>
         </div>
       </div>
     </section>
   );
+
+  // display the component as show information (not edit mode)
+  // if (!modifyMenu)
+  //   return (
+  //     <section className="h-full">
+  //       <div className="title">
+  //         {user.id === currentUser.id ? (
+  //           <h1>MON COMPTE</h1>
+  //         ) : (
+  //           <h1>PROFIL MUSICIEN</h1>
+  //         )}
+  //       </div>
+  //       <div className="userProfileDetails bg-white mx-13 mt-24 p-10 rounded-lg">
+  //         <div className="mainInformationSection flex flex-col justify-center items-center">
+  //           <div className="w-64 h-64 rounded-full overflow-hidden justify-center">
+  //             <img
+  //               className="w-full h-full object-cover"
+  //               src={avatar}
+  //               alt="Logo"
+  //             />
+  //           </div>
+  //           <div className="flex flex-col items-center">
+  //             <p>
+  //               {firstName} {lastName}
+  //             </p>
+  //             <p>{user.email}</p>
+  //           </div>
+  //         </div>
+  //         <div className="secondaryInformationSection ml-10 relative">
+  //           <div className="flex">
+  //             {user.skills.map((skill, index) => (
+  //               <div className="mr-13" key={`instruments${index}`}>
+  //                 <p>{skill.instrument.name}</p>
+  //                 <p>{`Niveau ${skill.level}`}</p>
+  //               </div>
+  //             ))}
+  //           </div>
+  //           <div className="description">
+  //             <h4>Description</h4>
+  //             <p>{description}</p>
+  //           </div>
+  //           <div className="absolute bottom-0 right-10">
+  //             <button
+  //               onClick={() => setModifyMenu(true)}
+  //               className="w-24 mt-10 text-white bg-info-main hover:bg-info-light font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+  //             >
+  //               Modifier
+  //             </button>
+  //           </div>
+  //         </div>
+  //       </div>
+  //     </section>
+  //   );
+
+  // // display the component as edit mode
+  // return (
+  //   <section className="h-full">
+  //     <div className="title">
+  //       {user.id === currentUser.id ? (
+  //         <h1>MON COMPTE</h1>
+  //       ) : (
+  //         <h1>PROFIL MUSICIEN</h1>
+  //       )}
+  //     </div>
+  //     <div className="userProfileDetails bg-white mx-13 mt-24 p-10 rounded-lg">
+  //       <div className="mainInformationSection flex flex-col justify-center items-center">
+  //         <div className="w-64 h-64 rounded-full overflow-hidden justify-center">
+  //           <img
+  //             className="w-full h-full object-cover"
+  //             src={avatar}
+  //             alt="Logo"
+  //           />
+  //         </div>
+  //         <div className="flex flex-col items-center">
+  //           <input
+  //             type="text"
+  //             value={firstName}
+  //             onChange={(e) => setFirstName(e.target.value)}
+  //             placeholder={firstName}
+  //           />
+  //           <input
+  //             type="text"
+  //             value={lastName}
+  //             onChange={(e) => setLastName(e.target.value)}
+  //             placeholder={lastName}
+  //           />
+  //           <p>{user.email}</p>
+  //         </div>
+  //       </div>
+  //       <div className="secondaryInformationSection ml-10 relative">
+  //         <div className="flex">
+  //           {user.skills.map((skill, index) => (
+  //             <div className="mr-13" key={`instruments${index}`}>
+  //               <p>{skill.instrument.name}</p>
+  //               <p>{`Niveau ${skill.level}`}</p>
+  //             </div>
+  //           ))}
+  //         </div>
+  //         <div className="description">
+  //           <h4>Description</h4>
+  //           <input
+  //             type="text"
+  //             value={description}
+  //             onChange={(e) => setDescription(e.target.value)}
+  //             placeholder={description}
+  //           />
+  //         </div>
+  //         <div className="absolute bottom-0 right-10">
+  //           <button
+  //             onClick={() => setModifyMenu(false)}
+  //             className="w-24 mt-10 text-white bg-danger-main hover:bg-danger-light font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+  //           >
+  //             Annuler
+  //           </button>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   </section>
+  // );
 }
 
 {
