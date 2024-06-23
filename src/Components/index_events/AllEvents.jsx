@@ -1,19 +1,24 @@
-import { axiosPrivate } from "../../api/axios";
 import { useState, useEffect } from "react";
-import { bearerTokenAtom, currentUserAtom } from "../../atom/atoms";
 import { useAtom } from "jotai";
 import { Card, Skeleton } from "@nextui-org/react";
-import {Button} from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import PopUpEvent from "../pop_up_event/PopUpEvent";
+import { axiosPrivate } from "../../api/axios";
+import { bearerTokenAtom, currentUserAtom } from "../../atom/atoms";
 
 const AllEvents = () => {
+  // Atom states for token and current user
   const [token, setToken] = useAtom(bearerTokenAtom);
   const [currentUser, setCurrentUser] = useAtom(currentUserAtom);
-  const [allEvents, setAllEvents] = useState([]);
   
+  // Component states
+  const [allEvents, setAllEvents] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [isAttendee, setIsAttendee] = useState(false);
+  const [attendance, setAttendance] = useState([]);
 
+  // Format date to French locale
   const formatDate = (date) => {
     const options = {
       year: "numeric",
@@ -25,18 +30,9 @@ const AllEvents = () => {
     return new Date(date).toLocaleDateString("fr-FR", options);
   };
 
+  // Fetch all events on token change
   useEffect(() => {
     if (token) {
-      console.log("This is your Token", token);
-    }
-    if (currentUser) {
-      console.log("This is your Current User", currentUser);
-    }
-  }, [token]);
-
-  //FETCH ALL THE EVENTS
-  useEffect(() => {
-  
       axiosPrivate
         .get("/events", {
           headers: {
@@ -50,19 +46,57 @@ const AllEvents = () => {
         .catch((error) => {
           console.error(error);
         });
-    }, [token]);
+    }
+  }, [token]);
 
+  // Set user attendance for a specific event
+  const setUserAttendance = async () => {
+    if (selectedEvent) {
+      try {
+        const response = await axiosPrivate.get(`/events/${selectedEvent.id}`, {
+          headers: {
+            Authorization: `${token}`,
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        });
+  
+        const updatedEvent = response.data;
+        const attendances = updatedEvent.event_instruments.reduce((acc, eventInstrument) => {
+          const userAttendances = eventInstrument.attendances.filter(att => currentUser.id === att.attendee.id);
+          return [...acc, ...userAttendances];
+        }, []);
+        if(attendances.length > 0) {
+          setIsAttendee(true);
+          setAttendance(attendances);
+        } else {
+          setIsAttendee(false);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
 
-  const openPopUp = (event) => {
-    setShowPopup(true);
+  // Open popup and set selected event
+  const openPopUp = async (event) => {
+    setUserAttendance(event);  // Pass the event directly
     setSelectedEvent(event);
-  }
-
-  const closePopUp = () => {
+    setShowPopup(true);
+  };
+  
+  // Close popup and reset selected event
+  const closePopUp = async () => {
     setShowPopup(false);
     setSelectedEvent(null);
-  }
+  };
 
+  // Use effect to set user attendance when popup is shown
+  useEffect(() => {
+    if (selectedEvent) {
+      setUserAttendance(selectedEvent);
+    }
+  }, [showPopup]); 
   return (
     <>
       <h1>ALL EVENTS HERE</h1>
@@ -114,18 +148,18 @@ const AllEvents = () => {
                   <Button className="text-white bg-info-main" onClick={() => openPopUp(event)}>Voir Plus</Button>
                 </div>
               </div>
-              {/* {event.event_instruments.length > 0 && (
-                <div className="flex flex-col">
-                  {event.event_instruments.map((event_instrument) => (
-                    <p className="text-sm" key={event_instrument.id}>
-                      {event_instrument.instrument.name}
-                    </p>
-                  ))}
-                </div>
-              )} */}
             </div>
           ))}
-          {showPopup && selectedEvent && <PopUpEvent selectedEvent={selectedEvent} isVisible={showPopup} closePoPup={closePopUp}/>}
+          {showPopup && selectedEvent && (
+            <PopUpEvent
+              selectedEvent={selectedEvent}
+              isVisible={showPopup}
+              closePoPup={closePopUp}
+              isAttendee={isAttendee}
+              setUserAttendance={setUserAttendance}
+              attendance={attendance}
+            />
+          )}
         </div>
       </div>
     </>
