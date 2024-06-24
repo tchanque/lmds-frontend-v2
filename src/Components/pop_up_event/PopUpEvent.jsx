@@ -9,6 +9,7 @@ const PopUpEvent = ({ selectedEvent, closePoPup, isAttendee, updateAttendanceSta
   const [choice, setChoice] = useState(null);
   const [token, setToken] = useAtom(bearerTokenAtom);
   const [currentUser, setCurrentUser] = useAtom(currentUserAtom);
+  const [loading, setLoading] = useState(null)
 
   // Ensuring token and current user are set
   useEffect(() => {
@@ -37,6 +38,7 @@ const PopUpEvent = ({ selectedEvent, closePoPup, isAttendee, updateAttendanceSta
   // Handle event registration
   const handleInscription = async (e) => {
     e.preventDefault();
+    setLoading(true)
     const eventInstrumentId = shouldDisplayInstruments() ? choice : selectedEvent.event_instruments[0].id;
 
     try {
@@ -62,6 +64,7 @@ const PopUpEvent = ({ selectedEvent, closePoPup, isAttendee, updateAttendanceSta
       console.log(response);
       await setUserAttendance(selectedEvent);
       await setChoice(null); // Update attendance status after registration
+      setLoading(false)
     } catch (error) {
       console.error(error);
     }
@@ -69,6 +72,7 @@ const PopUpEvent = ({ selectedEvent, closePoPup, isAttendee, updateAttendanceSta
 
   // Handle event unsubscription
   const handleUnsubscribe = async () => {
+    setLoading(true)
     try {
       await Promise.all(
         attendance.map((att) =>
@@ -82,11 +86,18 @@ const PopUpEvent = ({ selectedEvent, closePoPup, isAttendee, updateAttendanceSta
         )
       );
       await setUserAttendance(selectedEvent);
-      await setChoice(null); // Update attendance status after unsubscription
+       setChoice(null); 
+       setLoading(false)// Update attendance status after unsubscription
     } catch (error) {
       console.error(error);
     }
   };
+
+  if(loading) {
+    return (
+      <h1> IS LOADING</h1>
+    )
+  }
   
   return (
     <>
@@ -108,12 +119,28 @@ const PopUpEvent = ({ selectedEvent, closePoPup, isAttendee, updateAttendanceSta
             </div>
             <div className="text-center attendances">
               <h2>Liste des participants</h2>
+              <div className="flex justify-center gap-5">
+              {selectedEvent.event_instruments
+                      .filter(
+                        (instrument) =>
+                          instrument.instrument.name.toLowerCase() !== "aucun"
+                      )
+                      .map((instrument, index) => (
+                        <div key={index} className="flex flex-col">
+                          <p>{instrument.instrument.name}</p>
+                          {instrument.attendances.map((attendee, index) => {
+                            {return (<p key={index}>{attendee.attendee.first_name}</p>)}
+                          })}
+                        </div>
+                      ))}
+              </div>
               <p>Merci d'ajouter un dropdown menu avec les participants</p>
             </div>
             {!isAttendee ? (
               shouldDisplayInstruments() ? (
+                <div>
+                <h2>Choisissez un instrument</h2>
                 <form className="text-center" onSubmit={handleInscription}>
-                  <h2>Choisissez un instrument</h2>
                   <div className="flex items-center justify-center gap-5">
                     {selectedEvent.event_instruments
                       .filter(
@@ -134,18 +161,21 @@ const PopUpEvent = ({ selectedEvent, closePoPup, isAttendee, updateAttendanceSta
                           </label>
                         </div>
                       ))}
-                    <Button
-                      size="sm"
+                    <button
                       type="reset"
-                      className="text-white bg-danger-main"
+                      className="p-1 text-white rounded-full bg-danger-main"
                     >
-                      Annuler
-                    </Button>
+                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+</svg>
+
+                    </button>
                   </div>
-                  <Button className="text-white bg-success-main" type="submit">
+                  <Button className="mt-5 text-white bg-success-main" type="submit">
                     Je participe
                   </Button>
                 </form>
+                </div>
               ) : (
                 <Button
                   className="text-white bg-success-main"
