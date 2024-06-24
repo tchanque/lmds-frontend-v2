@@ -12,6 +12,7 @@ const PopUpPublication = ({ selectedPublication, closePoPup}) => {
   const [updatedPublication, setUpdatedPublication] = useState({
     title: selectedPublication.title,
     description: selectedPublication.description,
+    to_display: selectedPublication.to_display
   });
   const [isUpdating, setIsUpdating] = useState(false);
   
@@ -61,6 +62,7 @@ const handleUpdatePublication = async () => {
       {
         title: updatedPublication.title,
         description: updatedPublication.description,
+        to_display: updatedPublication.to_display
       },
       {
         headers: {
@@ -71,16 +73,24 @@ const handleUpdatePublication = async () => {
       }
     );
     console.log("Publication updated:", response.data);
+
+    if (response.data.to_display === true) {
     setIsUpdating(false)
+
     // Màj selectedPublication pour refléter les changements
-    selectedPublication.title = response.data.title;
-    selectedPublication.description = response.data.description;
-    setUpdatedPublication({
-      title: response.data.title,
-      description: response.data.description,
-    });
-    // closePoPup();
-    // window.location.reload();
+      selectedPublication.title = response.data.title;
+      selectedPublication.description = response.data.description;
+      selectedPublication.to_display = response.data.to_display;
+
+      setUpdatedPublication({
+        title: response.data.title,
+        description: response.data.description,
+        to_display: response.data.to_display
+      });
+     } else {
+    closePoPup();
+    window.location.reload();
+     }
   } catch (error) {
     console.error("Failed to update publication:", error);
     // Handle error scenarios
@@ -88,10 +98,10 @@ const handleUpdatePublication = async () => {
 };
 
 const handleChange = (event) => {
-  const { name, value } = event.target;
+  const { name, value, type, checked } = event.target;
   setUpdatedPublication({
     ...updatedPublication,
-    [name]: value,
+    [name]: type === "checkbox" ? checked : value,
   });
 };
 
@@ -136,6 +146,23 @@ const handleChange = (event) => {
                 <p>{selectedPublication.description}</p>
               )}
             </div>
+
+            <div className="text-center">
+              {isUpdating ? (
+                <label>
+                  <input
+                    type="checkbox"
+                    name="to_display"
+                    checked={updatedPublication.to_display}
+                    onChange={handleChange}
+                  />
+                  Afficher l'actualité
+                </label>
+              ) : (
+                <div></div>
+              )}
+            </div>
+
           </div>
           <button className="modal-close" onClick={closePoPup}>
             <svg
@@ -154,6 +181,7 @@ const handleChange = (event) => {
               ></path>
             </svg>
           </button>
+          { currentUser.role === "Admin" ? (
           <div className="flex justify-end gap-4 mt-4">
             {!isUpdating && (
               <Button
@@ -188,6 +216,7 @@ const handleChange = (event) => {
               </>
             )}
           </div>
+          ) : null} 
         </div>
       </div>
     </>

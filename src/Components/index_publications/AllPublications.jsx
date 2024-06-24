@@ -54,6 +54,7 @@ function AllPublications() {
 const closePopUp = async () => {
   setShowPopup(false);
   setSelectedPublication(null);
+  window.location.reload()
 };
 
 const littleDescription = (text, maxLength) => {
@@ -83,7 +84,9 @@ const formatDate = (date) => {
   return (
     <div className="max-w-screen-lg mx-auto">
       <Slider {...settings}>
-        {allPublications.map((publication) => (
+        {allPublications
+        .filter((publication) => publication.to_display)
+        .map((publication) => (
           <div key={publication.id} className="relative">
             <img
               className="w-full rounded-lg"
