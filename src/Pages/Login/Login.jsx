@@ -20,14 +20,14 @@ function Login() {
     }
   };
 
-  useEffect(() => {
-    if (token) {
-      console.log('This is your Token', token)
-    }
-    if(currentUser) {
-      console.log('This is your Current User', currentUser)
-    }
-  },[token])
+  // useEffect(() => {
+  //   if (token) {
+  //     console.log("you are logged")
+  //   }
+  //   if(currentUser) {
+  //     console.log('This is your Current User', currentUser)
+  //   }
+  // },[token])
 
   return (
     <section className="dark:bg-gray-900">

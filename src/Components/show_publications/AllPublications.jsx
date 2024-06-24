@@ -15,14 +15,14 @@ function AllPublications() {
   const [currentUser, setCurrentUser] = useAtom(currentUserAtom);
   const [allPublications, setAllPublications] = useState([]);
 
-  useEffect(() => {
-    if (token) {
-      console.log("This is your Token", token);
-    }
-    if (currentUser) {
-      console.log("This is your Current User", currentUser);
-    }
-  }, [token]);
+  // useEffect(() => {
+  //   if (token) {
+  //     console.log("This is your Token", token);
+  //   }
+  //   if (currentUser) {
+  //     console.log("This is your Current User", currentUser);
+  //   }
+  // }, [token]);
 
   useEffect(() => {
   
@@ -35,14 +35,14 @@ function AllPublications() {
       })
       .then((response) => {
         setAllPublications([...response.data]);
-        console.log("this is ALL the publications :", allPublications);
+        // console.log("this is ALL the publications :", allPublications);
       })
       .catch((error) => {
         console.error(error);
       });
   }, [token]);
 
-console.log("this is ALL the publications :", allPublications);
+// console.log("this is ALL the publications :", allPublications);
 
 const littleDescription = (text, maxLength) => {
   if (text.length <= maxLength) 
