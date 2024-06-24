@@ -48,7 +48,7 @@ function Footer() {
                   <span className="sr-only">Facebook page</span>
                 </a>
                 <a
-                  href="#"
+                  href="https://discord.gg/3jHNDRxC"
                   className="text-gray-500 hover:text-gray-900 dark:hover:text-white ms-5"
                 >
                   <svg
