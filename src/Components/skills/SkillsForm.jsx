@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const EventInstrumentForm = ({
+const SkillsForm = ({
   id,
   instrument,
   onInstrumentChange,
@@ -8,8 +8,6 @@ const EventInstrumentForm = ({
 }) => {
   const [localInstrument, setLocalInstrument] = useState(instrument.instrument);
   const [localLevel, setLocalLevel] = useState([]);
-  const [localTotalSpots, setLocalTotalSpots] = useState(instrument.totalSpots);
-  // const [isClicked, setIsClicked] = useState(false)
 
   useEffect(() => {
     onInstrumentChange(id, "instrument", localInstrument);
@@ -19,23 +17,12 @@ const EventInstrumentForm = ({
     onInstrumentChange(id, "level", localLevel);
   }, [localLevel]);
 
-  useEffect(() => {
-    onInstrumentChange(id, "totalSpots", localTotalSpots);
-  }, [localTotalSpots]);
-
-  const handleCheckboxChange = (event) => {
-    const { value, checked } = event.target;
-    if (checked) {
-      setLocalLevel(prevLevels => [...prevLevels, value]);
-    } else {
-      setLocalLevel(prevLevels => prevLevels.filter(level => level !== value));
-    }
-    
+  const handleRadioChange = (event) => {
+    setLocalLevel(event.target.value);
   };
 
   return (
     <div className="mt-5">
-      {/* <h1 className="mt-5 text-center">Nouvel Instrument</h1> */}
       <div className="flex items-center gap-5">
         <div>
           {" "}
@@ -72,41 +59,23 @@ const EventInstrumentForm = ({
         <label htmlFor="level" className="block mb-2 text-sm font-medium text-center font-hind-vadodara text-grey-main dark:text-white">Choisissez un niveau:</label>
           <div id="level" className="flex gap-1 bg-gray-50 border border-primary-main text-grey-main text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
             
-            <input type="checkbox" name="level1" value="1" checked={localLevel.includes("1")} onChange={handleCheckboxChange} />
+            <input type="radio" name="level1" value="1" checked={localLevel === "1"} onChange={handleRadioChange} />
             <label htmlFor="1">1</label><br />
 
-            <input type="checkbox" name="level2" value="2" checked={localLevel.includes("2")} onChange={handleCheckboxChange} />
+            <input type="radio" name="level2" value="2" checked={localLevel === "2"} onChange={handleRadioChange} />
             <label htmlFor="2">2</label><br />
 
-            <input type="checkbox" name="level3" value="3" checked={localLevel.includes("3")} onChange={handleCheckboxChange} />
+            <input type="radio" name="level3" value="3" checked={localLevel === "3"} onChange={handleRadioChange} />
             <label htmlFor="3">3</label><br />
 
-            <input type="checkbox" name="level4" value="4" checked={localLevel.includes("4")} onChange={handleCheckboxChange} />
+            <input type="radio" name="level4" value="4" checked={localLevel === "4"} onChange={handleRadioChange} />
             <label htmlFor="4">4</label><br />
 
-            <input type="checkbox" name="level5" value="5" checked={localLevel.includes("5")} onChange={handleCheckboxChange} />
+            <input type="radio" name="level5" value="5" checked={localLevel === "5"} onChange={handleRadioChange} />
             <label htmlFor="5">5</label><br />
           </div>
         </div>
 
-        <div>
-          <label
-            htmlFor="total_spots"
-            className="block mb-2 text-sm font-medium text-center font-hind-vadodara text-grey-main dark:text-white"
-          >
-            Places disponibles
-          </label>
-          <input
-            type="number"
-            name="total_spots"
-            id="total_spots"
-            value={localTotalSpots}
-            onChange={(e) => setLocalTotalSpots(e.target.value)}
-            className="bg-gray-50 border border-primary-main text-grey-main text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="Séletionne le nombre de places"
-            required
-          />
-        </div>
       </div>
       <div className="flex justify-end mt-2 mr-5">
         <button onClick={() => onInstrumentDestroy(id)} className="">
@@ -126,6 +95,7 @@ const EventInstrumentForm = ({
       </div>
     </div>
   );
-};
 
-export default EventInstrumentForm;
+}
+
+export default SkillsForm;

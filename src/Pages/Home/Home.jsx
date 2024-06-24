@@ -6,6 +6,7 @@ import AllEvents from '../../Components/index_events/AllEvents';
 import { useEffect } from "react";
 import { useState } from "react";
 import PublicationForm from "../../Components/publication/PublicationForm";
+import AllPublications from "../../Components/show_publications/AllPublications";
 
 const Home = () => {
   const [popUpEvent, setPopUpEvent] = useAtom(popUpEventAtom);
@@ -68,6 +69,9 @@ const Home = () => {
             )
           )}
         </div>
+        <div>
+        <AllPublications />
+      </div>
         </div>
         <div className="flex justify-center gap-4 my-20">
           <h2 className="text-xl font-bold leading-tight tracking-tight font-Ubuntu text-primary-dark md:text-2xl dark:text-white">

@@ -97,6 +97,8 @@ const AllEvents = () => {
       setUserAttendance(selectedEvent);
     }
   }, [showPopup]); 
+
+  
   return (
     <>
       <h1>ALL EVENTS HERE</h1>
