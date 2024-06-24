@@ -46,10 +46,6 @@ const EventForm = () => {
     );
   };
 
-  const printInstruments = (e) => {
-    e.preventDefault();
-    eventInstruments.map((instrument) => console.log(instrument));
-  };
 
   const handleClosePopUpEvent = () => {
     setPopUpEvent(false);
@@ -93,6 +89,7 @@ const EventForm = () => {
       )
       .then((response) => {
         console.log("Event created successfully:", response.data);
+        // creation of the event_instruments for each selected instrument
         if (eventInstruments.length > 0) {
           eventInstruments.map((eventInstrumentData) => {
             axiosPrivate
@@ -123,7 +120,24 @@ const EventForm = () => {
                 console.log(response);
               });
           });
+          // Creation of Aucun instrument if no instrument is selected
         } else {
+          axiosPrivate
+            .post('/event_instruments', {
+              event_instrument: {
+                event_id: response.data.id,
+                instrument_name: "Aucun",
+                level: "aucun niveau requis",
+                total_spots: 999,
+                available_spots: 999,
+              }
+          },{
+            headers: {
+              Authorization: `${token}`,
+              "Content-Type": "application/json",
+            },
+            withCredentials: true,
+          })
           handleClosePopUpEvent();
           window.location.reload();
         }
@@ -155,7 +169,7 @@ const EventForm = () => {
                 ></path>
               </svg>
             </button>
-            <h1 className="text-xl font-bold leading-tight tracking-tight text-center font-Ubuntu mb-8 text-primary-dark md:text-2xl dark:text-white">
+            <h1 className="mb-8 text-xl font-bold leading-tight tracking-tight text-center font-Ubuntu text-primary-dark md:text-2xl dark:text-white">
               CRÉATION D'ÉVÈNEMENT
             </h1>
 
