@@ -75,6 +75,7 @@ function Profile() {
       )
       .then((response) => {
         setUser(response.data);
+        setCurrentUser(response.data);
         setModifyMenu(false);
       })
       .catch((error) => {
