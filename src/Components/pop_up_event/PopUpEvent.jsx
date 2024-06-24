@@ -127,7 +127,7 @@ const PopUpEvent = ({ selectedEvent, closePoPup, isAttendee, updateAttendanceSta
                       )
                       .map((instrument, index) => (
                         <div key={index} className="flex flex-col">
-                          <p>{instrument.instrument.name}</p>
+                          <p>{instrument.instrument.name} {instrument.available_spots}/{instrument.total_spots}</p>
                           {instrument.attendances.map((attendee, index) => {
                             {return (<p key={index}>{attendee.attendee.first_name}</p>)}
                           })}
