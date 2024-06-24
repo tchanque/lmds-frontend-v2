@@ -9,6 +9,11 @@ import { axiosPrivate } from "../../api/axios";
 const PopUpPublication = ({ selectedPublication, closePoPup}) => {
   const [token, setToken] = useAtom(bearerTokenAtom);
   const [currentUser, setCurrentUser] = useAtom(currentUserAtom);
+  const [updatedPublication, setUpdatedPublication] = useState({
+    title: selectedPublication.title,
+    description: selectedPublication.description,
+  });
+  const [isUpdating, setIsUpdating] = useState(false);
   
   // Ensuring token and current user are set
   useEffect(() => {
@@ -24,8 +29,63 @@ const PopUpPublication = ({ selectedPublication, closePoPup}) => {
     return null;
   }
 
+  const startUpdating = () => {
+    setIsUpdating(true);
+  };
 
+// Function to handle delete publication
+const handleDeletePublication = async () => {
+  try {
+    const response = await axiosPrivate.delete(
+      `/publications/${selectedPublication.id}`,
+      {
+        headers: {
+          Authorization: `${token}`,
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
+    console.log("Publication deleted:", response.data);
+    closePoPup();
+    window.location.reload();
+  } catch (error) {
+    console.error("Failed to delete publication:", error);
+    // Handle error scenarios
+  }
+};
 
+const handleUpdatePublication = async () => {
+  try {
+    const response = await axiosPrivate.patch(
+      `/publications/${selectedPublication.id}`,
+      {
+        title: updatedPublication.title,
+        description: updatedPublication.description,
+      },
+      {
+        headers: {
+          Authorization: `${token}`,
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      }
+    );
+    console.log("Publication updated:", response.data);
+    // closePoPup();
+    // window.location.reload();
+  } catch (error) {
+    console.error("Failed to update publication:", error);
+    // Handle error scenarios
+  }
+};
+
+const handleChange = (event) => {
+  const { name, value } = event.target;
+  setUpdatedPublication({
+    ...updatedPublication,
+    [name]: value,
+  });
+};
 
 
 
@@ -34,19 +94,38 @@ const PopUpPublication = ({ selectedPublication, closePoPup}) => {
       <div className="modal is-active">
         <div className="flex flex-col modal-content">
           <div className="mt-6">
-          <img
+            <img
               className="w-full publication__img"
               src="https://cdn.pixabay.com/photo/2024/05/18/08/16/cat-8769861_1280.jpg"
               alt={selectedPublication.title}
-            /></div>
+            />
+          </div>
           <div className="flex flex-col items-center gap-8 p-2">
-            <div className="text-center">
-              <h2 className="">{selectedPublication.title}</h2>
-         
+            <div className="text-center ">
+              {isUpdating ? (
+                <input
+                  type="text"
+                  name="title"
+                  value={updatedPublication.title}
+                  onChange={handleChange}
+                  className="border-2 border-primary-main p-2 rounded-lg"
+                />
+              ) : (
+                <h2>{selectedPublication.title}</h2>
+              )}
             </div>
-         
+
             <div className="text-center">
-              <p>{selectedPublication.description}</p>
+              {isUpdating ? (
+                <textarea
+                  name="description"
+                  value={updatedPublication.description}
+                  onChange={handleChange}
+                  className="border-2 border-primary-main p-2 rounded-lg"
+                />
+              ) : (
+                <p>{selectedPublication.description}</p>
+              )}
             </div>
           </div>
           <button className="modal-close" onClick={closePoPup}>
@@ -66,6 +145,40 @@ const PopUpPublication = ({ selectedPublication, closePoPup}) => {
               ></path>
             </svg>
           </button>
+          <div className="flex justify-end gap-4 mt-4">
+            {!isUpdating && (
+              <Button
+                className="text-white bg-primary-main"
+                onClick={startUpdating}
+              >
+                Mettre à jour
+              </Button>
+            )}
+            {!isUpdating && (
+              <Button
+                className="text-white bg-danger-main"
+                onClick={handleDeletePublication}
+              >
+                Supprimer
+              </Button>
+            )}
+            {isUpdating && (
+              <>
+                <Button
+                  className="text-white bg-success-main"
+                  onClick={handleUpdatePublication}
+                >
+                  Valider
+                </Button>
+                <Button
+                  className="text-white bg-warning-main"
+                  onClick={() => setIsUpdating(false)}
+                >
+                  Annuler
+                </Button>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </>
