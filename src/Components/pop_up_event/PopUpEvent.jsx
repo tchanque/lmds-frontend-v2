@@ -60,7 +60,8 @@ const PopUpEvent = ({ selectedEvent, closePoPup, isAttendee, updateAttendanceSta
       );
 
       console.log(response);
-      await setUserAttendance(selectedEvent); // Update attendance status after registration
+      await setUserAttendance(selectedEvent);
+      await setChoice(null); // Update attendance status after registration
     } catch (error) {
       console.error(error);
     }
@@ -80,7 +81,8 @@ const PopUpEvent = ({ selectedEvent, closePoPup, isAttendee, updateAttendanceSta
           })
         )
       );
-      await setUserAttendance(selectedEvent); // Update attendance status after unsubscription
+      await setUserAttendance(selectedEvent);
+      await setChoice(null); // Update attendance status after unsubscription
     } catch (error) {
       console.error(error);
     }
