@@ -17,14 +17,12 @@ const PopUpEvent = ({
   const [token, setToken] = useAtom(bearerTokenAtom);
   const [currentUser, setCurrentUser] = useAtom(currentUserAtom);
   const [loading, setLoading] = useState(null);
+  const [hasAvailableSpots, setHasAvailableSpots] = useState(true);
 
-  // Ensuring token and current user are set
+  // Ensure token and current user are set
   useEffect(() => {
-    if (!token) {
-      setToken(bearerTokenAtom);
-    }
-    if (!currentUser) {
-      setCurrentUser(currentUserAtom);
+    if (!token || !currentUser) {
+      console.error("Token or current user is not set.");
     }
   }, [token, currentUser]);
 
@@ -49,7 +47,7 @@ const PopUpEvent = ({
     setLoading(true);
     const eventInstrumentId = shouldDisplayInstruments()
       ? choice
-      : selectedEvent.event_instruments[0].id;
+      : selectedEvent.event_instruments[0].id; //Select the only one event_instrument.  "Aucun"
 
     try {
       const response = await axiosPrivate.post(
@@ -58,7 +56,7 @@ const PopUpEvent = ({
           attendance: {
             attendee_id: currentUser.id,
             event_id: selectedEvent.id,
-            is_pending: false,
+            is_pending: !hasAvailableSpots,
             event_instrument_id: eventInstrumentId,
           },
         },
@@ -102,6 +100,21 @@ const PopUpEvent = ({
       console.error(error);
     }
   };
+
+  useEffect(() => {
+    if (choice) {
+      // vérifier si places disponibles
+      // update hasAvailableSpots => true or false
+      const chosenEventInstrument = selectedEvent.event_instruments.filter(
+        (eachEventInstrument) => eachEventInstrument.id === parseInt(choice)
+      )[0];
+      if (chosenEventInstrument.available_spots > 0) {
+        setHasAvailableSpots(true);
+      } else {
+        setHasAvailableSpots(false);
+      }
+    }
+  }, [choice]);
 
   if (loading) {
     return <h1> IS LOADING</h1>;
@@ -196,12 +209,22 @@ const PopUpEvent = ({
                         </svg>
                       </button>
                     </div>
-                    <Button
+                    {hasAvailableSpots ? (
+                       <Button
+                        className="mt-5 text-white bg-success-main"
+                        type="submit"
+                      >
+                        Je participe
+                      </Button>
+                    ) : (
+                      <Button
                       className="mt-5 text-white bg-success-main"
                       type="submit"
                     >
-                      Je participe
+                      Liste d'attente
                     </Button>
+                    )}
+                     
                   </form>
                 </div>
               ) : (
