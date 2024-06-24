@@ -71,6 +71,14 @@ const handleUpdatePublication = async () => {
       }
     );
     console.log("Publication updated:", response.data);
+    setIsUpdating(false)
+    // Màj selectedPublication pour refléter les changements
+    selectedPublication.title = response.data.title;
+    selectedPublication.description = response.data.description;
+    setUpdatedPublication({
+      title: response.data.title,
+      description: response.data.description,
+    });
     // closePoPup();
     // window.location.reload();
   } catch (error) {
@@ -97,7 +105,7 @@ const handleChange = (event) => {
             <img
               className="w-full publication__img"
               src="https://cdn.pixabay.com/photo/2024/05/18/08/16/cat-8769861_1280.jpg"
-              alt={selectedPublication.title}
+              alt="une image de chaton dodo"
             />
           </div>
           <div className="flex flex-col items-center gap-8 p-2">
@@ -112,6 +120,7 @@ const handleChange = (event) => {
                 />
               ) : (
                 <h2>{selectedPublication.title}</h2>
+               
               )}
             </div>
 
