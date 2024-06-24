@@ -42,14 +42,12 @@ const AllEvents = () => {
         })
         .then((response) => {
           setAllEvents([...response.data]);
-          console.log("this is ALL the events :", allEvents);
         })
         .catch((error) => {
           console.error(error);
         });
     }, [token]);
 
-  console.log("this is ALL the events :", allEvents);
   return (
     <>
       <h1>ALL EVENTS HERE</h1>
