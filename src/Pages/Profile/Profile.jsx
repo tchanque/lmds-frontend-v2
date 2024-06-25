@@ -4,14 +4,15 @@ import { useEffect, useState } from "react";
 import { useAtom } from "jotai";
 import { bearerTokenAtom, currentUserAtom } from "../../atom/atoms";
 import avatar from "../../public/images/profile_picture.jpeg";
+import { useNavigate } from "react-router-dom";
 
 import "./profile.css";
 
 function Profile() {
   const { id } = useParams();
 
-  const [currentUser] = useAtom(currentUserAtom);
-  const [token] = useAtom(bearerTokenAtom);
+  const [currentUser, setCurrentUser] = useAtom(currentUserAtom);
+  const [token, setToken] = useAtom(bearerTokenAtom);
 
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -25,6 +26,8 @@ function Profile() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (token) {
       axiosPrivate
@@ -36,7 +39,6 @@ function Profile() {
           withCredentials: true,
         })
         .then((response) => {
-          console.log(response.data);
           setUser(response.data);
           setFirstName(response.data.first_name);
           setLastName(response.data.last_name);
@@ -72,14 +74,35 @@ function Profile() {
         }
       )
       .then((response) => {
-        console.log(response.data);
         setUser(response.data);
+        setCurrentUser(response.data);
         setModifyMenu(false);
       })
       .catch((error) => {
         console.error("There was an error updating the user:", error);
       });
   };
+
+  const handleDelete = async () => {
+    try {
+      axiosPrivate.delete(
+        `/users/${id}`,
+        {headers: 
+          {
+            'Authorization': token,
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true
+        }
+      )
+      setToken("");
+      setCurrentUser("");
+      navigate("/");
+    }
+    catch (error) {
+      console.error("Error deleting the profile: ", error)
+    }
+  }
 
   const handleChangePassword = async () => {
     try {
@@ -100,7 +123,6 @@ function Profile() {
           withCredentials: true,
         }
       );
-      console.log(response.data);
     } catch (error) {
       console.error("Error changing password:", error);
     }
@@ -205,12 +227,20 @@ function Profile() {
               </>
             ) : (
               user.id === currentUser.id && (
-                <button
-                  onClick={() => setModifyMenu(true)}
-                  className="w-24 mt-10 text-white bg-info-main hover:bg-info-light font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-                >
-                  Modifier
-                </button>
+                <>
+                  <button
+                    onClick={() => setModifyMenu(true)}
+                    className="w-24 mt-10 text-white bg-info-main hover:bg-info-light font-medium rounded-lg text-sm py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                  >
+                    Modifier
+                  </button>
+                  <button
+                    onClick={handleDelete}
+                    className="w-24 mt-10 text-white bg-danger-main hover:bg-danger-light font-medium rounded-lg text-sm py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                  >
+                    Supprimer
+                  </button>
+                </>
               )
             )}
           </div>
@@ -252,12 +282,4 @@ function Profile() {
   );
 }
 
-{
-  /* <div className="flex flex-col">
-      <h4>Changer mon mot de passe</h4>
-      <input className="w-1/2 my-2 px-4 py-2 border rounded-md" type="text" placeholder="Ancien mot de passe" />
-      <input className="w-1/2 my-2 px-4 py-2 border rounded-md" placeholder="Nouveau mot de passe" />
-      <input className="w-1/2 my-2 px-4 py-2 border rounded-md" placeholder="Confirmer nouveau mot de passe" />
-    </div> */
-}
 export default Profile;

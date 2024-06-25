@@ -6,7 +6,7 @@ import AllEvents from '../../Components/index_events/AllEvents';
 import { useEffect } from "react";
 import { useState } from "react";
 import PublicationForm from "../../Components/publication/PublicationForm";
-import AllPublications from "../../Components/show_publications/AllPublications";
+import AllPublications from "../../Components/index_publications/AllPublications";
 
 const Home = () => {
   const [popUpEvent, setPopUpEvent] = useAtom(popUpEventAtom);

@@ -2,7 +2,8 @@ import { useState } from "react";
 import { axiosPrivate } from "../../../api/axios";
 import SkillsForm from "../../skills/SkillsForm";
 import { useAtom } from "jotai";
-import { bearerTokenAtom } from "../../../atom/atoms";
+import { bearerTokenAtom, popUpAdminFormAtom } from "../../../atom/atoms";
+import './adminRegistrationForm.css'
 
 const AdminRegistrationForm = () => {
   const [email, setEmail] = useState("");
@@ -13,7 +14,8 @@ const AdminRegistrationForm = () => {
   const [subscriptionEndDate, setSubscriptionEndDate] = useState("");
   const [password, setPassword] = useState("");
   const [skills, setSkills] = useState([]);
-  const [token, setToken] = useAtom(bearerTokenAtom)
+  const [token, setToken] = useAtom(bearerTokenAtom);
+  const [popUpAdminForm, setPopUpAdminForm] = useAtom(popUpAdminFormAtom);
 
   // Password Generation
   const generatePassword = () => {
@@ -73,6 +75,10 @@ const AdminRegistrationForm = () => {
     );
   };
 
+  const closePopUp = () => {
+    setPopUpAdminForm(false);
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -130,11 +136,30 @@ const AdminRegistrationForm = () => {
       });
   };
 
+  if (popUpAdminForm)
   return (
-    <section className="dark:bg-gray-900">
-      <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-        <div className="bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-          <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
+    <>
+    {popUpAdminForm && (
+    <section>
+      <div className={`modal ${popUpAdminForm ? 'is-active' : ''}`}>
+        <div className="modal-overlay">
+          <div className="modal-content-admin">
+          <button onClick={closePopUp} className="modal-close">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                x="0px"
+                y="0px"
+                width="25"
+                height="25"
+                viewBox="0 0 50 50"
+                fill="#F31248"
+              >
+                <path d="M 25 2 C 12.309534 2 2 12.309534 2 25 C 2 37.690466 12.309534 48 25 48 C 37.690466 48 48 37.690466 48 25 C 48 12.309534 37.690466 2 25 2 z M 25 4 C 36.609534 4 46 13.390466 46 25 C 46 36.609534 36.609534 46 25 46 C 13.390466 46 4 36.609534 4 25 C 4 13.390466 13.390466 4 25 4 z M 32.990234 15.986328 A 1.0001 1.0001 0 0 0 32.292969 16.292969 L 25 23.585938 L 17.707031 16.292969 A 1.0001 1.0001 0 0 0 16.990234 15.990234 A 1.0001 1.0001 0 0 0 16.292969 17.707031 L 23.585938 25 L 16.292969 32.292969 A 1.0001 1.0001 0 1 0 17.707031 33.707031 L 25 26.414062 L 32.292969 33.707031 A 1.0001 1.0001 0 1 0 33.707031 32.292969 L 26.414062 25 L 33.707031 17.707031 A 1.0001 1.0001 0 0 0 32.990234 15.986328 z"
+                stroke="#F31248"
+                strokeWidth={1.5}
+                ></path>
+              </svg>
+            </button>
             <h1 className="text-xl font-bold font-Ubuntu leading-tight text-center tracking-tight text-primary-dark md:text-2xl dark:text-white">
               CRÉATION DE COMPTE
             </h1>
@@ -328,6 +353,8 @@ const AdminRegistrationForm = () => {
         </div>
       </div>
     </section>
+    )}
+    </>
   );
 };
 
