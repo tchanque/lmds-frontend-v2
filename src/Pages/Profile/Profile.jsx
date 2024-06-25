@@ -5,7 +5,7 @@ import { useAtom } from "jotai";
 import { bearerTokenAtom, currentUserAtom } from "../../atom/atoms";
 import avatar from "../../public/images/profile_picture.jpeg";
 import { useNavigate } from "react-router-dom";
-
+import UserAgenda from "../../Components/user_agenda/UserAgenda";
 import "./profile.css";
 
 function Profile() {
@@ -140,6 +140,7 @@ function Profile() {
   if (!user) return <div>Pas de profil correspondant</div>;
 
   return (
+    <>
     <section className="h-full">
       <div className="title">
         {user.id === currentUser.id ? (
@@ -277,8 +278,12 @@ function Profile() {
             </button>
           </div>
         )}
-      </div>
+      </div>  
     </section>
+    <div id="agenda">
+    {user.id === currentUser.id && <UserAgenda userId={id} />}
+    </div>
+    </>
   );
 }
 

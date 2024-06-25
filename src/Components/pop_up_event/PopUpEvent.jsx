@@ -95,6 +95,7 @@ const PopUpEvent = ({
       await setUserAttendance(selectedEvent);
       setChoice(null);
       setLoading(false); // Update attendance status after unsubscription
+      
     } catch (error) {
       console.error(error);
     }
