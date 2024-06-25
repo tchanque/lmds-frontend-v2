@@ -24,13 +24,14 @@ const Nav = () => {
         <NavbarItem>
           <Link to="/">Home</Link>
         </NavbarItem>
-        <NavbarItem>
-          <Link to={{ pathname: `users/${currentUser.id}`, hash: "agenda "}}>Agenda</Link>
-        </NavbarItem>
+     
       </NavbarContent>
       <NavbarContent justify="end">
         {currentUser ? (
           <>
+             <NavbarItem>
+          <Link to={{ pathname: `users/${currentUser.id}`, hash: "agenda "}}>Agenda</Link>
+        </NavbarItem>
             <NavbarItem>
               <Link to={`users/${currentUser.id}`}>{currentUser.first_name} {currentUser.last_name}</Link>
             </NavbarItem>
