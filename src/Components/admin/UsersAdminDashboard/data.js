@@ -5,6 +5,7 @@ const columns = [
   {name: "LAST NAME", uid: "last_name", sortable: true},
   {name: "ROLE", uid: "role", sortable: true},
   {name: "EMAIL", uid: "email"},
+  {name: "SUB", uid: "is_subscriber"},
   {name: "ACTIONS", uid: "actions"},
 ];
 

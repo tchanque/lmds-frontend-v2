@@ -43,7 +43,7 @@ const PublicationForm = () => {
         },
         {
           headers: {
-            Authorization: `${token}`,
+            Authorization: token,
             "Content-Type": "application/json",
           },
           withCredentials: true,
