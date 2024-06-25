@@ -62,6 +62,7 @@ const AllEvents = () => {
         });
   
         const updatedEvent = response.data;
+        setSelectedEvent(updatedEvent);
         const attendances = updatedEvent.event_instruments.reduce((acc, eventInstrument) => {
           const userAttendances = eventInstrument.attendances.filter(att => currentUser.id === att.attendee.id);
           return [...acc, ...userAttendances];
@@ -83,6 +84,7 @@ const AllEvents = () => {
     setUserAttendance(event);  // Pass the event directly
     setSelectedEvent(event);
     setShowPopup(true);
+    console.log(event)
   };
   
   // Close popup and reset selected event
@@ -146,7 +148,6 @@ const AllEvents = () => {
                 <h3 className="underline">Description</h3>
                 <p>{event.description}</p>
                 <div className="flex gap-10">
-                  <Button className="text-white bg-success-main">INSCRIPTION</Button>
                   <Button className="text-white bg-info-main" onClick={() => openPopUp(event)}>Voir Plus</Button>
                 </div>
               </div>
