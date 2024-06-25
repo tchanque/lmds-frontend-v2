@@ -19,10 +19,9 @@ import { SearchIcon } from "../UsersAdminDashboard/SearchIcon";
 import { ChevronDownIcon } from "../UsersAdminDashboard/ChevronDownIcon";
 import { columns } from "./data";
 import { capitalize } from "./utils";
-import { useState } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import axios from "axios";
 import { axiosPrivate } from "../../../api/axios";
-import { useEffect } from "react";
 import { useAtom } from "jotai";
 import { bearerTokenAtom } from "../../../atom/atoms";
 import { useNavigate } from "react-router-dom";
@@ -39,18 +38,17 @@ const INITIAL_VISIBLE_COLUMNS = [
 ];
 
 const EventsAdminDashboard = () => {
-  const [filterValue, setFilterValue] = React.useState("");
-  const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
-  const [visibleColumns, setVisibleColumns] = React.useState(
+  const [filterValue, setFilterValue] = useState("");
+  const [selectedKeys, setSelectedKeys] = useState(new Set([]));
+  const [visibleColumns, setVisibleColumns] = useState(
     new Set(INITIAL_VISIBLE_COLUMNS)
   );
-  const [statusFilter, setStatusFilter] = React.useState("all");
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [sortDescriptor, setSortDescriptor] = React.useState({
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [sortDescriptor, setSortDescriptor] = useState({
     column: "age",
     direction: "ascending",
   });
-  const [page, setPage] = React.useState(1);
+  const [page, setPage] = useState(1);
   const [events, setEvents] = useState([]);
   const [token, setToken] = useAtom(bearerTokenAtom);
 
@@ -72,10 +70,9 @@ const EventsAdminDashboard = () => {
   };
 
   const deleteEventData = async (eventId) => {
-    console.log(eventId)
     const confirmDeletion = window.confirm("Êtes-vous sûr de vouloir supprimer cet évènement?");
     if (!confirmDeletion) return;
-  
+
     try {
       const response = await axiosPrivate.delete(`/events/${eventId}`, {
         headers: {
@@ -84,9 +81,7 @@ const EventsAdminDashboard = () => {
         },
         withCredentials: true,
       });
-  
-      console.log("Évènement supprimé avec succès", response);
-      // Mettre à jour l'état des utilisateurs après suppression
+
       setEvents((prevEvents) => prevEvents.filter((event) => event.id !== eventId));
     } catch (error) {
       console.error("Erreur lors de la suppression de l'évènement", error);
@@ -108,9 +103,9 @@ const EventsAdminDashboard = () => {
       .catch((error) => {
         console.error(error);
       });
-  }, []);
+  }, [token]);
 
-  const headerColumns = React.useMemo(() => {
+  const headerColumns = useMemo(() => {
     if (visibleColumns === "all") return columns;
 
     return columns.filter((column) =>
@@ -118,38 +113,30 @@ const EventsAdminDashboard = () => {
     );
   }, [visibleColumns]);
 
-  const filteredItems = React.useMemo(() => {
-    let filteredUsers = [...events];
+  const filteredItems = useMemo(() => {
+    let filteredEvents = [...events];
 
     if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter(
+      filteredEvents = filteredEvents.filter(
         (event) =>
           event.title.toLowerCase().includes(filterValue.toLowerCase()) ||
           event.category.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
-    if (
-      statusFilter !== "all" &&
-      Array.from(statusFilter).length !== statusOptions.length
-    ) {
-      filteredUsers = filteredUsers.filter((user) =>
-        Array.from(statusFilter).includes(user.status)
-      );
-    }
 
-    return filteredUsers;
-  }, [events, filterValue, statusFilter]);
+    return filteredEvents;
+  }, [events, filterValue, hasSearchFilter]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
-  const items = React.useMemo(() => {
+  const items = useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
 
     return filteredItems.slice(start, end);
   }, [page, filteredItems, rowsPerPage]);
 
-  const sortedItems = React.useMemo(() => {
+  const sortedItems = useMemo(() => {
     return [...items].sort((a, b) => {
       const first = a[sortDescriptor.column];
       const second = b[sortDescriptor.column];
@@ -159,22 +146,21 @@ const EventsAdminDashboard = () => {
     });
   }, [sortDescriptor, items]);
 
-  const renderCell = React.useCallback((event, columnKey) => {
-    console.log(event)
+  const renderCell = useCallback((event, columnKey) => {
     const cellValue = event[columnKey];
 
     switch (columnKey) {
-      case "title" :
+      case "title":
         return event.title;
-      case "category" :
+      case "category":
         return event.category;
-      case "price" :
-        return event.price;  
-      case "location" :
+      case "price":
+        return event.price;
+      case "location":
         return event.location;
-      case "start_date" :
+      case "start_date":
         return event.start_date;
-      case "end_date" :
+      case "end_date":
         return event.end_date;
       case "actions":
         return (
@@ -186,7 +172,6 @@ const EventsAdminDashboard = () => {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                {/* <DropdownItem onClick={() => handleDropdownItemClick("view", event.id)}>View</DropdownItem> */}
                 <DropdownItem onClick={() => handleDropdownItemClick("delete", event.id)}>Delete</DropdownItem>
               </DropdownMenu>
             </Dropdown>
@@ -195,26 +180,26 @@ const EventsAdminDashboard = () => {
       default:
         return cellValue;
     }
-  }, []);
+  }, [handleDropdownItemClick]);
 
-  const onNextPage = React.useCallback(() => {
+  const onNextPage = useCallback(() => {
     if (page < pages) {
       setPage(page + 1);
     }
   }, [page, pages]);
 
-  const onPreviousPage = React.useCallback(() => {
+  const onPreviousPage = useCallback(() => {
     if (page > 1) {
       setPage(page - 1);
     }
   }, [page]);
 
-  const onRowsPerPageChange = React.useCallback((e) => {
+  const onRowsPerPageChange = useCallback((e) => {
     setRowsPerPage(Number(e.target.value));
     setPage(1);
   }, []);
 
-  const onSearchChange = React.useCallback((value) => {
+  const onSearchChange = useCallback((value) => {
     if (value) {
       setFilterValue(value);
       setPage(1);
@@ -223,22 +208,22 @@ const EventsAdminDashboard = () => {
     }
   }, []);
 
-  const onClear = React.useCallback(() => {
+  const onClear = useCallback(() => {
     setFilterValue("");
     setPage(1);
   }, []);
 
-  const topContent = React.useMemo(() => {
+  const topContent = useMemo(() => {
     return (
       <div className="flex flex-col gap-4 mt-5">
         <div className="flex justify-between gap-3 items-end">
           <Input
             isClearable
             className="w-full sm:max-w-[44%]"
-            placeholder="Search by first_name, last_name, email..."
+            placeholder="Search by title, category..."
             startContent={<SearchIcon />}
             value={filterValue}
-            onClear={() => onClear()}
+            onClear={onClear}
             onValueChange={onSearchChange}
           />
           <div className="flex gap-3 mr-5">
@@ -286,17 +271,9 @@ const EventsAdminDashboard = () => {
         </div>
       </div>
     );
-  }, [
-    filterValue,
-    statusFilter,
-    visibleColumns,
-    onRowsPerPageChange,
-    events.length,
-    onSearchChange,
-    hasSearchFilter,
-  ]);
+  }, [filterValue, visibleColumns, onRowsPerPageChange, events.length, onSearchChange, onClear]);
 
-  const bottomContent = React.useMemo(() => {
+  const bottomContent = useMemo(() => {
     return (
       <div className="py-2 px-2 flex justify-between items-center mr-5">
         <span className="w-[30%] text-small text-default-400">
@@ -333,7 +310,7 @@ const EventsAdminDashboard = () => {
         </div>
       </div>
     );
-  }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
+  }, [selectedKeys, items.length, page, pages]);
 
   return (
     <Table
@@ -373,7 +350,6 @@ const EventsAdminDashboard = () => {
       </TableBody>
     </Table>
   );
-
 };
 
 export default EventsAdminDashboard;

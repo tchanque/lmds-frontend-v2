@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
   Table,
   TableHeader,
@@ -19,10 +19,8 @@ import { SearchIcon } from "../UsersAdminDashboard/SearchIcon";
 import { ChevronDownIcon } from "../UsersAdminDashboard/ChevronDownIcon";
 import { columns } from "./data";
 import { capitalize } from "./utils";
-import { useState } from "react";
 import axios from "axios";
 import { axiosPrivate } from "../../../api/axios";
-import { useEffect } from "react";
 import { useAtom } from "jotai";
 import { bearerTokenAtom } from "../../../atom/atoms";
 import { useNavigate } from "react-router-dom";
@@ -36,22 +34,19 @@ const INITIAL_VISIBLE_COLUMNS = [
 ];
 
 const PublicationsAdminDashboard = () => {
-  const [filterValue, setFilterValue] = React.useState("");
-  const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
-  const [visibleColumns, setVisibleColumns] = React.useState(
+  const [filterValue, setFilterValue] = useState("");
+  const [selectedKeys, setSelectedKeys] = useState(new Set([]));
+  const [visibleColumns, setVisibleColumns] = useState(
     new Set(INITIAL_VISIBLE_COLUMNS)
   );
-  const [statusFilter, setStatusFilter] = React.useState("all");
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [sortDescriptor, setSortDescriptor] = React.useState({
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [sortDescriptor, setSortDescriptor] = useState({
     column: "age",
     direction: "ascending",
   });
-  const [page, setPage] = React.useState(1);
+  const [page, setPage] = useState(1);
   const [publications, setPublications] = useState([]);
-  const [token, setToken] = useAtom(bearerTokenAtom);
-
-  const hasSearchFilter = Boolean(filterValue);
+  const [token] = useAtom(bearerTokenAtom);
 
   const navigate = useNavigate();
 
@@ -69,10 +64,9 @@ const PublicationsAdminDashboard = () => {
   };
 
   const deletePublicationData = async (publicationId) => {
-    console.log(publicationId)
     const confirmDeletion = window.confirm("Êtes-vous sûr de vouloir supprimer cette publication?");
     if (!confirmDeletion) return;
-  
+
     try {
       const response = await axiosPrivate.delete(`/publications/${publicationId}`, {
         headers: {
@@ -81,9 +75,8 @@ const PublicationsAdminDashboard = () => {
         },
         withCredentials: true,
       });
-  
+
       console.log("Publication supprimée avec succès", response);
-      // Mettre à jour l'état des utilisateurs après suppression
       setPublications((prevPublications) => prevPublications.filter((publication) => publication.id !== publicationId));
     } catch (error) {
       console.error("Erreur lors de la suppression de la publication", error);
@@ -107,74 +100,61 @@ const PublicationsAdminDashboard = () => {
       });
   }, []);
 
-  const headerColumns = React.useMemo(() => {
+  const headerColumns = useMemo(() => {
     if (visibleColumns === "all") return columns;
-
     return columns.filter((column) =>
       Array.from(visibleColumns).includes(column.uid)
     );
   }, [visibleColumns]);
 
-  const filteredItems = React.useMemo(() => {
-    let filteredUsers = [...publications];
+  const filteredItems = useMemo(() => {
+    let filteredPublications = [...publications];
 
-    if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter(
+    if (filterValue) {
+      filteredPublications = filteredPublications.filter(
         (publication) =>
           publication.title.toLowerCase().includes(filterValue.toLowerCase()) ||
           publication.creator.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
-    if (
-      statusFilter !== "all" &&
-      Array.from(statusFilter).length !== statusOptions.length
-    ) {
-      filteredUsers = filteredUsers.filter((user) =>
-        Array.from(statusFilter).includes(user.status)
-      );
-    }
 
-    return filteredUsers;
-  }, [publications, filterValue, statusFilter]);
+    return filteredPublications;
+  }, [publications, filterValue]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
-  const items = React.useMemo(() => {
+  const items = useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
-
     return filteredItems.slice(start, end);
   }, [page, filteredItems, rowsPerPage]);
 
-  const sortedItems = React.useMemo(() => {
+  const sortedItems = useMemo(() => {
     return [...items].sort((a, b) => {
       const first = a[sortDescriptor.column];
       const second = b[sortDescriptor.column];
       const cmp = first < second ? -1 : first > second ? 1 : 0;
-
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
   }, [sortDescriptor, items]);
 
-  const renderCell = React.useCallback((publication, columnKey) => {
-    console.log(publication)
+  const renderCell = useCallback((publication, columnKey) => {
     const cellValue = publication[columnKey];
 
     switch (columnKey) {
-      case "title" :
+      case "title":
         return publication.title;
-      case "creator.first_name" :
+      case "creator.first_name":
         return publication.creator_id.first_name;
-      case "creator_id" :
-        return publication.creator_id;  
+      case "creator_id":
+        return publication.creator_id;
       case "to_display":
-        // return cellValue ? "Yes" : "No";
         return (
           <Input
-          type="checkbox"
-          checked={cellValue}
-          onChange={() => handleToggleDisplay(publication.id, !cellValue)}
-        />
+            type="checkbox"
+            checked={cellValue}
+            onChange={() => handleToggleDisplay(publication.id, !cellValue)}
+          />
         );
       case "actions":
         return (
@@ -186,7 +166,6 @@ const PublicationsAdminDashboard = () => {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                {/* <DropdownItem onClick={() => handleDropdownItemClick("view", publication.id)}>View</DropdownItem> */}
                 <DropdownItem onClick={() => handleDropdownItemClick("delete", publication.id)}>Delete</DropdownItem>
               </DropdownMenu>
             </Dropdown>
@@ -208,10 +187,8 @@ const PublicationsAdminDashboard = () => {
         },
         withCredentials: true,
       });
-  
+
       console.log("Publication mise à jour avec succès", response.data);
-  
-      // Mettre à jour l'état des publications avec la nouvelle valeur de to_display
       setPublications((prevPublications) =>
         prevPublications.map((publication) =>
           publication.id === publicationId ? { ...publication, to_display: newValue } : publication
@@ -222,24 +199,24 @@ const PublicationsAdminDashboard = () => {
     }
   };
 
-  const onNextPage = React.useCallback(() => {
+  const onNextPage = useCallback(() => {
     if (page < pages) {
       setPage(page + 1);
     }
   }, [page, pages]);
 
-  const onPreviousPage = React.useCallback(() => {
+  const onPreviousPage = useCallback(() => {
     if (page > 1) {
       setPage(page - 1);
     }
   }, [page]);
 
-  const onRowsPerPageChange = React.useCallback((e) => {
+  const onRowsPerPageChange = useCallback((e) => {
     setRowsPerPage(Number(e.target.value));
     setPage(1);
   }, []);
 
-  const onSearchChange = React.useCallback((value) => {
+  const onSearchChange = useCallback((value) => {
     if (value) {
       setFilterValue(value);
       setPage(1);
@@ -248,19 +225,19 @@ const PublicationsAdminDashboard = () => {
     }
   }, []);
 
-  const onClear = React.useCallback(() => {
+  const onClear = useCallback(() => {
     setFilterValue("");
     setPage(1);
   }, []);
 
-  const topContent = React.useMemo(() => {
+  const topContent = useMemo(() => {
     return (
       <div className="flex flex-col gap-4 mt-5">
         <div className="flex justify-between gap-3 items-end">
           <Input
             isClearable
             className="w-full sm:max-w-[44%]"
-            placeholder="Search by first_name, last_name, email..."
+            placeholder="Search by title, creator..."
             startContent={<SearchIcon />}
             value={filterValue}
             onClear={() => onClear()}
@@ -313,15 +290,13 @@ const PublicationsAdminDashboard = () => {
     );
   }, [
     filterValue,
-    statusFilter,
     visibleColumns,
     onRowsPerPageChange,
     publications.length,
     onSearchChange,
-    hasSearchFilter,
   ]);
 
-  const bottomContent = React.useMemo(() => {
+  const bottomContent = useMemo(() => {
     return (
       <div className="py-2 px-2 flex justify-between items-center mr-5">
         <span className="w-[30%] text-small text-default-400">
@@ -358,7 +333,7 @@ const PublicationsAdminDashboard = () => {
         </div>
       </div>
     );
-  }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
+  }, [selectedKeys, items.length, page, pages]);
 
   return (
     <Table
@@ -398,7 +373,6 @@ const PublicationsAdminDashboard = () => {
       </TableBody>
     </Table>
   );
-
 };
 
 export default PublicationsAdminDashboard;
