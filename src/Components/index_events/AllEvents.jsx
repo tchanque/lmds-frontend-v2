@@ -6,19 +6,29 @@ import PopUpEvent from "../pop_up_event/PopUpEvent";
 import { axiosPrivate } from "../../api/axios";
 import { bearerTokenAtom, currentUserAtom } from "../../atom/atoms";
 
+/**
+ * AllEvents component displays all events and allows users to view more details about each event.
+ * It fetches all events from the API and displays them in a card format.
+ * It also allows users to view more details about each event in a popup.
+ * The component uses React hooks and state management with Jotai atoms.
+ */
 const AllEvents = () => {
   // Atom states for token and current user
-  const [token, setToken] = useAtom(bearerTokenAtom);
-  const [currentUser, setCurrentUser] = useAtom(currentUserAtom);
+  const [token, setToken] = useAtom(bearerTokenAtom);  // Token atom state
+  const [currentUser, setCurrentUser] = useAtom(currentUserAtom);  // Current user atom state
   
   // Component states
-  const [allEvents, setAllEvents] = useState([]);
-  const [showPopup, setShowPopup] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState(null);
-  const [isAttendee, setIsAttendee] = useState(false);
-  const [attendance, setAttendance] = useState([]);
+  const [allEvents, setAllEvents] = useState([]);  // All events state
+  const [showPopup, setShowPopup] = useState(false);  // Popup visibility state
+  const [selectedEvent, setSelectedEvent] = useState(null);  // Selected event state
+  const [isAttendee, setIsAttendee] = useState(false);  // Attendee state
+  const [attendance, setAttendance] = useState([]);  // Attendance state
 
-  // Format date to French locale
+  /**
+   * Format date to French locale
+   * @param {Date} date - The date to be formatted
+   * @returns {string} - The formatted date string
+   */
   const formatDate = (date) => {
     const options = {
       year: "numeric",
@@ -30,7 +40,9 @@ const AllEvents = () => {
     return new Date(date).toLocaleDateString("fr-FR", options);
   };
 
-  // Fetch all events on token change
+  /**
+   * Fetch all events on token change
+   */
   useEffect(() => {
     if (token) {
       axiosPrivate
@@ -49,11 +61,14 @@ const AllEvents = () => {
     }
   }, [token]);
 
-  // Set user attendance for a specific event
-  const setUserAttendance = async () => {
-    if (selectedEvent) {
+  /**
+   * Set user attendance for a specific event
+   * @param {Event} event - The event for which attendance is to be set
+   */
+  const setUserAttendance = async (event) => {
+    if (event) {
       try {
-        const response = await axiosPrivate.get(`/events/${selectedEvent.id}`, {
+        const response = await axiosPrivate.get(`/events/${event.id}`, {
           headers: {
             Authorization: `${token}`,
             "Content-Type": "application/json",
@@ -79,21 +94,27 @@ const AllEvents = () => {
     }
   };
 
-  // Open popup and set selected event
+  /**
+   * Open popup and set selected event
+   * @param {Event} event - The event to be displayed in the popup
+   */
   const openPopUp = async (event) => {
-    setUserAttendance(event);  // Pass the event directly
-    setSelectedEvent(event);
-    setShowPopup(true);
-    console.log(event)
+    setUserAttendance(event);  // Set user attendance for the event
+    setSelectedEvent(event);  // Set selected event
+    setShowPopup(true);  // Show popup
   };
   
-  // Close popup and reset selected event
+  /**
+   * Close popup and reset selected event
+   */
   const closePopUp = async () => {
-    setShowPopup(false);
-    setSelectedEvent(null);
+    setShowPopup(false);  // Hide popup
+    setSelectedEvent(null);  // Reset selected event
   };
 
-  // Use effect to set user attendance when popup is shown
+  /**
+   * Set user attendance when popup is shown
+   */
   useEffect(() => {
     if (selectedEvent) {
       setUserAttendance(selectedEvent);
