@@ -93,14 +93,14 @@ const formatDate = (date) => {
               src="https://cdn.pixabay.com/photo/2024/05/18/08/16/cat-8769861_1280.jpg"
               alt={publication.title}
             />
-            <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 bg-white text-black w-full sm:w-3/4 p-4 shadow-2xl mb-4 text-center">
-              <p className="text-gray-500 text-sm mb-2">
+            <div className="absolute bottom-0 w-full p-4 mb-4 text-center text-black transform -translate-x-1/2 bg-white shadow-2xl left-1/2 sm:w-3/4">
+              <p className="mb-2 text-sm text-gray-500">
                 {formatDate(publication.created_at)}
               </p>
-              <h2 className="text-primary-dark text-2xl font-bold mb-2">
+              <h2 className="mb-2 text-2xl font-bold text-primary-dark">
                 {publication.title}
               </h2>
-              <p className="text-primary-dark text-sm mb-4">
+              <p className="mb-4 text-sm text-primary-dark">
                 {littleDescription(publication.description, 300)}
               </p>
               <div className="flex justify-end">

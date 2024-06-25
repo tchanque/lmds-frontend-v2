@@ -5,18 +5,24 @@ import { useAtom } from "jotai";
 import { currentUserAtom, bearerTokenAtom } from "../../atom/atoms";
 import { axiosPrivate } from "../../api/axios";
 
-const PopUpEvent = ({ selectedEvent, closePoPup, isAttendee, updateAttendanceStatus, setUserAttendance, attendance }) => {
+const PopUpEvent = ({
+  selectedEvent,
+  closePoPup,
+  isAttendee,
+  updateAttendanceStatus,
+  setUserAttendance,
+  attendance,
+}) => {
   const [choice, setChoice] = useState(null);
   const [token, setToken] = useAtom(bearerTokenAtom);
   const [currentUser, setCurrentUser] = useAtom(currentUserAtom);
+  const [loading, setLoading] = useState(null);
+  const [hasAvailableSpots, setHasAvailableSpots] = useState(true);
 
-  // Ensuring token and current user are set
+  // Ensure token and current user are set
   useEffect(() => {
-    if (!token) {
-      setToken(bearerTokenAtom);
-    }
-    if (!currentUser) {
-      setCurrentUser(currentUserAtom);
+    if (!token || !currentUser) {
+      console.error("Token or current user is not set.");
     }
   }, [token, currentUser]);
 
@@ -27,7 +33,8 @@ const PopUpEvent = ({ selectedEvent, closePoPup, isAttendee, updateAttendanceSta
     }
     if (
       selectedEvent.event_instruments.length === 1 &&
-      selectedEvent.event_instruments[0].instrument.name.toLowerCase() === "aucun"
+      selectedEvent.event_instruments[0].instrument.name.toLowerCase() ===
+        "aucun"
     ) {
       return false;
     }
@@ -37,7 +44,10 @@ const PopUpEvent = ({ selectedEvent, closePoPup, isAttendee, updateAttendanceSta
   // Handle event registration
   const handleInscription = async (e) => {
     e.preventDefault();
-    const eventInstrumentId = shouldDisplayInstruments() ? choice : selectedEvent.event_instruments[0].id;
+    setLoading(true);
+    const eventInstrumentId = shouldDisplayInstruments()
+      ? choice
+      : selectedEvent.event_instruments[0].id; //Select the only one event_instrument.  "Aucun"
 
     try {
       const response = await axiosPrivate.post(
@@ -46,7 +56,7 @@ const PopUpEvent = ({ selectedEvent, closePoPup, isAttendee, updateAttendanceSta
           attendance: {
             attendee_id: currentUser.id,
             event_id: selectedEvent.id,
-            is_pending: false,
+            is_pending: !hasAvailableSpots,
             event_instrument_id: eventInstrumentId,
           },
         },
@@ -60,7 +70,9 @@ const PopUpEvent = ({ selectedEvent, closePoPup, isAttendee, updateAttendanceSta
       );
 
       console.log(response);
-      await setUserAttendance(selectedEvent); // Update attendance status after registration
+      await setUserAttendance(selectedEvent);
+      setChoice(null); // Update attendance status after registration
+      setLoading(false);
     } catch (error) {
       console.error(error);
     }
@@ -68,6 +80,7 @@ const PopUpEvent = ({ selectedEvent, closePoPup, isAttendee, updateAttendanceSta
 
   // Handle event unsubscription
   const handleUnsubscribe = async () => {
+    setLoading(true);
     try {
       await Promise.all(
         attendance.map((att) =>
@@ -80,12 +93,33 @@ const PopUpEvent = ({ selectedEvent, closePoPup, isAttendee, updateAttendanceSta
           })
         )
       );
-      await setUserAttendance(selectedEvent); // Update attendance status after unsubscription
+      await setUserAttendance(selectedEvent);
+      setChoice(null);
+      setLoading(false); // Update attendance status after unsubscription
     } catch (error) {
       console.error(error);
     }
   };
-  
+
+  useEffect(() => {
+    if (choice) {
+      // vérifier si places disponibles
+      // update hasAvailableSpots => true or false
+      const chosenEventInstrument = selectedEvent.event_instruments.filter(
+        (eachEventInstrument) => eachEventInstrument.id === parseInt(choice)
+      )[0];
+      if (chosenEventInstrument.available_spots > 0) {
+        setHasAvailableSpots(true);
+      } else {
+        setHasAvailableSpots(false);
+      }
+    }
+  }, [choice]);
+
+  if (loading) {
+    return <h1> IS LOADING</h1>;
+  }
+
   return (
     <>
       <div className="modal is-active">
@@ -106,44 +140,93 @@ const PopUpEvent = ({ selectedEvent, closePoPup, isAttendee, updateAttendanceSta
             </div>
             <div className="text-center attendances">
               <h2>Liste des participants</h2>
+              <div className="flex justify-center gap-5">
+                {selectedEvent.event_instruments
+                  .filter(
+                    (instrument) =>
+                      instrument.instrument.name.toLowerCase() !== "aucun"
+                  )
+                  .map((instrument, index) => (
+                    <div key={index} className="flex flex-col">
+                      <p>
+                        {instrument.instrument.name}{" "}
+                        {instrument.available_spots}/{instrument.total_spots}
+                      </p>
+                      {instrument.attendances.map((attendee, index) => {
+                        {
+                          return (
+                            <p key={index}>{attendee.attendee.first_name}</p>
+                          );
+                        }
+                      })}
+                    </div>
+                  ))}
+              </div>
               <p>Merci d'ajouter un dropdown menu avec les participants</p>
             </div>
             {!isAttendee ? (
               shouldDisplayInstruments() ? (
-                <form className="text-center" onSubmit={handleInscription}>
+                <div>
                   <h2>Choisissez un instrument</h2>
-                  <div className="flex items-center justify-center gap-5">
-                    {selectedEvent.event_instruments
-                      .filter(
-                        (instrument) =>
-                          instrument.instrument.name.toLowerCase() !== "aucun"
-                      )
-                      .map((instrument, index) => (
-                        <div key={index} className="instrument-radio">
-                          <input
-                            type="radio"
-                            id={`instrument-${index}`}
-                            name="instrument"
-                            value={instrument.id}
-                            onChange={(e) => setChoice(e.target.value)}
+                  <form className="text-center" onSubmit={handleInscription}>
+                    <div className="flex items-center justify-center gap-5">
+                      {selectedEvent.event_instruments
+                        .filter(
+                          (instrument) =>
+                            instrument.instrument.name.toLowerCase() !== "aucun"
+                        )
+                        .map((instrument, index) => (
+                          <div key={index} className="instrument-radio">
+                            <input
+                              type="radio"
+                              id={`instrument-${index}`}
+                              name="instrument"
+                              value={instrument.id}
+                              onChange={(e) => setChoice(e.target.value)}
+                            />
+                            <label htmlFor={`instrument-${index}`}>
+                              {instrument.instrument.name}
+                            </label>
+                          </div>
+                        ))}
+                      <button
+                        type="reset"
+                        className="p-1 text-white rounded-full bg-danger-main"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth="1.5"
+                          stroke="currentColor"
+                          className="size-4"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M6 18 18 6M6 6l12 12"
                           />
-                          <label htmlFor={`instrument-${index}`}>
-                            {instrument.instrument.name}
-                          </label>
-                        </div>
-                      ))}
-                    <Button
-                      size="sm"
-                      type="reset"
-                      className="text-white bg-danger-main"
+                        </svg>
+                      </button>
+                    </div>
+                    {hasAvailableSpots ? (
+                       <Button
+                        className="mt-5 text-white bg-success-main"
+                        type="submit"
+                      >
+                        Je participe
+                      </Button>
+                    ) : (
+                      <Button
+                      className="mt-5 text-white bg-success-main"
+                      type="submit"
                     >
-                      Annuler
+                      Liste d'attente
                     </Button>
-                  </div>
-                  <Button className="text-white bg-success-main" type="submit">
-                    Je participe
-                  </Button>
-                </form>
+                    )}
+                     
+                  </form>
+                </div>
               ) : (
                 <Button
                   className="text-white bg-success-main"
@@ -153,7 +236,10 @@ const PopUpEvent = ({ selectedEvent, closePoPup, isAttendee, updateAttendanceSta
                 </Button>
               )
             ) : (
-              <Button className="text-white bg-warning-main" onClick={handleUnsubscribe}>
+              <Button
+                className="text-white bg-warning-main"
+                onClick={handleUnsubscribe}
+              >
                 Je me désinscris
               </Button>
             )}
