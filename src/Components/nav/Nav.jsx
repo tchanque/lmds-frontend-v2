@@ -25,7 +25,7 @@ const Nav = () => {
           <Link to="/">Home</Link>
         </NavbarItem>
         <NavbarItem>
-          <Link to="/agenda">Agenda</Link>
+          <Link to={{ pathname: `users/${currentUser.id}`, hash: "agenda "}}>Agenda</Link>
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">

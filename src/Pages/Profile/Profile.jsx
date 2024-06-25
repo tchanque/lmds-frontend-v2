@@ -280,7 +280,9 @@ function Profile() {
         )}
       </div>  
     </section>
+    <div id="agenda">
     {user.id === currentUser.id && <UserAgenda userId={id} />}
+    </div>
     </>
   );
 }
