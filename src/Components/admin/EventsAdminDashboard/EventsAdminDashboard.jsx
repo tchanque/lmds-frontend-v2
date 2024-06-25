@@ -30,12 +30,15 @@ import { useNavigate } from "react-router-dom";
 const INITIAL_VISIBLE_COLUMNS = [
   "id",
   "title",
-  "creator_id",
-  "to_display",
+  "category",
+  "price",
+  "location",
+  "start_date",
+  "end_date",
   "actions",
 ];
 
-const PublicationsAdminDashboard = () => {
+const EventsAdminDashboard = () => {
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
   const [visibleColumns, setVisibleColumns] = React.useState(
@@ -48,33 +51,33 @@ const PublicationsAdminDashboard = () => {
     direction: "ascending",
   });
   const [page, setPage] = React.useState(1);
-  const [publications, setPublications] = useState([]);
+  const [events, setEvents] = useState([]);
   const [token, setToken] = useAtom(bearerTokenAtom);
 
   const hasSearchFilter = Boolean(filterValue);
 
   const navigate = useNavigate();
 
-  const handleDropdownItemClick = (action, publicationId) => {
+  const handleDropdownItemClick = (action, eventId) => {
     switch (action) {
       case "view":
-        navigate(`/publications/${publicationId}`);
+        navigate(`/events/${eventId}`);
         break;
       case "delete":
-        deletePublicationData(publicationId);
+        deleteEventData(eventId);
         break;
       default:
         break;
     }
   };
 
-  const deletePublicationData = async (publicationId) => {
-    console.log(publicationId)
-    const confirmDeletion = window.confirm("Êtes-vous sûr de vouloir supprimer cette publication?");
+  const deleteEventData = async (eventId) => {
+    console.log(eventId)
+    const confirmDeletion = window.confirm("Êtes-vous sûr de vouloir supprimer cet évènement?");
     if (!confirmDeletion) return;
   
     try {
-      const response = await axiosPrivate.delete(`/publications/${publicationId}`, {
+      const response = await axiosPrivate.delete(`/events/${eventId}`, {
         headers: {
           Authorization: token,
           "Content-Type": "application/json",
@@ -82,17 +85,17 @@ const PublicationsAdminDashboard = () => {
         withCredentials: true,
       });
   
-      console.log("Publication supprimée avec succès", response);
+      console.log("Évènement supprimé avec succès", response);
       // Mettre à jour l'état des utilisateurs après suppression
-      setPublications((prevPublications) => prevPublications.filter((publication) => publication.id !== publicationId));
+      setEvents((prevEvents) => prevEvents.filter((event) => event.id !== eventId));
     } catch (error) {
-      console.error("Erreur lors de la suppression de la publication", error);
+      console.error("Erreur lors de la suppression de l'évènement", error);
     }
   };
 
   useEffect(() => {
     axiosPrivate
-      .get("/publications", {
+      .get("/events", {
         headers: {
           Authorization: token,
           "Content-Type": "application/json",
@@ -100,7 +103,7 @@ const PublicationsAdminDashboard = () => {
         withCredentials: true,
       })
       .then((response) => {
-        setPublications(response.data);
+        setEvents(response.data);
       })
       .catch((error) => {
         console.error(error);
@@ -116,13 +119,13 @@ const PublicationsAdminDashboard = () => {
   }, [visibleColumns]);
 
   const filteredItems = React.useMemo(() => {
-    let filteredUsers = [...publications];
+    let filteredUsers = [...events];
 
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter(
-        (publication) =>
-          publication.title.toLowerCase().includes(filterValue.toLowerCase()) ||
-          publication.creator.toLowerCase().includes(filterValue.toLowerCase())
+        (event) =>
+          event.title.toLowerCase().includes(filterValue.toLowerCase()) ||
+          event.category.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
     if (
@@ -135,7 +138,7 @@ const PublicationsAdminDashboard = () => {
     }
 
     return filteredUsers;
-  }, [publications, filterValue, statusFilter]);
+  }, [events, filterValue, statusFilter]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -156,26 +159,23 @@ const PublicationsAdminDashboard = () => {
     });
   }, [sortDescriptor, items]);
 
-  const renderCell = React.useCallback((publication, columnKey) => {
-    console.log(publication)
-    const cellValue = publication[columnKey];
+  const renderCell = React.useCallback((event, columnKey) => {
+    console.log(event)
+    const cellValue = event[columnKey];
 
     switch (columnKey) {
       case "title" :
-        return publication.title;
-      case "creator.first_name" :
-        return publication.creator_id.first_name;
-      case "creator_id" :
-        return publication.creator_id;  
-      case "to_display":
-        // return cellValue ? "Yes" : "No";
-        return (
-          <Input
-          type="checkbox"
-          checked={cellValue}
-          onChange={() => handleToggleDisplay(publication.id, !cellValue)}
-        />
-        );
+        return event.title;
+      case "category" :
+        return event.category;
+      case "price" :
+        return event.price;  
+      case "location" :
+        return event.location;
+      case "start_date" :
+        return event.start_date;
+      case "end_date" :
+        return event.end_date;
       case "actions":
         return (
           <div className="relative flex justify-start items-center gap-2">
@@ -186,8 +186,8 @@ const PublicationsAdminDashboard = () => {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                {/* <DropdownItem onClick={() => handleDropdownItemClick("view", publication.id)}>View</DropdownItem> */}
-                <DropdownItem onClick={() => handleDropdownItemClick("delete", publication.id)}>Delete</DropdownItem>
+                {/* <DropdownItem onClick={() => handleDropdownItemClick("view", event.id)}>View</DropdownItem> */}
+                <DropdownItem onClick={() => handleDropdownItemClick("delete", event.id)}>Delete</DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </div>
@@ -196,31 +196,6 @@ const PublicationsAdminDashboard = () => {
         return cellValue;
     }
   }, []);
-
-  const handleToggleDisplay = async (publicationId, newValue) => {
-    try {
-      const response = await axiosPrivate.put(`/publications/${publicationId}`, {
-        to_display: newValue,
-      }, {
-        headers: {
-          Authorization: token,
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      });
-  
-      console.log("Publication mise à jour avec succès", response.data);
-  
-      // Mettre à jour l'état des publications avec la nouvelle valeur de to_display
-      setPublications((prevPublications) =>
-        prevPublications.map((publication) =>
-          publication.id === publicationId ? { ...publication, to_display: newValue } : publication
-        )
-      );
-    } catch (error) {
-      console.error("Erreur lors de la mise à jour de la publication", error);
-    }
-  };
 
   const onNextPage = React.useCallback(() => {
     if (page < pages) {
@@ -295,7 +270,7 @@ const PublicationsAdminDashboard = () => {
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total {publications.length} publications
+            Total {events.length} évènements
           </span>
           <label className="flex items-center text-default-400 text-small mr-5">
             Rows per page:
@@ -316,7 +291,7 @@ const PublicationsAdminDashboard = () => {
     statusFilter,
     visibleColumns,
     onRowsPerPageChange,
-    publications.length,
+    events.length,
     onSearchChange,
     hasSearchFilter,
   ]);
@@ -387,7 +362,7 @@ const PublicationsAdminDashboard = () => {
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody emptyContent={"No publications found"} items={sortedItems}>
+      <TableBody emptyContent={"No evenements found"} items={sortedItems}>
         {(item) => (
           <TableRow key={item.id}>
             {(columnKey) => (
@@ -401,4 +376,4 @@ const PublicationsAdminDashboard = () => {
 
 };
 
-export default PublicationsAdminDashboard;
+export default EventsAdminDashboard;
