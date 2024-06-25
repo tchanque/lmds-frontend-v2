@@ -9,7 +9,6 @@ const PopUpEvent = ({
   selectedEvent,
   closePoPup,
   isAttendee,
-  updateAttendanceStatus,
   setUserAttendance,
   attendance,
 }) => {
@@ -34,7 +33,7 @@ const PopUpEvent = ({
     if (
       selectedEvent.event_instruments.length === 1 &&
       selectedEvent.event_instruments[0].instrument.name.toLowerCase() ===
-        "aucun"
+      "aucun"
     ) {
       return false;
     }
@@ -146,19 +145,17 @@ const PopUpEvent = ({
                     (instrument) =>
                       instrument.instrument.name.toLowerCase() !== "aucun"
                   )
-                  .map((instrument, index) => (
-                    <div key={index} className="flex flex-col">
+                  .map((instrument, instrumentIndex) => (
+                    <div key={instrumentIndex} className="flex flex-col">
                       <p>
                         {instrument.instrument.name}{" "}
                         {instrument.available_spots}/{instrument.total_spots}
                       </p>
-                      {instrument.attendances.map((attendee, index) => {
-                        {
-                          return (
-                            <p key={index}>{attendee.attendee.first_name}</p>
-                          );
-                        }
-                      })}
+                      {instrument.attendances
+                        .filter((attendee) => !attendee.is_pending) // Filtrer les attendances
+                        .map((attendee, attendeeIndex) => (
+                          <p key={attendeeIndex}>{attendee.attendee.first_name}</p>
+                        ))}
                     </div>
                   ))}
               </div>
@@ -182,7 +179,7 @@ const PopUpEvent = ({
                               id={`instrument-${index}`}
                               name="instrument"
                               value={instrument.id}
-                              onChange={(e) => setChoice(e.target.value)}
+                              onClick={(e) => {setChoice(e.target.value); setHasAvailableSpots(true)}}
                             />
                             <label htmlFor={`instrument-${index}`}>
                               {instrument.instrument.name}
@@ -192,6 +189,7 @@ const PopUpEvent = ({
                       <button
                         type="reset"
                         className="p-1 text-white rounded-full bg-danger-main"
+                        onClick={() => { setChoice(null); setHasAvailableSpots(true) }}
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -210,21 +208,22 @@ const PopUpEvent = ({
                       </button>
                     </div>
                     {hasAvailableSpots ? (
-                       <Button
+                      <Button
                         className="mt-5 text-white bg-success-main"
                         type="submit"
+                        isDisabled={!choice}
                       >
                         Je participe
                       </Button>
                     ) : (
                       <Button
-                      className="mt-5 text-white bg-success-main"
-                      type="submit"
-                    >
-                      Liste d'attente
-                    </Button>
+                        className="mt-5 text-white bg-success-main"
+                        type="submit"
+                      >
+                        Liste d'attente
+                      </Button>
                     )}
-                     
+
                   </form>
                 </div>
               ) : (
