@@ -16,38 +16,28 @@ import {
   User,
   Pagination,
 } from "@nextui-org/react";
-import { PlusIcon } from "./PlusIcon";
-import { VerticalDotsIcon } from "./VerticalDotsIcon";
-import { SearchIcon } from "./SearchIcon";
-import { ChevronDownIcon } from "./ChevronDownIcon";
-import { columns, users, statusOptions } from "./data";
+import { VerticalDotsIcon } from "../UsersAdminDashboard/VerticalDotsIcon";
+import { SearchIcon } from "../UsersAdminDashboard/SearchIcon";
+import { ChevronDownIcon } from "../UsersAdminDashboard/ChevronDownIcon";
+import { columns } from "./data";
 import { capitalize } from "./utils";
 import { useState } from "react";
 import axios from "axios";
 import { axiosPrivate } from "../../../api/axios";
 import { useEffect } from "react";
 import { useAtom } from "jotai";
-import { bearerTokenAtom, popUpAdminFormAtom } from "../../../atom/atoms";
-import { Link } from "react-router-dom";
+import { bearerTokenAtom } from "../../../atom/atoms";
 import { useNavigate } from "react-router-dom";
-
-const statusColorMap = {
-  active: "success",
-  paused: "danger",
-  vacation: "warning",
-};
 
 const INITIAL_VISIBLE_COLUMNS = [
   "id",
-  "first_name",
-  "last_name",
-  "role",
-  "is_subscriber",
-  "email",
+  "title",
+  "creator_id",
+  "to_display",
   "actions",
 ];
 
-const UsersAdminDashboard = () => {
+const PublicationsAdminDashboard = () => {
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
   const [visibleColumns, setVisibleColumns] = React.useState(
@@ -60,53 +50,33 @@ const UsersAdminDashboard = () => {
     direction: "ascending",
   });
   const [page, setPage] = React.useState(1);
-  const [users, setUsers] = useState([]);
+  const [publications, setPublications] = useState([]);
   const [token, setToken] = useAtom(bearerTokenAtom);
-  const [popUpAdminForm, setPopUpAdminForm] = useAtom(popUpAdminFormAtom);
 
   const hasSearchFilter = Boolean(filterValue);
 
   const navigate = useNavigate();
 
-  const handleDropdownItemClick = (action, userId) => {
+  const handleDropdownItemClick = (action, publicationId) => {
     switch (action) {
       case "view":
-        navigate(`/users/${userId}`);
+        navigate(`/publications/${publicationId}`);
         break;
       case "delete":
-        deleteUserData(userId);
+        deletePublicationData(publicationId);
         break;
       default:
         break;
     }
   };
 
-  // const handleResendMail = (userId) => {
-  //   console.log(userId)
-  //   axiosPrivate
-  //   .delete(`/users/${userId}/resend_welcome_email`, null, {
-  //     headers: {
-  //       Authorization: token,
-  //       "Content-Type": "application/json",
-  //     },
-  //     withCredentials: true,
-  //   })
-  //   .then((response) => {
-  //     alert("Email de bienvenue renvoyé avec succès !");
-  //   })
-  //   .catch((error) => {
-  //     console.error("Erreur lors du renvoi de l'email de bienvenue :", error);
-  //     alert("Erreur lors du renvoi de l'email de bienvenue. Veuillez réessayer.");
-  //   });
-  // };
-
-  const deleteUserData = async (userId) => {
-    console.log(userId)
-    const confirmDeletion = window.confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur?");
+  const deletePublicationData = async (publicationId) => {
+    console.log(publicationId)
+    const confirmDeletion = window.confirm("Êtes-vous sûr de vouloir supprimer cette publication?");
     if (!confirmDeletion) return;
   
     try {
-      const response = await axiosPrivate.delete(`/users/${userId}`, {
+      const response = await axiosPrivate.delete(`/publications/${publicationId}`, {
         headers: {
           Authorization: token,
           "Content-Type": "application/json",
@@ -114,17 +84,17 @@ const UsersAdminDashboard = () => {
         withCredentials: true,
       });
   
-      console.log("Utilisateur supprimé avec succès", response);
+      console.log("Publication supprimée avec succès", response);
       // Mettre à jour l'état des utilisateurs après suppression
-      setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
+      setPublications((prevPublications) => prevPublications.filter((publication) => publication.id !== publicationId));
     } catch (error) {
-      console.error("Erreur lors de la suppression de l'utilisateur", error);
+      console.error("Erreur lors de la suppression de la publication", error);
     }
   };
 
   useEffect(() => {
     axiosPrivate
-      .get("/users", {
+      .get("/publications", {
         headers: {
           Authorization: token,
           "Content-Type": "application/json",
@@ -132,7 +102,7 @@ const UsersAdminDashboard = () => {
         withCredentials: true,
       })
       .then((response) => {
-        setUsers(response.data);
+        setPublications(response.data);
       })
       .catch((error) => {
         console.error(error);
@@ -148,14 +118,13 @@ const UsersAdminDashboard = () => {
   }, [visibleColumns]);
 
   const filteredItems = React.useMemo(() => {
-    let filteredUsers = [...users];
+    let filteredUsers = [...publications];
 
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter(
-        (user) =>
-          user.first_name.toLowerCase().includes(filterValue.toLowerCase()) ||
-          user.last_name.toLowerCase().includes(filterValue.toLowerCase()) ||
-          user.email.toLowerCase().includes(filterValue.toLowerCase())
+        (publication) =>
+          publication.title.toLowerCase().includes(filterValue.toLowerCase()) ||
+          publication.creator.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
     if (
@@ -168,7 +137,7 @@ const UsersAdminDashboard = () => {
     }
 
     return filteredUsers;
-  }, [users, filterValue, statusFilter]);
+  }, [publications, filterValue, statusFilter]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -189,46 +158,26 @@ const UsersAdminDashboard = () => {
     });
   }, [sortDescriptor, items]);
 
-  const openPopup = () => {
-    setPopUpAdminForm(true);
-  };
-
-  const renderCell = React.useCallback((user, columnKey) => {
-    const cellValue = user[columnKey];
+  const renderCell = React.useCallback((publication, columnKey) => {
+    console.log(publication)
+    const cellValue = publication[columnKey];
 
     switch (columnKey) {
-      case "name":
+      case "title" :
+        return publication.title;
+      case "creator.first_name" :
+        return publication.creator_id.first_name;
+      case "creator_id" :
+        return publication.creator_id;  
+      case "to_display":
+        // return cellValue ? "Yes" : "No";
         return (
-          <User
-            avatarProps={{ radius: "lg", src: user.avatar }}
-            description={user.email}
-            name={cellValue}
-          >
-            {user.email}
-          </User>
+          <Input
+          type="checkbox"
+          checked={cellValue}
+          onChange={() => handleToggleDisplay(publication.id, !cellValue)}
+        />
         );
-      case "role":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{cellValue}</p>
-            <p className="text-bold text-tiny capitalize text-default-400">
-              {user.team}
-            </p>
-          </div>
-        );
-      case "status":
-        return (
-          <Chip
-            className="capitalize"
-            color={statusColorMap[user.status]}
-            size="sm"
-            variant="flat"
-          >
-            {cellValue}
-          </Chip>
-        );
-        case "is_subscriber":
-          return cellValue ? "Yes" : "No";
       case "actions":
         return (
           <div className="relative flex justify-start items-center gap-2">
@@ -239,9 +188,8 @@ const UsersAdminDashboard = () => {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem onClick={() => handleDropdownItemClick("view", user.id)}>View</DropdownItem>
-                <DropdownItem onClick={() => handleDropdownItemClick("delete", user.id)}>Delete</DropdownItem>
-                <DropdownItem onClick={() => handleResendMail(user.id)}>Resend Mail</DropdownItem>
+                <DropdownItem onClick={() => handleDropdownItemClick("view", publication.id)}>View</DropdownItem>
+                <DropdownItem onClick={() => handleDropdownItemClick("delete", publication.id)}>Delete</DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </div>
@@ -250,6 +198,31 @@ const UsersAdminDashboard = () => {
         return cellValue;
     }
   }, []);
+
+  const handleToggleDisplay = async (publicationId, newValue) => {
+    try {
+      const response = await axiosPrivate.put(`/publications/${publicationId}`, {
+        to_display: newValue,
+      }, {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
+  
+      console.log("Publication mise à jour avec succès", response.data);
+  
+      // Mettre à jour l'état des publications avec la nouvelle valeur de to_display
+      setPublications((prevPublications) =>
+        prevPublications.map((publication) =>
+          publication.id === publicationId ? { ...publication, to_display: newValue } : publication
+        )
+      );
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour de la publication", error);
+    }
+  };
 
   const onNextPage = React.useCallback(() => {
     if (page < pages) {
@@ -296,30 +269,6 @@ const UsersAdminDashboard = () => {
             onValueChange={onSearchChange}
           />
           <div className="flex gap-3 mr-5">
-            {/* <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button
-                  endContent={<ChevronDownIcon className="text-small" />}
-                  variant="flat"
-                >
-                  Status
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={statusFilter}
-                selectionMode="multiple"
-                onSelectionChange={setStatusFilter}
-              >
-                {statusOptions.map((status) => (
-                  <DropdownItem key={status.uid} className="capitalize">
-                    {capitalize(status.name)}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown> */}
             <Dropdown>
               <DropdownTrigger className="hidden sm:flex">
                 <Button
@@ -344,18 +293,11 @@ const UsersAdminDashboard = () => {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <Button
-              color="primary"
-              onClick={openPopup}
-              endContent={<PlusIcon />}
-            >
-              Add New
-            </Button>
           </div>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total {users.length} users
+            Total {publications.length} publications
           </span>
           <label className="flex items-center text-default-400 text-small mr-5">
             Rows per page:
@@ -376,7 +318,7 @@ const UsersAdminDashboard = () => {
     statusFilter,
     visibleColumns,
     onRowsPerPageChange,
-    users.length,
+    publications.length,
     onSearchChange,
     hasSearchFilter,
   ]);
@@ -447,7 +389,7 @@ const UsersAdminDashboard = () => {
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody emptyContent={"No users found"} items={sortedItems}>
+      <TableBody emptyContent={"No publications found"} items={sortedItems}>
         {(item) => (
           <TableRow key={item.id}>
             {(columnKey) => (
@@ -458,6 +400,7 @@ const UsersAdminDashboard = () => {
       </TableBody>
     </Table>
   );
+
 };
 
-export default UsersAdminDashboard;
+export default PublicationsAdminDashboard;

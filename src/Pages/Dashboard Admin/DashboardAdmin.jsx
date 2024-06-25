@@ -3,6 +3,7 @@ import { useAtom } from "jotai";
 import { popUpAdminFormAtom } from "../../atom/atoms";
 import UsersAdminDashboard from "../../Components/admin/UsersAdminDashboard/UsersAdminDashboard";
 import AdminRegistrationForm from "../../Components/admin/registration_form/AdminRegistrationForm";
+import PublicationsAdminDashboard from "../../Components/admin/PublicationsAdminDashboard/PublicationsAdminDashboard";
 
 
 
@@ -54,6 +55,7 @@ const DashboardAdmin = () => {
         </div>
         <div className="w-full mr-5">
           {showUsersList && <UsersAdminDashboard />}
+          {showPublicationsList && <PublicationsAdminDashboard />}
         </div>
       </div>
       {popUpAdminForm && <AdminRegistrationForm />}
