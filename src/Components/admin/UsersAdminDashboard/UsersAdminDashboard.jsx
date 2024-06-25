@@ -42,6 +42,7 @@ const INITIAL_VISIBLE_COLUMNS = [
   "first_name",
   "last_name",
   "role",
+  "is_subscriber",
   "email",
   "actions",
 ];
@@ -72,9 +73,6 @@ const AdminDashboard = () => {
       case "view":
         navigate(`/users/${userId}`);
         break;
-      case "edit":
-        // Logique pour l'édition
-        break;
       case "delete":
         deleteUserData(userId);
         break;
@@ -83,22 +81,45 @@ const AdminDashboard = () => {
     }
   };
 
-  const deleteUserData = (userId) => {
-    // Exemple d'appel Axios pour supprimer l'utilisateur avec la méthode DELETE
-    axios.delete(`/users/${userId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      withCredentials: true,
-    })
-    .then((response) => {
+  // const handleResendMail = (userId) => {
+  //   console.log(userId)
+  //   axiosPrivate
+  //   .delete(`/users/${userId}/resend_welcome_email`, null, {
+  //     headers: {
+  //       Authorization: token,
+  //       "Content-Type": "application/json",
+  //     },
+  //     withCredentials: true,
+  //   })
+  //   .then((response) => {
+  //     alert("Email de bienvenue renvoyé avec succès !");
+  //   })
+  //   .catch((error) => {
+  //     console.error("Erreur lors du renvoi de l'email de bienvenue :", error);
+  //     alert("Erreur lors du renvoi de l'email de bienvenue. Veuillez réessayer.");
+  //   });
+  // };
+
+  const deleteUserData = async (userId) => {
+    console.log(userId)
+    const confirmDeletion = window.confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur?");
+    if (!confirmDeletion) return;
+  
+    try {
+      const response = await axiosPrivate.delete(`/users/${userId}`, {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
+  
       console.log("Utilisateur supprimé avec succès", response);
-      // Peut-être rediriger l'utilisateur vers une autre page après suppression
-    })
-    .catch((error) => {
+      // Mettre à jour l'état des utilisateurs après suppression
+      setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
+    } catch (error) {
       console.error("Erreur lors de la suppression de l'utilisateur", error);
-    });
+    }
   };
 
   useEffect(() => {
@@ -206,6 +227,8 @@ const AdminDashboard = () => {
             {cellValue}
           </Chip>
         );
+        case "is_subscriber":
+          return cellValue ? "Yes" : "No";
       case "actions":
         return (
           <div className="relative flex justify-start items-center gap-2">
@@ -216,13 +239,9 @@ const AdminDashboard = () => {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem onClick={() => handleDropdownItemClick("view", user.id)}>View
-                  {/* <Link to={`/users/${user.id}`}>View</Link> */}
-                  {/* <a href={`/users/${user.id}`}>View</a> */}
-                </DropdownItem>
-                <DropdownItem>Edit</DropdownItem>
+                <DropdownItem onClick={() => handleDropdownItemClick("view", user.id)}>View</DropdownItem>
                 <DropdownItem onClick={() => handleDropdownItemClick("delete", user.id)}>Delete</DropdownItem>
-                <DropdownItem>Resend Mail</DropdownItem>
+                <DropdownItem onClick={() => handleResendMail(user.id)}>Resend Mail</DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </div>
