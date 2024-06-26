@@ -101,7 +101,8 @@ const AllEvents = () => {
   const openPopUp = async (event) => {
     setUserAttendance(event);  // Set user attendance for the event
     setSelectedEvent(event);  // Set selected event
-    setShowPopup(true);  // Show popup
+    setShowPopup(true);
+    setMessage(null)  // Show popup
   };
   
   /**
