@@ -145,9 +145,9 @@ function Profile() {
             <h1>PROFIL MUSICIEN</h1>
           )}
         </div>
-        <div className="userProfileDetails bg-white mx-13 mt-24 p-10 rounded-lg flex flex-col md:flex-col">
-          <div className="mainInformationSection flex flex-col justify-center items-center">
-            <div className="w-64 h-64 rounded-full overflow-hidden justify-center my-2">
+        <div className="bg-white mx-13 my-15 p-10 rounded-lg grid grid-cols-1 gap-2 lg:grid-cols-3 lg:gap-2">
+          <div className="col-span-1 lg:col-span-1 flex flex-col justify-center items-center">
+            <div className="w-64 h-64 my-2 rounded-full overflow-hidden justify-center">
               <img
                 className="w-full h-full object-cover"
                 src={avatar}
@@ -155,7 +155,7 @@ function Profile() {
               />
             </div>
 
-            <div className="flex">
+            <div className="flex flex-col">
               {modifyMenu && user.id === currentUser.id ? (
                 <>
                   <input
@@ -163,50 +163,64 @@ function Profile() {
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     placeholder="First Name"
-                    className="w-1/2 py-2 border rounded-md text-grey-main font-Ubuntu text-center"
+                    className="py-2 border rounded-md text-grey-main font-Ubuntu text-center"
                   />
                   <input
                     type="text"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                     placeholder="Last Name"
-                    className="w-1/2 py-2 border rounded-md text-grey-main font-Ubuntu text-center"
+                    className="py-2 border rounded-md text-grey-main font-Ubuntu text-center"
                   />
                 </>
               ) : (
                 <>
-                  <p>
-                    {firstName} {lastName}
-                  </p>
+                  <div className="flex flex-col justify-center items-center">
+                    <p>{firstName}</p>
+                    <p>{lastName}</p>
+                  </div>
                 </>
               )}
             </div>
             <p>{user.email}</p>
           </div>
-          <div className="secondaryInformationSection ml-10 relative">
-            <div className="flex">
+          <div
+            className="col-span-1 lg:col-span-2 flex flex-col"
+            id="secondSection"
+          >
+            <div className="flex justify-evenly flex-wrap items-center">
               {user.skills.map((skill, index) => (
-                <div className="mr-13" key={`instruments${index}`}>
+                <div
+                  className="flex flex-col items-center"
+                  key={`instruments${index}`}
+                >
                   <p>{skill.instrument.name}</p>
                   <p>{`Niveau ${skill.level}`}</p>
                 </div>
               ))}
             </div>
-            <div className="description">
+            <div
+              className="flex flex-col justify-center items-center flex-grow"
+              id="descriptionSection"
+            >
               <h4>Description</h4>
-              {modifyMenu ? (
-                <textarea
-                  type="text"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Description"
-                  className="w-full my-4 px-2 py-2 border rounded-md break-text text-grey-main font-Ubuntu"
-                />
-              ) : (
-                <p className="w-full my-4 px-2 py-2">{description}</p>
-              )}
+              <div className="w-2/3 sm:w-full flex flex-grow items-center transition-all duration-300 ease-in-out">
+                {modifyMenu ? (
+                  <textarea
+                    type="text"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Description"
+                    className="w-full h-full px-2 py-2 border rounded-md break-words text-grey-main text-center font-Ubuntu resize-none"
+                  />
+                ) : (
+                  <p className="w-full h-full px-2 py-2 text-center overflow-auto">
+                    {description}
+                  </p>
+                )}
+              </div>
             </div>
-            <div className="absolute bottom-0 right-10">
+            <div className="flex justify-center" id="editButton">
               {modifyMenu ? (
                 <>
                   <button
@@ -246,28 +260,25 @@ function Profile() {
         </div>
 
         {user.id === currentUser.id && ( // only the user can change its password
-          <div
-            id="passwordSection"
-            className="bg-white mx-13 mt-24 p-10 rounded-lg"
-          >
-            <div className="flex flex-col">
+          <div id="passwordSection" className="bg-white mx-13 my-15 p-10 rounded-lg">
+            <div className="flex flex-col items-center">
               <h4>Changer mon mot de passe</h4>
               <input
-                className="w-1/2 my-2 px-4 py-2 border rounded-md"
+                className="w-full sm:w-1/2 my-2 px-4 py-2 border rounded-md transition-all duration-300 ease-in-out"
                 type="password"
                 value={oldPassword}
                 onChange={(e) => setOldPassword(e.target.value)}
                 placeholder="Ancien mot de passe"
               />
               <input
-                className="w-1/2 my-2 px-4 py-2 border rounded-md"
+                className="w-full sm:w-1/2 my-2 px-4 py-2 border rounded-md transition-all duration-300 ease-in-out"
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 placeholder="Nouveau mot de passe"
               />
               <input
-                className="w-1/2 my-2 px-4 py-2 border rounded-md"
+                className="w-full sm:w-1/2 my-2 px-4 py-2 border rounded-md transition-all duration-300 ease-in-out"
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
