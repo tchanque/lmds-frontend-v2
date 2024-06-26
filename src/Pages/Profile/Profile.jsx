@@ -3,7 +3,7 @@ import { axiosPrivate } from "../../api/axios";
 import { useEffect, useState } from "react";
 import { useAtom } from "jotai";
 import { bearerTokenAtom, currentUserAtom } from "../../atom/atoms";
-import avatar from "../../public/images/profile_picture.jpeg";
+import default_avatar from "../../public/images/photo-avatar-profil.png";
 import { useNavigate } from "react-router-dom";
 import UserAgenda from "../../Components/user_agenda/UserAgenda";
 import "./profile.css";
@@ -17,6 +17,9 @@ function Profile() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [modifyMenu, setModifyMenu] = useState(false);
+  const [modifyPicture, setModifyPicture] = useState(false);
+  const [newPicture, setNewPicture] = useState(null);
+  const [avatarUrl, setAvatarUrl] = useState("http://127.0.0.1:3000")
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -43,6 +46,7 @@ function Profile() {
           setFirstName(response.data.first_name);
           setLastName(response.data.last_name);
           setDescription(response.data.description);
+          setAvatarUrl(`http://127.0.0.1:3000${response.data.profile_picture_url}`)
           setLoading(false);
         })
         .catch((error) => {
@@ -53,7 +57,8 @@ function Profile() {
       setLoading(false);
     }
   }, [id, token]);
-
+  
+  
   const handleSave = () => {
     const updatedUser = {
       first_name: firstName,
@@ -128,6 +133,47 @@ function Profile() {
     }
   };
 
+  const updateProfilePicture = async (e) => {
+    e.preventDefault(); 
+   
+    const formData = new FormData();
+    formData.append("user[profile_picture]", newPicture);
+
+    try {
+      const response = await axiosPrivate.patch(`users/${id}`, formData, {
+        headers: {
+          Authorization: token,
+          "Accept": "application/json",
+          "Content-Type": "multipart/form-data",
+        },
+        withCredentials: true,
+      });
+      setUser(response.data);
+      setCurrentUser(response.data);
+      setModifyPicture(false);
+      setAvatarUrl(`http://127.0.0.1:3000${response.data.profile_picture_url}`)
+      console.log("current token", token);
+    } catch (error) {
+      if (error.response) {
+        throw new Error(error.response.data.errors.join(', '));
+      } else if (error.request) {
+        throw new Error('No response received from server.');
+      } else {
+        throw new Error('Error in setting up the request: ' + error.message);
+      }
+    }
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setNewPicture(file);
+  };
+
+  const handleModifyPicture = () => {
+    setModifyPicture(true);
+  }
+  
+
   if (loading) {
     return (
       <div>
@@ -145,19 +191,47 @@ function Profile() {
       <div className="title">
         {user.id === currentUser.id ? (
           <h1>MON COMPTE</h1>
+          
         ) : (
           <h1>PROFIL MUSICIEN</h1>
         )}
       </div>
+     
       <div className="userProfileDetails bg-white mx-13 mt-24 p-10 rounded-lg">
         <div className="mainInformationSection flex flex-col justify-center items-center">
           <div className="w-64 h-64 rounded-full overflow-hidden justify-center">
-            <img
+            {user.profile_picture_url ? (
+             <img
+             className="w-full h-full object-cover"
+             src={avatarUrl}
+             alt="Photo de profil"
+             onClick={handleModifyPicture}
+             /> 
+            ) : (
+              <img
               className="w-full h-full object-cover"
-              src={avatar}
-              alt="Logo"
-            />
+              src={default_avatar}
+              alt="Photo de profil"
+              onClick={handleModifyPicture}
+            /> 
+            )}
           </div>
+
+           
+          {modifyPicture && user.id === currentUser.id && (
+            <form onSubmit={updateProfilePicture} className="mt-4">
+              <input
+              type="file"
+              onChange={handleFileChange}
+              accept="image/*"
+              className="my-2 px-4 py-2 border rounded-md"            
+              />
+              <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-md">
+              Valider
+              </button>
+            </form>
+          )}
+
           <div className="flex flex-col items-center">
             {modifyMenu && user.id === currentUser.id ? (
               <>
@@ -183,6 +257,7 @@ function Profile() {
                   {firstName} {lastName}
                 </p>
                 <p>{user.email}</p>
+                <img src="/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--f3fe27d3e4df506c6cb5dbbe63b53bb5802ebebb/4600_1_08_bis.jpg" alt="" />
               </>
             )}
           </div>
