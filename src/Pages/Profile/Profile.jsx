@@ -152,7 +152,6 @@ function Profile() {
       setCurrentUser(response.data);
       setModifyPicture(false);
       setAvatarUrl(`http://127.0.0.1:3000${response.data.profile_picture_url}`)
-      console.log("current token", token);
     } catch (error) {
       if (error.response) {
         throw new Error(error.response.data.errors.join(', '));

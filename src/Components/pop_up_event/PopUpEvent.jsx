@@ -124,7 +124,9 @@ const PopUpEvent = ({
     <>
       <div className="modal is-active">
         <div className="flex modal-content">
-          <div className="event_img bg-cover bg-center w-3/6 h-6/6 bg-no-repeat bg-[url('https://media.istockphoto.com/id/1667873018/fr/photo/gar%C3%A7on-jouant-de-la-batterie-dans-une-%C3%A9cole-de-musique.jpg?s=2048x2048&w=is&k=20&c=Bn0w595KUKm2zDPhSDREM4o9nd5wSc94vpd4ADxruRo=')]"></div>
+          <div className="flex justify-center items-center">
+            <img src={`http://127.0.0.1:3000${selectedEvent.event_picture_url}`} alt="" className=""/>
+          </div>
           <div className="flex flex-col items-center w-4/6 gap-8 p-2 event_information">
             <div className="text-center title__event-container">
               <h2 className="">{selectedEvent.category}</h2>

@@ -1,4 +1,5 @@
 import { Button } from "@nextui-org/react";
+import { useState } from "react";
 
 const EventCard = ({ event, formatDate, openPopUp }) => {
   return (
@@ -6,7 +7,7 @@ const EventCard = ({ event, formatDate, openPopUp }) => {
       <div className="w-80">
         <img
           className=""
-          src="https://media.istockphoto.com/id/1667873018/fr/photo/gar%C3%A7on-jouant-de-la-batterie-dans-une-%C3%A9cole-de-musique.jpg?s=2048x2048&w=is&k=20&c=Bn0w595KUKm2zDPhSDREM4o9nd5wSc94vpd4ADxruRo="
+          src={`http://127.0.0.1:3000${event.event_picture_url}`}
           alt="Event"
         />
       </div>
