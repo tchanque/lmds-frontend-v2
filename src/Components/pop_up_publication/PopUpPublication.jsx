@@ -13,9 +13,13 @@ const PopUpPublication = ({ selectedPublication, closePoPup}) => {
   const [updatedPublication, setUpdatedPublication] = useState({
     title: selectedPublication.title,
     description: selectedPublication.description,
-    to_display: selectedPublication.to_display
+    to_display: selectedPublication.to_display,
+    publication_picture: selectedPublication.publication_picture_url
   });
   const [isUpdating, setIsUpdating] = useState(false);
+  const [publicationPicture, setPublicationPicture] = useState(null);
+  const [publicationFile, setPublicationFile] = useState();
+
   
   // Ensuring token and current user are set
   useEffect(() => {
@@ -57,18 +61,20 @@ const handleDeletePublication = async () => {
 };
 
 const handleUpdatePublication = async () => {
+
+  const formData = new FormData();
+    
+    formData.append("publication[title]", updatedPublication.title);
+    formData.append("publication[description]", updatedPublication.description);
+    formData.append("publication[to_display]", updatedPublication.to_display);
+    formData.append("publication[publication_picture]", publicationPicture);
+
   try {
     const response = await axiosPrivate.patch(
-      `/publications/${selectedPublication.id}`,
-      {
-        title: updatedPublication.title,
-        description: updatedPublication.description,
-        to_display: updatedPublication.to_display
-      },
-      {
+      `/publications/${selectedPublication.id}`, formData, {
         headers: {
           Authorization: `${token}`,
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/form-data",
         },
         withCredentials: true,
       }
@@ -82,11 +88,13 @@ const handleUpdatePublication = async () => {
       selectedPublication.title = response.data.title;
       selectedPublication.description = response.data.description;
       selectedPublication.to_display = response.data.to_display;
+      selectedPublication.publication_picture_url = response.data.publication_picture_url
 
       setUpdatedPublication({
         title: response.data.title,
         description: response.data.description,
-        to_display: response.data.to_display
+        to_display: response.data.to_display,
+        publication_picture: response.data.publication_picture_url
       });
      } else {
     closePoPup();
@@ -98,22 +106,32 @@ const handleUpdatePublication = async () => {
   }
 };
 
-const handleChange = (event) => {
-  const { name, value, type, checked } = event.target;
+const handleChange = (e) => {
+  const { name, value, type, checked } = e.target;
   setUpdatedPublication({
     ...updatedPublication,
     [name]: type === "checkbox" ? checked : value,
   });
 };
 
-
+const handleFileChange = (e) => {
+  const file = e.target.files[0];
+  setPublicationPicture(file);
+  setPublicationFile(URL.createObjectURL(file));
+};
 
   return (
     <>
       <div className="modal is-active">
         <div className="flex flex-col modal-content">
           <div className="mt-6">
-            {selectedPublication.publication_picture_url ? (
+            {publicationFile ? (
+              <img
+              className="w-full publication__img"
+              src={publicationFile}
+              alt="Publication Preview"
+            />
+            ) : selectedPublication.publication_picture_url ? (
               <img
               className="w-full publication__img"
               src={`http://127.0.0.1:3000${selectedPublication.publication_picture_url}`}
@@ -123,10 +141,17 @@ const handleChange = (event) => {
               <img
               className="w-full publication__img"
               src={defaultImage}
-              alt="une image de chaton dodo"
+              alt="default image"
             />
             )}
-            
+            {isUpdating && (
+              <input
+              type="file"
+              onChange={handleFileChange}
+              accept="image/*"
+              className="my-2 px-4 py-2 border rounded-md"            
+              />   
+            )}
           </div>
           <div className="flex flex-col items-center gap-8 p-2">
             <div className="text-center ">
