@@ -115,12 +115,14 @@ const AllEvents = () => {
 
   return (
     <>
-      <div className="flex grid grid-cols-2">
+      <div className="grid grid-cols-1 justify-items-center lg:grid-cols-5">
+        <div className="lg:col-span-2 lg:w-3/4">
           <CalendarEvent
             allEvents={allEvents}
             onDateChange={handleDateChange}
           />
-        <div className="flex flex-col">
+        </div>
+        <div className="lg:col-span-3 w-full flex flex-col">
           {filteredEvents.length === 0 ? (
             <h2>PAS D'EVENT</h2>
           ) : (

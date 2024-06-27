@@ -4,17 +4,32 @@
 
 /* ========== CLASSE GENERALE DU CALENDRIER (parente) ========== */
 .react-calendar {
-  @apply my-3 border-2 border-solid rounded font-Ubuntu border-primary-dark;
-  padding: 2em;
   background-color: white;
   font-size: 1em;
-  margin: 1.5em;
-  max-width: 40vw;
-  min-height: 40vh;
-  width: 100%;
   border: none;
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* corresponds to small screen and lower */
+/* @media screen and (max-width: 640px) {
+  .react-calendar {
+    max-width: 90vw;
+  }
+} */
+
+/* higher than small screens */
+@media screen and (min-width: 640px) {
+  .react-calendar {
+    max-width: 70vw;
+  }
+}
+
+/* corresponds to large screen and higher */
+/* @media screen and (min-width: 1024px) {
+  .react-calendar {
+    grid-column: 2;
+  }
+} */
 
 /* ========== CSS POUR LA BARRE DE NAVIGATION DU CALENDRIER ========== */
 .react-calendar__navigation {
