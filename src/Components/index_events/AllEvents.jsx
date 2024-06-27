@@ -5,30 +5,19 @@ import PopUpEvent from "../pop_up_event/PopUpEvent";
 import { axiosPrivate } from "../../api/axios";
 import { bearerTokenAtom, currentUserAtom } from "../../atom/atoms";
 import EventCard from "../event_card/EventCard";
+import CalendarEvent from "../calendar_event/CalendarEvent";
 
-/**
- * AllEvents component displays all events and allows users to view more details about each event.
- * It fetches all events from the API and displays them in a card format.
- * It also allows users to view more details about each event in a popup.
- * The component uses React hooks and state management with Jotai atoms.
- */
+
 const AllEvents = () => {
-  // Atom states for token and current user
-  const [token, setToken] = useAtom(bearerTokenAtom);  // Token atom state
-  const [currentUser, setCurrentUser] = useAtom(currentUserAtom);  // Current user atom state
-  
-  // Component states
-  const [allEvents, setAllEvents] = useState([]);  // All events state
-  const [showPopup, setShowPopup] = useState(false);  // Popup visibility state
-  const [selectedEvent, setSelectedEvent] = useState(null);  // Selected event state
-  const [isAttendee, setIsAttendee] = useState(false);  // Attendee state
-  const [attendance, setAttendance] = useState([]);  // Attendance state
+  const [token, setToken] = useAtom(bearerTokenAtom);
+  const [currentUser, setCurrentUser] = useAtom(currentUserAtom);
+  const [allEvents, setAllEvents] = useState([]);
+  const [showPopup, setShowPopup] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [isAttendee, setIsAttendee] = useState(false);
+  const [attendance, setAttendance] = useState([]);
+  const [filteredEvents, setFilteredEvents] = useState([]);
 
-  /**
-   * Format date to French locale
-   * @param {Date} date - The date to be formatted
-   * @returns {string} - The formatted date string
-   */
   const formatDate = (date) => {
     const options = {
       year: "numeric",
@@ -40,9 +29,6 @@ const AllEvents = () => {
     return new Date(date).toLocaleDateString("fr-FR", options);
   };
 
-  /**
-   * Fetch all events on token change
-   */
   useEffect(() => {
     if (token) {
       axiosPrivate
@@ -61,10 +47,13 @@ const AllEvents = () => {
     }
   }, [token]);
 
-  /**
-   * Set user attendance for a specific event
-   * @param {Event} event - The event for which attendance is to be set
-   */
+  const handleDateChange = (date) => {
+    const selectedDateEvents = allEvents.filter(
+      (event) => new Date(event.start_date).toDateString() === date.toDateString()
+    );
+    setFilteredEvents(selectedDateEvents);
+  };
+
   const setUserAttendance = async (event) => {
     if (event) {
       try {
@@ -75,14 +64,14 @@ const AllEvents = () => {
           },
           withCredentials: true,
         });
-  
+
         const updatedEvent = response.data;
         setSelectedEvent(updatedEvent);
         const attendances = updatedEvent.event_instruments.reduce((acc, eventInstrument) => {
           const userAttendances = eventInstrument.attendances.filter(att => currentUser.id === att.attendee.id);
           return [...acc, ...userAttendances];
         }, []);
-        if(attendances.length > 0) {
+        if (attendances.length > 0) {
           setIsAttendee(true);
           setAttendance(attendances);
         } else {
@@ -94,65 +83,43 @@ const AllEvents = () => {
     }
   };
 
-  /**
-   * Open popup and set selected event
-   * @param {Event} event - The event to be displayed in the popup
-   */
   const openPopUp = async (event) => {
-    setUserAttendance(event);  // Set user attendance for the event
-    setSelectedEvent(event);  // Set selected event
-    setShowPopup(true);  // Show popup
-  };
-  
-  /**
-   * Close popup and reset selected event
-   */
-  const closePopUp = async () => {
-    setShowPopup(false);  // Hide popup
-    setSelectedEvent(null);  // Reset selected event
+    setUserAttendance(event);
+    setSelectedEvent(event);
+    setShowPopup(true);
   };
 
-  /**
-   * Set user attendance when popup is shown
-   */
+  const closePopUp = async () => {
+    setShowPopup(false);
+    setSelectedEvent(null);
+  };
+
   useEffect(() => {
     if (selectedEvent) {
       setUserAttendance(selectedEvent);
     }
-  }, [showPopup]); 
+  }, [showPopup]);
 
-  
   return (
-<>
+    <>
       <h1 id="events">ALL EVENTS HERE</h1>
       <div className="flex">
         <div>
-          <Card className="w-[550px] h-[500px] space-y-10 p-4 m-10" radius="lg">
-            <Skeleton className="rounded-lg">
-              <div className="h-24 rounded-lg bg-default-300"></div>
-            </Skeleton>
-            <div className="space-y-3">
-              <Skeleton className="w-3/5 rounded-lg">
-                <div className="w-3/5 h-3 rounded-lg bg-default-200"></div>
-              </Skeleton>
-              <Skeleton className="w-4/5 rounded-lg">
-                <div className="w-4/5 h-3 rounded-lg bg-default-200"></div>
-              </Skeleton>
-              <Skeleton className="w-2/5 rounded-lg">
-                <div className="w-2/5 h-3 rounded-lg bg-default-300"></div>
-              </Skeleton>
-            </div>
-          </Card>
+          <CalendarEvent allEvents={allEvents} onDateChange={handleDateChange} />
         </div>
         <div className="flex flex-col">
-          {allEvents.map((event) => (
-            <EventCard
-              key={event.id}
-              event={event}
-              formatDate={formatDate}
-              openPopUp={openPopUp}
-            />
-          ))}
+          {filteredEvents.length === 0 ? (
+            <h2>PAS D'EVENT</h2>
+          ) : (
+            filteredEvents.map((event) => (
+              <EventCard
+                key={event.id}
+                event={event}
+                formatDate={formatDate}
+                openPopUp={openPopUp}
+              />
+            ))
+          )}
           {showPopup && selectedEvent && (
             <PopUpEvent
               selectedEvent={selectedEvent}

@@ -1,0 +1,12 @@
+/* CalendarEvent.css */
+.react-calendar__tile.highlight {
+  background-color: #00bfff;
+  color: white;
+  border-radius: 50%;
+}
+
+.react-calendar__tile.selected {
+  background-color: #ffbf00;
+  color: white;
+  border-radius: 50%;
+}
