@@ -12,7 +12,6 @@ import {
   Dropdown,
   DropdownMenu,
   DropdownItem,
-  Chip,
   User,
   Pagination,
 } from "@nextui-org/react";
@@ -20,7 +19,7 @@ import { PlusIcon } from "./PlusIcon";
 import { VerticalDotsIcon } from "./VerticalDotsIcon";
 import { SearchIcon } from "./SearchIcon";
 import { ChevronDownIcon } from "./ChevronDownIcon";
-import { columns, users, statusOptions } from "./data";
+import { columns } from "./data";
 import { capitalize } from "./utils";
 import { useState } from "react";
 import axios from "axios";
@@ -28,14 +27,7 @@ import { axiosPrivate } from "../../../api/axios";
 import { useEffect } from "react";
 import { useAtom } from "jotai";
 import { bearerTokenAtom, popUpAdminFormAtom } from "../../../atom/atoms";
-import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-
-const statusColorMap = {
-  active: "success",
-  paused: "danger",
-  vacation: "warning",
-};
 
 const INITIAL_VISIBLE_COLUMNS = [
   "id",
@@ -53,19 +45,16 @@ const UsersAdminDashboard = () => {
   const [visibleColumns, setVisibleColumns] = React.useState(
     new Set(INITIAL_VISIBLE_COLUMNS)
   );
-  const [statusFilter, setStatusFilter] = React.useState("all");
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [sortDescriptor, setSortDescriptor] = React.useState({
-    column: "age",
+    column: "first_name",
     direction: "ascending",
   });
   const [page, setPage] = React.useState(1);
   const [users, setUsers] = useState([]);
-  const [token, setToken] = useAtom(bearerTokenAtom);
+  const [token] = useAtom(bearerTokenAtom);
   const [popUpAdminForm, setPopUpAdminForm] = useAtom(popUpAdminFormAtom);
-
-  const hasSearchFilter = Boolean(filterValue);
-
+  
   const navigate = useNavigate();
 
   const handleDropdownItemClick = (action, userId) => {
@@ -81,27 +70,7 @@ const UsersAdminDashboard = () => {
     }
   };
 
-  // const handleResendMail = (userId) => {
-  //   console.log(userId)
-  //   axiosPrivate
-  //   .delete(`/users/${userId}/resend_welcome_email`, null, {
-  //     headers: {
-  //       Authorization: token,
-  //       "Content-Type": "application/json",
-  //     },
-  //     withCredentials: true,
-  //   })
-  //   .then((response) => {
-  //     alert("Email de bienvenue renvoyé avec succès !");
-  //   })
-  //   .catch((error) => {
-  //     console.error("Erreur lors du renvoi de l'email de bienvenue :", error);
-  //     alert("Erreur lors du renvoi de l'email de bienvenue. Veuillez réessayer.");
-  //   });
-  // };
-
   const deleteUserData = async (userId) => {
-    console.log(userId)
     const confirmDeletion = window.confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur?");
     if (!confirmDeletion) return;
   
@@ -114,8 +83,6 @@ const UsersAdminDashboard = () => {
         withCredentials: true,
       });
   
-      console.log("Utilisateur supprimé avec succès", response);
-      // Mettre à jour l'état des utilisateurs après suppression
       setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
     } catch (error) {
       console.error("Erreur lors de la suppression de l'utilisateur", error);
@@ -150,7 +117,7 @@ const UsersAdminDashboard = () => {
   const filteredItems = React.useMemo(() => {
     let filteredUsers = [...users];
 
-    if (hasSearchFilter) {
+    if (filterValue) {
       filteredUsers = filteredUsers.filter(
         (user) =>
           user.first_name.toLowerCase().includes(filterValue.toLowerCase()) ||
@@ -158,17 +125,9 @@ const UsersAdminDashboard = () => {
           user.email.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
-    if (
-      statusFilter !== "all" &&
-      Array.from(statusFilter).length !== statusOptions.length
-    ) {
-      filteredUsers = filteredUsers.filter((user) =>
-        Array.from(statusFilter).includes(user.status)
-      );
-    }
-
+    
     return filteredUsers;
-  }, [users, filterValue, statusFilter]);
+  }, [users, filterValue]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
@@ -216,17 +175,6 @@ const UsersAdminDashboard = () => {
             </p>
           </div>
         );
-      case "status":
-        return (
-          <Chip
-            className="capitalize"
-            color={statusColorMap[user.status]}
-            size="sm"
-            variant="flat"
-          >
-            {cellValue}
-          </Chip>
-        );
         case "is_subscriber":
           return cellValue ? "Yes" : "No";
       case "actions":
@@ -241,7 +189,6 @@ const UsersAdminDashboard = () => {
               <DropdownMenu>
                 <DropdownItem onClick={() => handleDropdownItemClick("view", user.id)}>View</DropdownItem>
                 <DropdownItem onClick={() => handleDropdownItemClick("delete", user.id)}>Delete</DropdownItem>
-                <DropdownItem onClick={() => handleResendMail(user.id)}>Resend Mail</DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </div>
@@ -292,34 +239,10 @@ const UsersAdminDashboard = () => {
             placeholder="Search by first_name, last_name, email..."
             startContent={<SearchIcon />}
             value={filterValue}
-            onClear={() => onClear()}
+            onClear={onClear}
             onValueChange={onSearchChange}
           />
           <div className="flex gap-3 mr-5">
-            {/* <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button
-                  endContent={<ChevronDownIcon className="text-small" />}
-                  variant="flat"
-                >
-                  Status
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={statusFilter}
-                selectionMode="multiple"
-                onSelectionChange={setStatusFilter}
-              >
-                {statusOptions.map((status) => (
-                  <DropdownItem key={status.uid} className="capitalize">
-                    {capitalize(status.name)}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown> */}
             <Dropdown>
               <DropdownTrigger className="hidden sm:flex">
                 <Button
@@ -373,90 +296,62 @@ const UsersAdminDashboard = () => {
     );
   }, [
     filterValue,
-    statusFilter,
     visibleColumns,
-    onRowsPerPageChange,
     users.length,
     onSearchChange,
-    hasSearchFilter,
+    onClear,
+    onRowsPerPageChange,
+    openPopup,
   ]);
 
-  const bottomContent = React.useMemo(() => {
-    return (
-      <div className="py-2 px-2 flex justify-between items-center mr-5">
-        <span className="w-[30%] text-small text-default-400">
-          {selectedKeys === "all"
-            ? "All items selected"
-            : `${selectedKeys.size} of ${filteredItems.length} selected`}
-        </span>
-        <Pagination
-          isCompact
-          showControls
-          showShadow
-          color="primary"
-          page={page}
-          total={pages}
-          onChange={setPage}
-        />
-        <div className="hidden sm:flex w-[30%] justify-end gap-2">
-          <Button
-            isDisabled={pages === 1}
-            size="sm"
-            variant="flat"
-            onPress={onPreviousPage}
-          >
-            Previous
-          </Button>
-          <Button
-            isDisabled={pages === 1}
-            size="sm"
-            variant="flat"
-            onPress={onNextPage}
-          >
-            Next
-          </Button>
-        </div>
-      </div>
-    );
-  }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
-
   return (
-    <Table
-      aria-label="Example table with custom cells, pagination and sorting"
-      bottomContent={bottomContent}
-      bottomContentPlacement="outside"
-      classNames={{
-        wrapper: "max-h-[382px]",
-      }}
-      selectedKeys={selectedKeys}
-      selectionMode="multiple"
-      sortDescriptor={sortDescriptor}
-      topContent={topContent}
-      topContentPlacement="outside"
-      onSelectionChange={setSelectedKeys}
-      onSortChange={setSortDescriptor}
-    >
-      <TableHeader columns={headerColumns}>
-        {(column) => (
-          <TableColumn
-            key={column.uid}
-            align={column.uid === "actions" ? "center" : "start"}
-            allowsSorting={column.sortable}
-          >
-            {column.name}
-          </TableColumn>
-        )}
-      </TableHeader>
-      <TableBody emptyContent={"No users found"} items={sortedItems}>
-        {(item) => (
-          <TableRow key={item.id}>
-            {(columnKey) => (
-              <TableCell>{renderCell(item, columnKey)}</TableCell>
-            )}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+    <div className="w-full flex flex-col">
+      {topContent}
+      <Table
+        aria-label="Users table"
+        classNames={{
+          base: "mt-5",
+          table: "min-h-[400px]",
+        }}
+        sortDescriptor={sortDescriptor}
+        onSortChange={setSortDescriptor}
+        selectedKeys={selectedKeys}
+        onSelectionChange={setSelectedKeys}
+        containerClassName="overflow-scroll"
+      >
+        <TableHeader columns={headerColumns}>
+          {(column) => (
+            <TableColumn
+              key={column.uid}
+              allowsSorting={column.uid === "name" || column.uid === "role"}
+              maxWidth={column.uid === "actions" ? 50 : undefined}
+            >
+              {column.name}
+            </TableColumn>
+          )}
+        </TableHeader>
+        <TableBody items={sortedItems}>
+          {(item) => (
+            <TableRow key={item.id}>
+              {(columnKey) => (
+                <TableCell>{renderCell(item, columnKey)}</TableCell>
+              )}
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+      <Pagination
+        isCompact
+        showControls
+        showShadow
+        className="mt-4 self-end"
+        page={page}
+        total={pages}
+        onChange={setPage}
+        onNext={onNextPage}
+        onPrevious={onPreviousPage}
+      />
+    </div>
   );
 };
 

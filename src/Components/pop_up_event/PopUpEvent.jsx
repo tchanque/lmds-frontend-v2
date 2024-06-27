@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useAtom } from "jotai";
 import { currentUserAtom, bearerTokenAtom } from "../../atom/atoms";
 import { axiosPrivate } from "../../api/axios";
+import parse from "html-react-parser";
 import defaultImage from "../../public/images/image_event.jpg"
 
 const PopUpEvent = ({
@@ -11,13 +12,14 @@ const PopUpEvent = ({
   closePoPup,
   isAttendee,
   setUserAttendance,
-  attendance,
+  attendance
 }) => {
   const [choice, setChoice] = useState(null);
   const [token, setToken] = useAtom(bearerTokenAtom);
   const [currentUser, setCurrentUser] = useAtom(currentUserAtom);
   const [loading, setLoading] = useState(null);
   const [hasAvailableSpots, setHasAvailableSpots] = useState(true);
+  const [message, setMessage] = useState(null);
 
   // Ensure token and current user are set
   useEffect(() => {
@@ -69,7 +71,21 @@ const PopUpEvent = ({
         }
       );
 
-      console.log(response);
+      // if response.data is-pending est true et que à l'inscription hasAvailableSpots est true : Popup : Désolé, quelqu'un s'est inscrit avant toi !
+      // if response.data is-pending est false et que à l'inscription hasAvailableSpots est false : Popup : Bravo, une place c'est libérée au moment de ton inscription  !
+
+      console.log(response.data);
+      if (response.data.is_pending && hasAvailableSpots) {
+        // Popup: Désolé, quelqu'un s'est inscrit avant toi !
+        console.log("Désolé, quelqu'un s'est inscrit avant toi !");
+        // Show message on the screen
+        setMessage("<p className='text-danger-main'>Désolé, il semblerait que quelqu'un se soit inscrit avant vous ! Vous êtes en liste d'attente.</p>");
+      } else if (!response.data.is_pending && !hasAvailableSpots) {
+        // Popup: Bravo, une place c'est libérée au moment de ton inscription
+        console.log("Bravo, une place c'est libérée au moment de ton inscription !");
+        // Show message on the screen
+        setMessage("<p className='text-success-main'>Woaw ! Une place c'est libérée au moment de ton inscription !</p>");
+      }
       await setUserAttendance(selectedEvent);
       setChoice(null); // Update attendance status after registration
       setLoading(false);
@@ -245,11 +261,12 @@ const PopUpEvent = ({
             ) : (
               <Button
                 className="text-white bg-warning-main"
-                onClick={handleUnsubscribe}
+                onClick={() => {handleUnsubscribe(); setChoice(null); setMessage(null)}}
               >
                 Je me désinscris
               </Button>
             )}
+            {message ? <div>{parse(message)}</div> : null}
           </div>
           <button className="modal-close" onClick={closePoPup}>
             {" "}

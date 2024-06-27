@@ -1,5 +1,4 @@
 import { Button } from "@nextui-org/react";
-import { useState } from "react";
 import defaultImage from "../../public/images/image_event.jpg"
 
 const EventCard = ({ event, formatDate, openPopUp }) => {

@@ -146,7 +146,6 @@ const AllEvents = () => {
         </div>
       </div>
     </>
-
   );
 };
 

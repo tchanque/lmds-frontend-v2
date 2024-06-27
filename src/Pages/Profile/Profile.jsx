@@ -90,24 +90,20 @@ function Profile() {
 
   const handleDelete = async () => {
     try {
-      axiosPrivate.delete(
-        `/users/${id}`,
-        {headers: 
-          {
+      axiosPrivate.delete(`/users/${id}`, {
+        headers: {
             'Authorization': token,
             'Content-Type': 'application/json'
           },
-          withCredentials: true
-        }
-      )
+          withCredentials: true,
+        });
       setToken("");
       setCurrentUser("");
       navigate("/");
+    } catch (error) {
+      console.error("Error deleting the profile: ", error);
     }
-    catch (error) {
-      console.error("Error deleting the profile: ", error)
-    }
-  }
+  };
 
   const handleChangePassword = async () => {
     try {
@@ -189,13 +185,11 @@ function Profile() {
     <section className="h-full">
       <div className="title">
         {user.id === currentUser.id ? (
-          <h1>MON COMPTE</h1>
-          
+          <h1>MON COMPTE</h1>         
         ) : (
           <h1>PROFIL MUSICIEN</h1>
         )}
-      </div>
-     
+      </div>     
       <div className="userProfileDetails bg-white mx-13 mt-24 p-10 rounded-lg">
         <div className="mainInformationSection flex flex-col justify-center items-center">
           <div className="w-64 h-64 rounded-full overflow-hidden justify-center">
@@ -239,88 +233,185 @@ function Profile() {
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   placeholder="First Name"
-                  className="w-1/2 my-2 px-4 py-2 border rounded-md"
+                  className="py-2 border rounded-md text-grey-main font-Ubuntu text-center"
                 />
                 <input
                   type="text"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                   placeholder="Last Name"
-                  className="w-1/2 my-2 px-4 py-2 border rounded-md"
+                  className="py-2 border rounded-md text-grey-main font-Ubuntu text-center"
                 />
-                <p>{user.email}</p>
               </>
             ) : (
               <>
-                <p>
-                  {firstName} {lastName}
-                </p>
-                <p>{user.email}</p>
-                <img src="/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MiwicHVyIjoiYmxvYl9pZCJ9fQ==--f3fe27d3e4df506c6cb5dbbe63b53bb5802ebebb/4600_1_08_bis.jpg" alt="" />
-              </>
+                  <div className="flex flex-col justify-center items-center">
+                    <p>{firstName}</p>
+                    <p>{lastName}</p>
+                  </div>
+                </>
             )}
           </div>
-        </div>
+          <p>{user.email}</p>
+          <div
+            className="col-span-1 lg:col-span-2 flex flex-col"
+            id="secondSection"
+          >
+            <div className="flex justify-evenly flex-wrap items-center">
+              {user.skills.map((skill, index) => (
+                <div
+                  className="flex flex-col items-center"
+                  key={`instruments${index}`}
+                >
+                  <p>{skill.instrument.name}</p>
+                  <p>{`Niveau ${skill.level}`}</p>
+                </div>
+              ))}
+            </div>
+            <div
+              className="flex flex-col justify-center items-center flex-grow"
+              id="descriptionSection"
+            >
+              <h4>Description</h4>
+              <div className="w-2/3 sm:w-full flex flex-grow items-center transition-all duration-300 ease-in-out">
+                {modifyMenu ? (
+                  <textarea
+                    type="text"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Description"
+                    className="w-full h-full px-2 py-2 border rounded-md break-words text-grey-main text-center font-Ubuntu resize-none"
+                  />
+                ) : (
+                  <p className="w-full h-full px-2 py-2 text-center overflow-auto">
+                    {description}
+                  </p>
+                )}
+        {/* </div>
         <div className="secondaryInformationSection ml-10 relative">
           <div className="flex">
             {user.skills.map((skill, index) => (
               <div className="mr-13" key={`instruments${index}`}>
                 <p>{skill.instrument.name}</p>
-                <p>{`Niveau ${skill.level}`}</p>
+                <p>{`Niveau ${skill.level}`}</p> */}
               </div>
-            ))}
-          </div>
-          <div className="description">
-            <h4>Description</h4>
-            {modifyMenu && user.id === currentUser.id ? (
-              <input
-                type="text"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Description"
-                className="w-full my-2 px-4 py-2 border rounded-md"
-              />
-            ) : (
-              <p>{description}</p>
-            )}
-          </div>
-          <div className="absolute bottom-0 right-10">
-            {modifyMenu && user.id === currentUser.id ? (
-              <>
-                <button
-                  onClick={() => setModifyMenu(false)}
-                  className="w-24 mt-10 text-white bg-danger-main hover:bg-danger-light font-medium rounded-lg text-sm py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-                >
-                  Annuler
-                </button>
-                <button
-                  onClick={handleSave}
-                  className="w-24 mt-10 text-white bg-success-main hover:bg-success-light font-medium rounded-lg text-sm py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 ml-5"
-                >
-                  Sauvegarder
-                </button>
-              </>
-            ) : (
-              user.id === currentUser.id && (
+              </div>
+            <div className="flex justify-center" id="editButton">
+              {modifyMenu ? (
+          //   ))}
+          // </div>
+          // <div className="description">
+          //   <h4>Description</h4>
+          //   {modifyMenu && user.id === currentUser.id ? (
+          //     <input
+          //       type="text"
+          //       value={description}
+          //       onChange={(e) => setDescription(e.target.value)}
+          //       placeholder="Description"
+          //       className="w-full my-2 px-4 py-2 border rounded-md"
+          //     />
+          //   ) : (
+          //     <p>{description}</p>
+          //   )}
+          // </div>
+          // <div className="absolute bottom-0 right-10">
+          //   {modifyMenu && user.id === currentUser.id ? (
+          //     <>
+          //       <button
+          //         onClick={() => setModifyMenu(false)}
+          //         className="w-24 mt-10 text-white bg-danger-main hover:bg-danger-light font-medium rounded-lg text-sm py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+          //       >
+          //         Annuler
+          //       </button>
+          //       <button
+          //         onClick={handleSave}
+          //         className="w-24 mt-10 text-white bg-success-main hover:bg-success-light font-medium rounded-lg text-sm py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 ml-5"
+          //       >
+          //         Sauvegarder
+          //       </button>
+          //     </>
+          //   ) : (
+          //     user.id === currentUser.id && (
                 <>
                   <button
-                    onClick={() => setModifyMenu(true)}
-                    className="w-24 mt-10 text-white bg-info-main hover:bg-info-light font-medium rounded-lg text-sm py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                    onClick={() => setModifyMenu(false)}
+                    className="w-24 mt-10 text-white bg-warning-main hover:bg-warning-light font-medium rounded-lg text-sm py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
                   >
-                    Modifier
+                    Annuler
                   </button>
                   <button
-                    onClick={handleDelete}
-                    className="w-24 mt-10 text-white bg-danger-main hover:bg-danger-light font-medium rounded-lg text-sm py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                    onClick={handleSave}
+                     className="w-24 mt-10 text-white bg-danger-main hover:bg-danger-light font-medium rounded-lg text-sm py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
                   >
-                    Supprimer
+                    Sauvegarder
                   </button>
                 </>
-              )
-            )}
+               ) : (
+                (user.id === currentUser.id ||
+                  currentUser.role === "Admin") && (
+                  <>
+                    <button
+                      onClick={() => setModifyMenu(true)}
+                      className="w-24 mt-10 text-white bg-info-main hover:bg-info-light font-medium rounded-lg text-sm py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                    >
+                      Modifier
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (
+                          window.confirm(
+                            "Es-tu sûr de vouloir supprimer ton compte?"
+                          )
+                        ) {
+                          handleDelete();
+                        }
+                      }}
+                      className="w-24 mt-10 text-white bg-danger-main hover:bg-danger-light font-medium rounded-lg text-sm py-2.5 ml-5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                    >
+                      Supprimer
+                    </button>
+                  </>
+                )
+              )}
+            </div> 
           </div>
         </div>
-        {user.id === currentUser.id && (
+        {user.id === currentUser.id && ( // only the user can change its password
+          <div
+            id="passwordSection"
+            className="bg-white mx-13 my-15 p-10 rounded-lg"
+          >
+            <div className="flex flex-col items-center">
+              <h4>Changer mon mot de passe</h4>
+              <input
+                className="w-full sm:w-1/2 my-2 px-4 py-2 border rounded-md transition-all duration-300 ease-in-out"
+                type="password"
+                value={oldPassword}
+                onChange={(e) => setOldPassword(e.target.value)}
+                placeholder="Ancien mot de passe"
+              />
+              <input
+                className="w-full sm:w-1/2 my-2 px-4 py-2 border rounded-md transition-all duration-300 ease-in-out"
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="Nouveau mot de passe"
+              />
+              <input
+                className="w-full sm:w-1/2 my-2 px-4 py-2 border rounded-md transition-all duration-300 ease-in-out"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirmer nouveau mot de passe"
+              />
+              <button
+                onClick={handleChangePassword}
+                className="w-24 text-white bg-info-main hover:bg-info-light font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+              >
+                Changer
+              </button>
+            </div>
+        {/* {user.id === currentUser.id && (
           <div className="changePasswordSection mt-10">
             <h4>Changer mon mot de passe</h4>
             <input
@@ -349,7 +440,7 @@ function Profile() {
               className="w-24 mt-10 text-white bg-info-main hover:bg-info-light font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
             >
               Changer
-            </button>
+            </button> */}
           </div>
         )}
       </div>  

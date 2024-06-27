@@ -5,7 +5,6 @@ import { useAtom } from "jotai";
 import { bearerTokenAtom, popUpEventAtom } from "../../atom/atoms";
 import EventInstrumentForm from "./event_instrument_form/EventInstrumentForm";
 import "./eventForm.css";
-import missingImage from "../../public/images/image_event.jpg";
 
 const EventForm = () => {
   const [category, setCategory] = useState("");
