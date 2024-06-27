@@ -190,9 +190,9 @@ function Profile() {
           <h1>PROFIL MUSICIEN</h1>
         )}
       </div>     
-      <div className="userProfileDetails bg-white mx-13 mt-24 p-10 rounded-lg">
-        <div className="mainInformationSection flex flex-col justify-center items-center">
-          <div className="w-64 h-64 rounded-full overflow-hidden justify-center">
+      <div className="bg-white mx-13 my-15 p-10 rounded-lg grid grid-cols-1 gap-2 lg:grid-cols-3 lg:gap-2">
+        <div className="col-span-1 lg:col-span-1 flex flex-col justify-center items-center">
+          <div className="w-64 h-64 my-2 rounded-full overflow-hidden justify-center">
             {user.profile_picture_url ? (
              <img
              className="w-full h-full object-cover"
@@ -225,7 +225,7 @@ function Profile() {
             </form>
           )}
 
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col ">
             {modifyMenu && user.id === currentUser.id ? (
               <>
                 <input
@@ -253,6 +253,7 @@ function Profile() {
             )}
           </div>
           <p>{user.email}</p>
+        </div>
           <div
             className="col-span-1 lg:col-span-2 flex flex-col"
             id="secondSection"
@@ -287,51 +288,12 @@ function Profile() {
                     {description}
                   </p>
                 )}
-        {/* </div>
-        <div className="secondaryInformationSection ml-10 relative">
-          <div className="flex">
-            {user.skills.map((skill, index) => (
-              <div className="mr-13" key={`instruments${index}`}>
-                <p>{skill.instrument.name}</p>
-                <p>{`Niveau ${skill.level}`}</p> */}
+
               </div>
               </div>
             <div className="flex justify-center" id="editButton">
               {modifyMenu ? (
-          //   ))}
-          // </div>
-          // <div className="description">
-          //   <h4>Description</h4>
-          //   {modifyMenu && user.id === currentUser.id ? (
-          //     <input
-          //       type="text"
-          //       value={description}
-          //       onChange={(e) => setDescription(e.target.value)}
-          //       placeholder="Description"
-          //       className="w-full my-2 px-4 py-2 border rounded-md"
-          //     />
-          //   ) : (
-          //     <p>{description}</p>
-          //   )}
-          // </div>
-          // <div className="absolute bottom-0 right-10">
-          //   {modifyMenu && user.id === currentUser.id ? (
-          //     <>
-          //       <button
-          //         onClick={() => setModifyMenu(false)}
-          //         className="w-24 mt-10 text-white bg-danger-main hover:bg-danger-light font-medium rounded-lg text-sm py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-          //       >
-          //         Annuler
-          //       </button>
-          //       <button
-          //         onClick={handleSave}
-          //         className="w-24 mt-10 text-white bg-success-main hover:bg-success-light font-medium rounded-lg text-sm py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 ml-5"
-          //       >
-          //         Sauvegarder
-          //       </button>
-          //     </>
-          //   ) : (
-          //     user.id === currentUser.id && (
+
                 <>
                   <button
                     onClick={() => setModifyMenu(false)}
@@ -411,43 +373,14 @@ function Profile() {
                 Changer
               </button>
             </div>
-        {/* {user.id === currentUser.id && (
-          <div className="changePasswordSection mt-10">
-            <h4>Changer mon mot de passe</h4>
-            <input
-              className="w-1/2 my-2 px-4 py-2 border rounded-md"
-              type="password"
-              value={oldPassword}
-              onChange={(e) => setOldPassword(e.target.value)}
-              placeholder="Ancien mot de passe"
-            />
-            <input
-              className="w-1/2 my-2 px-4 py-2 border rounded-md"
-              type="password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              placeholder="Nouveau mot de passe"
-            />
-            <input
-              className="w-1/2 my-2 px-4 py-2 border rounded-md"
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Confirmer nouveau mot de passe"
-            />
-            <button
-              onClick={handleChangePassword}
-              className="w-24 mt-10 text-white bg-info-main hover:bg-info-light font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-            >
-              Changer
-            </button> */}
+  
           </div>
         )}
-      </div>  
-    </section>
-    <div id="agenda">
+      <div id="agenda">
     {user.id === currentUser.id && <UserAgenda userId={id} />}
-    </div>
+    </div> 
+    </section>
+    
     </>
   );
 }
