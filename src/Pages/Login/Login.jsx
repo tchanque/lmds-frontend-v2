@@ -2,14 +2,12 @@ import { axiosPrivate } from "../../api/axios";
 import { useEffect, useState } from "react";
 import { useAtom } from "jotai";
 import { bearerTokenAtom, currentUserAtom } from "../../atom/atoms";
-import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [token, setToken] = useAtom(bearerTokenAtom);
   const [currentUser, setCurrentUser] = useAtom(currentUserAtom);
-const navigate = useNavigate()
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -17,7 +15,6 @@ const navigate = useNavigate()
       const response = await axiosPrivate.post("/users/sign_in", { user: { email, password } });
       setToken(response.headers.authorization);
       setCurrentUser(response.data.user);
-      navigate("/");
     } catch (error) {
       console.error(error.response || error);
     }

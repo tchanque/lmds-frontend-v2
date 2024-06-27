@@ -1,7 +1,6 @@
 import { useAtom } from "jotai";
 import { axiosPrivate } from "../../api/axios";
 import { currentUserAtom, bearerTokenAtom } from "../../atom/atoms";
-import {Button} from "@nextui-org/react";
 
 function LogoutButton() {
   const [, setUser] = useAtom(currentUserAtom);
@@ -26,7 +25,7 @@ function LogoutButton() {
     }
   };
 
-  return <Button onClick={handleLogout} className="w-full p-0 m-0 font-bold text-white bg-danger-main">DÉCONNEXION</Button>;
+  return <button onClick={handleLogout}>Déconnexion</button>;
 }
 
 export default LogoutButton;

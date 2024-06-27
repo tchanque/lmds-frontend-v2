@@ -4,7 +4,6 @@ import { popUpAdminFormAtom } from "../../atom/atoms";
 import UsersAdminDashboard from "../../Components/admin/UsersAdminDashboard/UsersAdminDashboard";
 import AdminRegistrationForm from "../../Components/admin/registration_form/AdminRegistrationForm";
 import PublicationsAdminDashboard from "../../Components/admin/PublicationsAdminDashboard/PublicationsAdminDashboard";
-import EventsAdminDashboard from "../../Components/admin/EventsAdminDashboard/EventsAdminDashboard";
 
 
 
@@ -57,7 +56,6 @@ const DashboardAdmin = () => {
         <div className="w-full mr-5">
           {showUsersList && <UsersAdminDashboard />}
           {showPublicationsList && <PublicationsAdminDashboard />}
-          {showEventsList && <EventsAdminDashboard />}
         </div>
       </div>
       {popUpAdminForm && <AdminRegistrationForm />}
