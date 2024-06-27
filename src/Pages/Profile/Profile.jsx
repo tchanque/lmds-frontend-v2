@@ -247,7 +247,15 @@ function Profile() {
                       Modifier
                     </button>
                     <button
-                      onClick={handleDelete}
+                      onClick={() => {
+                        if (
+                          window.confirm(
+                            "Es-tu sûr de vouloir supprimer ton compte?"
+                          )
+                        ) {
+                          handleDelete();
+                        }
+                      }}
                       className="w-24 mt-10 text-white bg-danger-main hover:bg-danger-light font-medium rounded-lg text-sm py-2.5 ml-5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
                     >
                       Supprimer
@@ -260,7 +268,10 @@ function Profile() {
         </div>
 
         {user.id === currentUser.id && ( // only the user can change its password
-          <div id="passwordSection" className="bg-white mx-13 my-15 p-10 rounded-lg">
+          <div
+            id="passwordSection"
+            className="bg-white mx-13 my-15 p-10 rounded-lg"
+          >
             <div className="flex flex-col items-center">
               <h4>Changer mon mot de passe</h4>
               <input
