@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { useAtom } from "jotai";
 import { currentUserAtom, bearerTokenAtom } from "../../atom/atoms";
 import { axiosPrivate } from "../../api/axios";
+import defaultImage from "../../public/images/image_event.jpg"
 
 const PopUpPublication = ({ selectedPublication, closePoPup}) => {
   const [token, setToken] = useAtom(bearerTokenAtom);
@@ -112,11 +113,20 @@ const handleChange = (event) => {
       <div className="modal is-active">
         <div className="flex flex-col modal-content">
           <div className="mt-6">
-            <img
+            {selectedPublication.publication_picture_url ? (
+              <img
               className="w-full publication__img"
-              src="https://cdn.pixabay.com/photo/2024/05/18/08/16/cat-8769861_1280.jpg"
+              src={`http://127.0.0.1:3000${selectedPublication.publication_picture_url}`}
               alt="une image de chaton dodo"
             />
+            ) : (
+              <img
+              className="w-full publication__img"
+              src={defaultImage}
+              alt="une image de chaton dodo"
+            />
+            )}
+            
           </div>
           <div className="flex flex-col items-center gap-8 p-2">
             <div className="text-center ">

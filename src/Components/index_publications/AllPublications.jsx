@@ -8,6 +8,7 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "./all_publications.css"
+import defaultImage from "../../public/images/image_event.jpg"
 
 
 
@@ -17,6 +18,7 @@ function AllPublications() {
   const [allPublications, setAllPublications] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const [selectedPublication, setSelectedPublication] = useState(null);
+  const [host] = useState("127.0.0.1:3000")
 
   useEffect(() => {
     if (token) {
@@ -37,6 +39,7 @@ function AllPublications() {
         withCredentials: true,
       })
       .then((response) => {
+        console.log(allPublications);
         setAllPublications([...response.data]);
       })
       .catch((error) => {
@@ -88,11 +91,18 @@ const formatDate = (date) => {
         .filter((publication) => publication.to_display)
         .map((publication) => (
           <div key={publication.id} className="relative">
+           {publication.publication_picture_url ? ( 
             <img
               className="w-full rounded-lg"
-              src="https://cdn.pixabay.com/photo/2024/05/18/08/16/cat-8769861_1280.jpg"
+              src={`http://127.0.0.1:3000${publication.publication_picture_url}`}
+              alt={publication.title}
+            />) : (
+              <img
+              className="w-full rounded-lg"
+              src={defaultImage}
               alt={publication.title}
             />
+            )}
             <div className="absolute bottom-0 w-full p-4 mb-4 text-center text-black transform -translate-x-1/2 bg-white shadow-2xl left-1/2 sm:w-3/4">
               <p className="mb-2 text-sm text-gray-500">
                 {formatDate(publication.created_at)}

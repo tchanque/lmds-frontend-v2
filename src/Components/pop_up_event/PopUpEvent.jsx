@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useAtom } from "jotai";
 import { currentUserAtom, bearerTokenAtom } from "../../atom/atoms";
 import { axiosPrivate } from "../../api/axios";
+import defaultImage from "../../public/images/image_event.jpg"
 
 const PopUpEvent = ({
   selectedEvent,
@@ -125,7 +126,11 @@ const PopUpEvent = ({
       <div className="modal is-active">
         <div className="flex modal-content">
           <div className="flex justify-center items-center">
-            <img src={`http://127.0.0.1:3000${selectedEvent.event_picture_url}`} alt="" className=""/>
+            {selectedEvent.event_picture_url ? (
+              <img src={`http://127.0.0.1:3000${selectedEvent.event_picture_url}`} alt="" className=""/>
+            ) : (
+              <img src={defaultImage} alt="" className=""/>
+            )}
           </div>
           <div className="flex flex-col items-center w-4/6 gap-8 p-2 event_information">
             <div className="text-center title__event-container">

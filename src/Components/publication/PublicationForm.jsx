@@ -11,6 +11,9 @@ const PublicationForm = () => {
   const [token, setToken] = useAtom(bearerTokenAtom);
   const [toDisplay, setToDisplay] = useState(true);
   const [currentUser, setCurrentUser] = useAtom(currentUserAtom)
+  const [publicationPicture, setPublicationPicture] = useState(null);
+  const [publicationFile, setPublicationFile] = useState();
+
 
   const handleClosePopUpPublication = () => {
     setPopUpPublication(false);
@@ -29,22 +32,21 @@ const PublicationForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    const formData = new FormData();
+    
+    formData.append("publication[title]", title);
+    formData.append("publication[description]", description);
+    formData.append("publication[to_display]", toDisplay);
+    formData.append("publication[publication_picture]", publicationPicture);
+
+
     axiosPrivate
       .post(
-        "/publications",
-        {
-          publication: {
-            // Nesting the publication data under the 'publication' key
-            creator_id: currentUser.id,
-            title: title,
-            description: description,
-            to_display: toDisplay,
-          },
-        },
-        {
+        "/publications", formData, {
           headers: {
             Authorization: token,
-            "Content-Type": "application/json",
+            "Content-Type": "multipart/form-data",
           },
           withCredentials: true,
         }
@@ -60,12 +62,19 @@ const PublicationForm = () => {
       });   
     };
 
+    const handleFileChange = (e) => {
+      const file = e.target.files[0];
+      setPublicationPicture(file);
+      setPublicationFile(URL.createObjectURL(file));
+    };
+
+
   if (popUpPublication)
     return (
       <section className="dark:bg-gray-900">
         <div className={`modal ${popUpPublication ? 'is-active' : ''}`}>
           <div className=" modal-overlay">
-            <div className="modal-content">
+            <div className="modal-content-publication">
               <button onClick={handleClosePopUpPublication} className="modal-close">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -87,6 +96,16 @@ const PublicationForm = () => {
               </h1>
   
               <form onSubmit={handleSubmit}>
+              <div className="flex flex-col justify-center items-center mb-5">
+              {/* <img src={missingImage} alt="" /> */}
+              <img src={publicationFile} alt="" />
+              <input 
+              type="file" 
+              onChange={handleFileChange}
+              accept="image/*"
+              className="mt-2"
+              />
+            </div>
                 <div className="">
                    <div className='my-8'>
                     <label
