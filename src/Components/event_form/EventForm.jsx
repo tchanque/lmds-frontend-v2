@@ -6,7 +6,7 @@ import { bearerTokenAtom, popUpEventAtom } from "../../atom/atoms";
 import EventInstrumentForm from "./event_instrument_form/EventInstrumentForm";
 import "./eventForm.css";
 
-const EventForm = () => {
+const EventForm = ({action}) => {
   const [category, setCategory] = useState("");
   const [title, setTitle] = useState("");
   const [startDate, setStartDate] = useState(
