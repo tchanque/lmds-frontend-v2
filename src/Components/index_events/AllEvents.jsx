@@ -124,7 +124,7 @@ const AllEvents = () => {
   
   return (
 <>
-      <h1>ALL EVENTS HERE</h1>
+      <h1 id="events">ALL EVENTS HERE</h1>
       <div className="flex">
         <div>
           <Card className="w-[550px] h-[500px] space-y-10 p-4 m-10" radius="lg">
@@ -166,7 +166,6 @@ const AllEvents = () => {
         </div>
       </div>
     </>
-
   );
 };
 
