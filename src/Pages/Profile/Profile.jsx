@@ -102,7 +102,7 @@ function Profile() {
 
   const handleChangePassword = async () => {
     try {
-      const response = await axiosPrivate.patch(
+      await axiosPrivate.patch(
         `/users/${id}/change_password`,
         {
           user: {
