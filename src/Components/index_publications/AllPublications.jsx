@@ -18,7 +18,6 @@ function AllPublications() {
   const [allPublications, setAllPublications] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const [selectedPublication, setSelectedPublication] = useState(null);
-  const [host] = useState("127.0.0.1:3000")
 
   useEffect(() => {
     if (token) {
