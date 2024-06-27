@@ -29,24 +29,23 @@ const CalendarEvent = ({ allEvents, onDateChange }) => {
   const tileClassName = ({ date, view }) => {
     if (view === "month") {
       const dayEvents = allEvents.filter(
-        (event) =>
-          new Date(event.start_date).toDateString() === date.toDateString()
+        (event) => new Date(event.start_date).toDateString() === date.toDateString()
       );
-      if (dayEvents.length > 0) {
+      if (selectedDate && date.toDateString() === selectedDate.toDateString()) {
+        return "selected";
+      } else if (dayEvents.length > 0) {
         return "highlight";
       }
-    }
-    if (selectedDate && date.toDateString() === selectedDate.toDateString()) {
-      return "selected";
     }
     return null;
   };
 
   return (
-    <div>
+    <div className="container_calendar">
       <Calendar
         onChange={handleDateChange}
-        tileClassName={tileClassName} // Applique la classe CSS aux jours avec événements
+        tileClassName={tileClassName}
+         // Applique la classe CSS aux jours avec événements
       />
     </div>
   );

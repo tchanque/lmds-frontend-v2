@@ -1,12 +1,109 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-.react-calendar__tile.highlight {
-
-  color: rgb(255, 0, 0);
-
+/* ========== CLASSE GENERALE DU CALENDRIER (parente) ========== */
+.react-calendar {
+  @apply my-3 border-2 border-solid rounded font-Ubuntu border-primary-dark;
+  padding: 2em;
+  background-color: white;
+  font-size: 1em;
+  margin: 1.5em;
+  max-width: 40vw;
+  min-height: 40vh;
+  width: 100%;
+  border: none;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
-.react-calendar__tile.selected {
-  background-color: #ffbf00;
-  color: white;
+/* ========== CSS POUR LA BARRE DE NAVIGATION DU CALENDRIER ========== */
+.react-calendar__navigation {
+  display: flex;
+  font-size: 1.2em;
+  align-items: center;
+}
+
+.react-calendar__navigation__label {
+  height: 100%;
+}
+
+.react-calendar__navigation__arrow {
+  font-size: 2em;
   border-radius: 50%;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  transition: 0.5s;
+}
+
+.react-calendar__navigation__arrow:hover {
+  @apply text-primary-main;
+  transition: 0.5s;
+}
+
+/* ========== CSS POUR LES NOMS DES JOURS ========== */
+.react-calendar__month-view__weekdays {
+  text-align: center;
+  padding: 1.02em;
+}
+
+/* ========== CSS POUR LES TUILES (JOURS) DU CALENDRIER ========== */
+
+
+.react-calendar__month-view__days button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.react-calendar__tile abbr {
+  font-size: 1rem;
+  color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  width: 40px;
+  margin: 2px;
+  transition: 0.5s;
+}
+
+/* Effet de survol avec un fond bleu rond */
+.react-calendar__tile:hover abbr {
+  background-color: #00bfff;
+  color: white;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: 0.5s;
+}
+
+/* ========== CSS POUR LES JOURS AVEC EVENEMENTS (highlight) ========== */
+.react-calendar__tile.highlight {
+  position: relative; /* Nécessaire pour positionner la pastille à l'intérieur de la div */
+}
+
+.react-calendar__tile.highlight::after {
+  content: ''; /* Nécessaire pour créer un pseudo-élément */
+  position: absolute;
+  top: 50%; /* Centré verticalement */
+  right: 10%; /* Ajustez cette valeur selon vos besoins */
+  transform: translate(50%, -50%); /* Pour recentrer la pastille */
+  width: 10px; /* Taille de la pastille */
+  height: 10px; /* Taille de la pastille */
+  background-color: red; /* Couleur de la pastille */
+  border-radius: 50%; /* Rend la pastille ronde */
+}
+
+/* ========== METS EN VALEUR LES JOURS SELECTIONNES ========== *//* Styles pour les jours sélectionnés */
+.react-calendar__tile.selected abbr {
+  background-color: #ffbf00 !important;
+  color: white !important;
+  border-radius: 50% !important;
+}
+
+/* Assurez-vous que les styles 'selected' priment sur 'highlight' */
+.react-calendar__tile.highlight.selected abbr {
+  background-color: #ffbf00 !important;
+  color: white !important;
+  border-radius: 50% !important;
 }
