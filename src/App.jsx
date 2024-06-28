@@ -9,8 +9,8 @@ import Register from "./Pages/Register/Register";
 import Login from "./Pages/Login/Login";
 import Nav from "./Components/nav/Nav";
 import Footer from "./Components/footer/Footer";
-import Terms from "./Pages/Terms/Terms";
-import Privacy from "./Pages/Privacy/Privacy";
+import Cgu from "./Pages/Cgu/Cgu";
+import Mentions from "./Pages/Mentions/Mentions";
 import DashboardAdmin from "./Pages/Dashboard Admin/DashboardAdmin";
 
 function App() {
@@ -45,8 +45,8 @@ function App() {
           ) : (
             <Route path="/admin" element={<Navigate to="/" replace />} />
           )}
-          <Route path="/CGU" element={<Terms />} />
-          <Route path="/Mentions" element={<Privacy />} />
+          <Route path="/CGU" element={<Cgu />} />
+          <Route path="/Mentions" element={<Mentions />} />
         </Routes>
         <Footer />
       </BrowserRouter>
