@@ -41,13 +41,11 @@ const CalendarEvent = ({ allEvents, onDateChange }) => {
   };
 
   return (
-    <div className="container_calendar">
       <Calendar
         onChange={handleDateChange}
         tileClassName={tileClassName}
          // Applique la classe CSS aux jours avec événements
       />
-    </div>
   );
 };
 
