@@ -7,7 +7,6 @@ import { axiosPrivate } from "../../api/axios";
 import parse from "html-react-parser";
 import { format } from "date-fns";
 import defaultImage from "../../public/images/image_event.jpg";
-// import PencilIcon from "../../public/images/pencil.svg";
 
 const PopUpEvent = ({
   selectedEvent,
@@ -19,7 +18,7 @@ const PopUpEvent = ({
   const [choice, setChoice] = useState(null);
   const [token, setToken] = useAtom(bearerTokenAtom);
   const [currentUser, setCurrentUser] = useAtom(currentUserAtom);
-  const [loading, setLoading] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [hasAvailableSpots, setHasAvailableSpots] = useState(true);
   const [message, setMessage] = useState(null);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -36,6 +35,8 @@ const PopUpEvent = ({
   const [price, setPrice] = useState(selectedEvent.price);
   const [location, setLocation] = useState(selectedEvent.location);
   const [description, setDescription] = useState(selectedEvent.description);
+  const [eventPicture, setEventPicture] = useState(null);
+  const [eventFile, setEventFile] = useState();
 
   // Ensure token and current user are set
   useEffect(() => {
@@ -110,9 +111,10 @@ const PopUpEvent = ({
       }
       await setUserAttendance(selectedEvent);
       setChoice(null); // Update attendance status after registration
-      setLoading(false);
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -133,9 +135,10 @@ const PopUpEvent = ({
       );
       await setUserAttendance(selectedEvent);
       setChoice(null);
-      setLoading(false); // Update attendance status after unsubscription
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false); // Update attendance status after unsubscription
     }
   };
 
@@ -161,24 +164,25 @@ const PopUpEvent = ({
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const updatedEvent = {
-      title: title,
-      description: description,
-      category: category,
-      price: price,
-      start_date: startDate,
-      end_date: endDate,
-      location: location,
-    };
+    const formData = new FormData();
+
+    formData.append("event[title]", title)
+    formData.append("event[description]", description)
+    formData.append("event[category]", category)
+    formData.append("event[price]", price)
+    formData.append("event[sart_date]", startDate)
+    formData.append("event[end_date]", endDate)
+    formData.append("event[location]", location)
+    formData.append("event[event_picture]", eventPicture)
 
     axiosPrivate
       .patch(
         `/events/${selectedEvent.id}`,
-        updatedEvent, // Pass updatedEvent as the data to be patched
+        formData,
         {
           headers: {
             Authorization: token,
-            "Content-Type": "application/json",
+            "Content-Type": "multipart/form-data",
           },
           withCredentials: true,
         }
@@ -195,6 +199,12 @@ const PopUpEvent = ({
       });
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setEventPicture(file);
+    setEventFile(URL.createObjectURL(file));
+  };
+
   if (loading) {
     return <h1> IS LOADING</h1>;
   }
@@ -208,11 +218,11 @@ const PopUpEvent = ({
               {selectedEvent.event_picture_url ? (
                 <img
                   src={`http://127.0.0.1:3000${selectedEvent.event_picture_url}`}
-                  alt=""
+                  alt={title}
                   className=""
                 />
               ) : (
-                <img src={defaultImage} alt="" className="" />
+                <img src={defaultImage} alt="default image" className="" />
               )}
             </div>
             <div className="flex flex-col items-center w-4/6 gap-8 p-2 event_information">
@@ -378,6 +388,33 @@ const PopUpEvent = ({
                 <h2>MODIFIER ÉVÈNEMENT</h2>
               </div>
               <form onSubmit={handleSubmit}>
+                <div className="flex flex-col">
+                  {eventFile ? (
+                    <img
+                      className="w-full publication__img"
+                      src={eventFile}
+                      alt="Event Preview"
+                    />
+                  ) : selectedEvent.event_picture_url ? (
+                    <img
+                      src={`http://127.0.0.1:3000${selectedEvent.event_picture_url}`}
+                      alt={title}
+                      className=""
+                    />
+                  ) : (
+                    <img
+                      className="w-full publication__img"
+                      src={defaultImage}
+                      alt="default image"
+                    />
+                  )}
+                  <input
+                    type="file"
+                    onChange={handleFileChange}
+                    accept="image/*"
+                    className="my-2 px-4 py-2 border rounded-md text-center"
+                  />
+                </div>
                 <div className="grid grid-cols-2 gap-x-8 gap-y-6">
                   <div>
                     <label
@@ -516,14 +553,16 @@ const PopUpEvent = ({
                     />
                   </div>
                 </div>
-                <Button type="submit" className="bg-success-main">
+                <div className="flex justify-center">
+                <Button type="submit" className="m-5 bg-success-main">
                   Accepter
                 </Button>
-              </form>
+                <Button onClick={handleEdit} className="m-5 bg-warning-main">
+                  Annuler
+                </Button>
+                </div>
 
-              <Button onClick={handleEdit} className="m-2 bg-warning-main">
-                Annuler
-              </Button>
+              </form>
             </div>
           </div>
         </>
