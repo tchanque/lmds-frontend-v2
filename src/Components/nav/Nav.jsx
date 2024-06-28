@@ -24,7 +24,7 @@ const Nav = () => {
 
   return (
     <Navbar>
-      <NavbarBrand>
+       <NavbarBrand>
         <img src={logoNav} className="w-28" />
       </NavbarBrand>
       <NavbarContent justify="center" className="hidden gap-5 g-5 sm:flex">
@@ -39,8 +39,8 @@ const Nav = () => {
           </a>
         </NavbarItem>
       </NavbarContent>
-      {currentUser ? (
-        <>
+        {currentUser ? (
+          <>
           <NavbarContent justify="center" className="hidden gap-10 g-5 sm:flex">
             <NavbarItem>
               <Link to={{ pathname: `users/${currentUser.id}`, hash: "agenda " }}>
@@ -79,8 +79,8 @@ const Nav = () => {
             </Dropdown>
           </NavbarContent>
         </>
-      ) : (
-        <NavbarContent justify="end">
+        ) : (
+<NavbarContent justify="end">
           <Dropdown>
             <NavbarItem>
               <DropdownTrigger>

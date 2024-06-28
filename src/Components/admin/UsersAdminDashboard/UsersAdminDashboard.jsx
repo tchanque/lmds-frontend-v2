@@ -54,7 +54,7 @@ const UsersAdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [token] = useAtom(bearerTokenAtom);
   const [popUpAdminForm, setPopUpAdminForm] = useAtom(popUpAdminFormAtom);
-
+  
   const navigate = useNavigate();
 
   const handleDropdownItemClick = (action, userId) => {
@@ -125,7 +125,7 @@ const UsersAdminDashboard = () => {
           user.email.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
-
+    
     return filteredUsers;
   }, [users, filterValue]);
 
@@ -175,8 +175,8 @@ const UsersAdminDashboard = () => {
             </p>
           </div>
         );
-      case "is_subscriber":
-        return cellValue ? "Yes" : "No";
+        case "is_subscriber":
+          return cellValue ? "Yes" : "No";
       case "actions":
         return (
           <div className="relative flex justify-start items-center gap-2">

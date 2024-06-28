@@ -23,6 +23,9 @@ const EventForm = () => {
   const [eventInstruments, setEventInstruments] = useState([]);
 
   const [popUpEvent, setPopUpEvent] = useAtom(popUpEventAtom);
+  const [eventPicture, setEventPicture] = useState(null);
+  const [eventFile, setEventFile] = useState();
+
 
   const addEventInstrumentForm = (e) => {
     e.preventDefault();
@@ -64,25 +67,23 @@ const EventForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("event[category]", category);
+    formData.append("event[title]", title);
+    formData.append("event[start_date]", startDate);
+    formData.append("event[end_date]", endDate);
+    formData.append("event[price]", price);
+    formData.append("event[location]", location);
+    formData.append("event[description]", description);
+    formData.append("event[event_picture]", eventPicture);
+    
     axiosPrivate
       .post(
-        "/events",
-        {
-          event: {
-            // Nesting the event data under the 'event' key
-            category: category,
-            title: title,
-            start_date: startDate,
-            end_date: endDate,
-            price: price,
-            location: location,
-            description: description,
-          },
-        },
-        {
+        "/events", formData, {
           headers: {
             Authorization: `${token}`,
-            "Content-Type": "application/json",
+            "Content-Type": "multipart/form-data",
           },
           withCredentials: true,
         }
@@ -147,12 +148,18 @@ const EventForm = () => {
       });
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setEventPicture(file);
+    setEventFile(URL.createObjectURL(file));
+  };
+
   if (popUpEvent)
   return (
     <section className="dark:bg-gray-900">
       <div className={`modal ${popUpEvent ? 'is-active' : ''}`}>
         <div className=" modal-overlay">
-          <div className="modal-content">
+          <div className="modal-content-event">
             <button onClick={handleClosePopUpEvent} className="modal-close">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -174,6 +181,16 @@ const EventForm = () => {
             </h1>
 
             <form onSubmit={handleSubmit}>
+            <div className="flex flex-col justify-center items-center mb-5">
+              {/* <img src={missingImage} alt="" /> */}
+              <img src={eventFile} alt="" />
+              <input 
+              type="file" 
+              onChange={handleFileChange}
+              accept="image/*"
+              className="mt-2"
+              />
+            </div>
               <div className="grid grid-cols-2 gap-x-8 gap-y-6">
                 <div>
                   <label
