@@ -6,6 +6,8 @@ import { bearerTokenAtom, currentUserAtom } from "../../atom/atoms";
 import default_avatar from "../../public/images/photo-avatar-profil.png";
 import { useNavigate } from "react-router-dom";
 import UserAgenda from "../../Components/user_agenda/UserAgenda";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./profile.css";
 
 function Profile() {
@@ -57,7 +59,6 @@ function Profile() {
       setLoading(false);
     }
   }, [id, token]);
-  
   
   const handleSave = () => {
     const updatedUser = {
@@ -124,8 +125,22 @@ function Profile() {
           withCredentials: true,
         }
       );
+      
+      toast.success("Mot de passe changé avec succès !", {
+        position: "top-center"
+      });
+       // Reset the password fields
+    setOldPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+
     } catch (error) {
       console.error("Error changing password:", error);
+      toast.error("Erreur lors du changement de mot de passe.", {
+        position: "top-center"
+      }
+
+      );
     }
   };
 
@@ -168,7 +183,6 @@ function Profile() {
     setModifyPicture(true);
   }
   
-
   if (loading) {
     return (
       <div>
@@ -182,6 +196,7 @@ function Profile() {
 
   return (
     <>
+    <ToastContainer />
     <section className="h-full">
       <div className="title">
         {user.id === currentUser.id ? (
