@@ -44,6 +44,9 @@ export default {
         192: "48rem",
         200: "50rem",
       },
+      width: {
+        'fixedButton': '100px'
+      }
     },
   },
   darkMode: "class",
@@ -68,6 +71,7 @@ export default {
             "grey-dark": "#51555C",
             gradientColor1: "#ffffff",
             gradientColor2: "#bee3f3",
+            "lmds-red": "#C9614F",
           },
         },
         dark: {
