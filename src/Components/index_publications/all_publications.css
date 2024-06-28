@@ -1,0 +1,25 @@
+.slick-next {
+  right: 10px;
+  background: rgb(248, 247, 247) !important;
+  border-radius: 7px;
+}
+
+.slick-prev {
+  left: 10px;
+  z-index: 2;
+  background: rgb(241, 237, 237) !important;
+  border-radius: 7px;
+}
+
+
+.slick-prev:before,
+.slick-next:before {
+color: rgb(0, 0, 0);
+}
+
+.img-restrained {
+  max-width: 100%; /* S'assure que l'image ne dépasse pas la largeur de son conteneur */
+  max-height: 600px; /* Définit une hauteur maximale pour l'image */
+  object-fit: cover; /* Maintient les proportions de l'image tout en couvrant la zone définie */
+  border-radius: 0.75rem; /* Ajoute un rayon de bordure pour arrondir les coins */
+}

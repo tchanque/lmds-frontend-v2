@@ -92,7 +92,7 @@ const formatDate = (date) => {
           <div key={publication.id} className="relative">
            {publication.publication_picture_url ? ( 
             <img
-              className="w-full rounded-lg"
+              className="w-full rounded-lg img-restrained"
               src={`http://127.0.0.1:3000${publication.publication_picture_url}`}
               alt={publication.title}
             />) : (
