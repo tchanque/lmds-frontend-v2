@@ -7,6 +7,7 @@ import { axiosPrivate } from "../../api/axios";
 import parse from "html-react-parser";
 import { format } from "date-fns";
 import defaultImage from "../../public/images/image_event.jpg";
+import { useNavigate } from "react-router-dom";
 
 const PopUpEvent = ({
   selectedEvent,
@@ -22,6 +23,7 @@ const PopUpEvent = ({
   const [hasAvailableSpots, setHasAvailableSpots] = useState(true);
   const [message, setMessage] = useState(null);
   const [isUpdating, setIsUpdating] = useState(false);
+  const navigate = useNavigate();
 
   // ELEMENT FOR UPDATE
   const [category, setCategory] = useState(selectedEvent.category);
@@ -121,6 +123,7 @@ const PopUpEvent = ({
   // Handle event unsubscription
   const handleUnsubscribe = async () => {
     setLoading(true);
+    console.log(selectedEvent)
     try {
       await Promise.all(
         attendance.map((att) =>
@@ -200,6 +203,22 @@ const PopUpEvent = ({
         console.error("Error updating event:", error);
       });
   };
+
+  const handleDelete = async () => {
+    try {
+      axiosPrivate.delete(`/events/${selectedEvent.id}`, {
+        headers: {
+            'Authorization': token,
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true,
+        });
+      window.location.reload()
+      console.log("Event deleted successfully");
+    } catch (error) {
+      console.error("Error deleting the event: ", error);
+    }
+  }
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -357,6 +376,21 @@ const PopUpEvent = ({
                   Je me désinscris
                 </Button>
               )}
+              {currentUser && currentUser.role === "Admin" || currentUser.id == selectedEvent.creator_id ? (
+                
+              <div className="flex gap-5 adminBtn">
+            <Button className="font-bold text-white bg-primary-main" onClick={handleEdit}>Edit</Button>
+            <Button className="font-bold text-white bg-danger-main" onClick={() => {
+                        if (
+                          window.confirm(
+                            "Es-tu sûr de vouloir supprimer ton compte?"
+                          )
+                        ) {
+                          handleDelete();
+                        }
+                      }}>Delete</Button>
+            </div>
+              ) : null}
               {message ? <div>{parse(message)}</div> : null}
             </div>
             {/* <button className="" onClick={handleEdit}> */}
@@ -379,7 +413,6 @@ const PopUpEvent = ({
                 ></path>
               </svg>
             </button>
-            <button onClick={handleEdit}>Edit</button>
           </div>
         </div>
       ) : (
@@ -414,7 +447,7 @@ const PopUpEvent = ({
                     type="file"
                     onChange={handleFileChange}
                     accept="image/*"
-                    className="my-2 px-4 py-2 border rounded-md text-center"
+                    className="px-4 py-2 my-2 text-center border rounded-md"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-x-8 gap-y-6">
