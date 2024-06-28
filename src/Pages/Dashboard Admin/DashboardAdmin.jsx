@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useAtom } from "jotai";
+import { Button } from "@nextui-org/react";
 import { popUpAdminFormAtom } from "../../atom/atoms";
 import UsersAdminDashboard from "../../Components/admin/UsersAdminDashboard/UsersAdminDashboard";
 import AdminRegistrationForm from "../../Components/admin/registration_form/AdminRegistrationForm";
 import PublicationsAdminDashboard from "../../Components/admin/PublicationsAdminDashboard/PublicationsAdminDashboard";
 import EventsAdminDashboard from "../../Components/admin/EventsAdminDashboard/EventsAdminDashboard";
+import "./dashboardAdmin.css"
 
 
 
@@ -34,7 +36,7 @@ const DashboardAdmin = () => {
 
   return (
     <>
-      <div className="flex">
+      <div className="admin flex h-dvh">
         <div>
           <aside className="flex flex-col items-center">
             <img
@@ -43,13 +45,13 @@ const DashboardAdmin = () => {
             />
             <ul>
               <li className="flex justify-center">
-                <button onClick={handleUsersList}>Users List</button>
+                <Button color="primary" className="w-full my-2" onClick={handleUsersList}>Liste des membres</Button>
               </li>
               <li className="flex justify-center">
-                <button onClick={handlePublicationsList}>Publications List</button>
+                <Button color="primary" className="w-full my-2" onClick={handlePublicationsList}>Liste des actualités</Button>
               </li>
               <li className="flex justify-center">
-                <button onClick={handleEventsList}>Events List</button>
+                <Button color="primary" className="w-full my-2" onClick={handleEventsList}>Liste des évènements</Button>
               </li>
             </ul>
           </aside>

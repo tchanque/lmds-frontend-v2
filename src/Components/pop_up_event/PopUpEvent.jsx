@@ -232,189 +232,192 @@ const PopUpEvent = ({
 
   return (
     <>
-      {!isUpdating ? (
-        <div className="modal is-active">
-          <div className="flex modal-content">
-            <div className="flex items-center justify-center">
-              {selectedEvent.event_picture_url ? (
-                <img
-                  src={`http://127.0.0.1:3000${selectedEvent.event_picture_url}`}
-                  alt={title}
-                  className=""
-                />
-              ) : (
-                <img src={defaultImage} alt="default image" className="" />
-              )}
+    {!isUpdating ? (
+      <div className="modal is-active">
+        <div className="flex modal-content">
+          <div className="flex items-center justify-center">
+            {selectedEvent.event_picture_url ? (
+              <img
+                src={`http://127.0.0.1:3000${selectedEvent.event_picture_url}`}
+                alt={title}
+                className=""
+              />
+            ) : (
+              <img src={defaultImage} alt="default image" className="" />
+            )}
+          </div>
+          <div className="flex flex-col items-center w-4/6 gap-8 p-2 event_information">
+            <div className="text-center title__event-container">
+              <h2 className="">{category}</h2>
+              <p className="">{title}</p>
             </div>
-            <div className="flex flex-col items-center w-4/6 gap-8 p-2 event_information">
-              <div className="text-center title__event-container">
-                <h2 className="">{category}</h2>
-                <p className="">{title}</p>
+            <div className="text-center pricing">
+              <h2>Prix</h2>
+              <p>{price} €</p>
+            </div>
+            <div className="text-center event_description">
+              <h2>Description</h2>
+              <p>{description}</p>
+            </div>
+            <div className="text-center attendances">
+              <h2>Liste des participants</h2>
+              <div className="flex justify-center gap-5">
+                {selectedEvent.event_instruments
+                  .filter(
+                    (instrument) =>
+                      instrument.instrument.name.toLowerCase() !== "aucun"
+                  )
+                  .map((instrument, instrumentIndex) => (
+                    <div key={instrumentIndex} className="flex flex-col">
+                      <p>
+                        {instrument.instrument.name}{" "}
+                        {instrument.available_spots}/{instrument.total_spots}
+                      </p>
+                      {instrument.attendances
+                        .filter((attendee) => !attendee.is_pending)
+                        .map((attendee, attendeeIndex) => (
+                          <p key={attendeeIndex}>
+                            {attendee.attendee.first_name}
+                          </p>
+                        ))}
+                    </div>
+                  ))}
               </div>
-              <div className="text-center pricing">
-                <h2>Prix</h2>
-                <p>{price} €</p>
-              </div>
-              <div className="text-center event_description">
-                <h2>Description</h2>
-                <p>{description}</p>
-              </div>
-              <div className="text-center attendances">
-                <h2>Liste des participants</h2>
-                <div className="flex justify-center gap-5">
-                  {selectedEvent.event_instruments
-                    .filter(
-                      (instrument) =>
-                        instrument.instrument.name.toLowerCase() !== "aucun"
-                    )
-                    .map((instrument, instrumentIndex) => (
-                      <div key={instrumentIndex} className="flex flex-col">
-                        <p>
-                          {instrument.instrument.name}{" "}
-                          {instrument.available_spots}/{instrument.total_spots}
-                        </p>
-                        {instrument.attendances
-                          .filter((attendee) => !attendee.is_pending) // Filtrer les attendances
-                          .map((attendee, attendeeIndex) => (
-                            <p key={attendeeIndex}>
-                              {attendee.attendee.first_name}
-                            </p>
-                          ))}
-                      </div>
-                    ))}
-                </div>
-                <p>Merci d'ajouter un dropdown menu avec les participants</p>
-              </div>
-              {!isAttendee ? (
-                shouldDisplayInstruments() ? (
-                  <div>
-                    <h2>Choisissez un instrument</h2>
-                    <form className="text-center" onSubmit={handleInscription}>
-                      <div className="flex items-center justify-center gap-5">
-                        {selectedEvent.event_instruments
-                          .filter(
-                            (instrument) =>
-                              instrument.instrument.name.toLowerCase() !==
-                              "aucun"
-                          )
-                          .map((instrument, index) => (
-                            <div key={index} className="instrument-radio">
-                              <input
-                                type="radio"
-                                id={`instrument-${index}`}
-                                name="instrument"
-                                value={instrument.id}
-                                onClick={(e) => {
-                                  setChoice(e.target.value);
-                                  setHasAvailableSpots(true);
-                                }}
-                              />
-                              <label htmlFor={`instrument-${index}`}>
-                                {instrument.instrument.name}
-                              </label>
-                            </div>
-                          ))}
-                        <button
-                          type="reset"
-                          className="p-1 text-white rounded-full bg-danger-main"
-                          onClick={() => {
-                            setChoice(null);
-                            setHasAvailableSpots(true);
-                          }}
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth="1.5"
-                            stroke="currentColor"
-                            className="size-4"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M6 18 18 6M6 6l12 12"
+              <p>Merci d'ajouter un dropdown menu avec les participants</p>
+            </div>
+            
+            {currentUser ? (!isAttendee ? (
+              shouldDisplayInstruments() ? (
+                <div>
+                  <h2>Choisissez un instrument</h2>
+                  <form className="text-center" onSubmit={handleInscription}>
+                    <div className="flex items-center justify-center gap-5">
+                      {selectedEvent.event_instruments
+                        .filter(
+                          (instrument) =>
+                            instrument.instrument.name.toLowerCase() !== "aucun"
+                        )
+                        .map((instrument, index) => (
+                          <div key={index} className="instrument-radio">
+                            <input
+                              type="radio"
+                              id={`instrument-${index}`}
+                              name="instrument"
+                              value={instrument.id}
+                              onClick={(e) => {
+                                setChoice(e.target.value);
+                                setHasAvailableSpots(true);
+                              }}
                             />
-                          </svg>
-                        </button>
-                      </div>
-                      {hasAvailableSpots ? (
-                        <Button
-                          className="mt-5 text-white bg-success-main"
-                          type="submit"
-                          isDisabled={!choice}
+                            <label htmlFor={`instrument-${index}`}>
+                              {instrument.instrument.name}
+                            </label>
+                          </div>
+                        ))}
+                      <button
+                        type="reset"
+                        className="p-1 text-white rounded-full bg-danger-main"
+                        onClick={() => {
+                          setChoice(null);
+                          setHasAvailableSpots(true);
+                        }}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth="1.5"
+                          stroke="currentColor"
+                          className="size-4"
                         >
-                          Je participe
-                        </Button>
-                      ) : (
-                        <Button
-                          className="mt-5 text-white bg-success-main"
-                          type="submit"
-                        >
-                          Liste d'attente
-                        </Button>
-                      )}
-                    </form>
-                  </div>
-                ) : (
-                  <Button
-                    className="text-white bg-success-main"
-                    onClick={handleInscription}
-                  >
-                    Je participe
-                  </Button>
-                )
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M6 18 18 6M6 6l12 12"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                    {hasAvailableSpots ? (
+                      <Button
+                        className="mt-5 text-white bg-success-main"
+                        type="submit"
+                        isDisabled={!choice}
+                      >
+                        Je participe
+                      </Button>
+                    ) : (
+                      <Button
+                        className="mt-5 text-white bg-success-main"
+                        type="submit"
+                      >
+                        Liste d'attente
+                      </Button>
+                    )}
+                  </form>
+                </div>
               ) : (
                 <Button
-                  className="text-white bg-warning-main"
+                  className="text-white bg-success-main"
+                  onClick={handleInscription}
+                >
+                  Je participe
+                </Button>
+              )
+            ) : (
+              <Button
+                className="text-white bg-warning-main"
+                onClick={() => {
+                  handleUnsubscribe();
+                  setChoice(null);
+                  setMessage(null);
+                }}
+              >
+                Je me désinscris
+              </Button>
+            )) : null}
+            
+            {(currentUser && (currentUser.role === "Admin" || currentUser.id === selectedEvent.creator_id)) && (
+              <div className="flex gap-5 adminBtn">
+                <Button
+                  className="font-bold text-white bg-primary-main"
+                  onClick={handleEdit}
+                >
+                  Edit
+                </Button>
+                <Button
+                  className="font-bold text-white bg-danger-main"
                   onClick={() => {
-                    handleUnsubscribe();
-                    setChoice(null);
-                    setMessage(null);
+                    if (window.confirm("Es-tu sûr de vouloir supprimer cet évènement?")) {
+                      handleDelete();
+                    }
                   }}
                 >
-                  Je me désinscris
+                  Delete
                 </Button>
-              )}
-              {currentUser && currentUser.role === "Admin" || currentUser.id == selectedEvent.creator_id ? (
-                
-              <div className="flex gap-5 adminBtn">
-            <Button className="font-bold text-white bg-primary-main" onClick={handleEdit}>Edit</Button>
-            <Button className="font-bold text-white bg-danger-main" onClick={() => {
-                        if (
-                          window.confirm(
-                            "Es-tu sûr de vouloir supprimer ton compte?"
-                          )
-                        ) {
-                          handleDelete();
-                        }
-                      }}>Delete</Button>
-            </div>
-              ) : null}
-              {message ? <div>{parse(message)}</div> : null}
-            </div>
-            {/* <button className="" onClick={handleEdit}> */}
-            {/* <PencilIcon width={25} height={25} /> */}
-            {/* </button> */}
-            <button className="modal-close" onClick={closePoPup}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                x="0px"
-                y="0px"
-                width="25"
-                height="25"
-                viewBox="0 0 50 50"
-                fill="#F31248"
-              >
-                <path
-                  d="M 25 2 C 12.309534 2 2 12.309534 2 25 C 2 37.690466 12.309534 48 25 48 C 37.690466 48 48 37.690466 48 25 C 48 12.309534 37.690466 2 25 2 z M 25 4 C 36.609534 4 46 13.390466 46 25 C 46 36.609534 36.609534 46 25 46 C 13.390466 46 4 36.609534 4 25 C 4 13.390466 13.390466 4 25 4 z M 32.990234 15.986328 A 1.0001 1.0001 0 0 0 32.292969 16.292969 L 25 23.585938 L 17.707031 16.292969 A 1.0001 1.0001 0 0 0 16.990234 15.990234 A 1.0001 1.0001 0 0 0 16.292969 17.707031 L 23.585938 25 L 16.292969 32.292969 A 1.0001 1.0001 0 1 0 17.707031 33.707031 L 25 26.414062 L 32.292969 33.707031 A 1.0001 1.0001 0 1 0 33.707031 32.292969 L 26.414062 25 L 33.707031 17.707031 A 1.0001 1.0001 0 0 0 32.990234 15.986328 z"
-                  stroke="#F31248"
-                  strokeWidth={1.5}
-                ></path>
-              </svg>
-            </button>
+              </div>
+            )}
+            {message ? <div>{parse(message)}</div> : null}
           </div>
+          <button className="modal-close" onClick={closePoPup}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              x="0px"
+              y="0px"
+              width="25"
+              height="25"
+              viewBox="0 0 50 50"
+              fill="#F31248"
+            >
+              <path
+                d="M 25 2 C 12.309534 2 2 12.309534 2 25 C 2 37.690466 12.309534 48 25 48 C 37.690466 48 48 37.690466 48 25 C 48 12.309534 37.690466 2 25 2 z M 25 4 C 36.609534 4 46 13.390466 46 25 C 46 36.609534 36.609534 46 25 46 C 13.390466 46 4 36.609534 4 25 C 4 13.390466 13.390466 4 25 4 z M 32.990234 15.986328 A 1.0001 1.0001 0 0 0 32.292969 16.292969 L 25 23.585938 L 17.707031 16.292969 A 1.0001 1.0001 0 0 0 16.990234 15.990234 A 1.0001 1.0001 0 0 0 16.292969 17.707031 L 23.585938 25 L 16.292969 32.292969 A 1.0001 1.0001 0 1 0 17.707031 33.707031 L 25 26.414062 L 32.292969 33.707031 A 1.0001 1.0001 0 1 0 33.707031 32.292969 L 26.414062 25 L 33.707031 17.707031 A 1.0001 1.0001 0 0 0 32.990234 15.986328 z"
+                stroke="#F31248"
+                strokeWidth={1.5}
+              ></path>
+            </svg>
+          </button>
         </div>
+      </div>
       ) : (
         <>
           <div className="modal is-active">
