@@ -184,6 +184,8 @@ const PopUpEvent = ({
     .then(response => {
       // Handle success if needed
       console.log("Event updated successfully:", response.data);
+      handleEdit();
+      window.location.reload();
     })
     .catch(error => {
       // Handle error if needed
@@ -359,7 +361,7 @@ const PopUpEvent = ({
       ) : (
         <>
           <div className="modal is-active">
-            <div className="flex items-center flex-col modal-content">
+            <div className="flex flex-col items-center modal-content">
               <div className="title_form">
                 <h2>MODIFIER ÉVÈNEMENT</h2>
               </div>
@@ -502,10 +504,10 @@ const PopUpEvent = ({
                     />
                   </div>
                 </div>
-                <Button type="submit" className="bg-success-main" onClick={handleEdit}>Accepter</Button>
+                <Button type="submit" className="bg-success-main" >Accepter</Button>
               </form>
 
-              <Button onClick={handleEdit} className="bg-warning-main m-2">
+              <Button onClick={handleEdit} className="m-2 bg-warning-main">
                 Annuler
               </Button>
             </div>
