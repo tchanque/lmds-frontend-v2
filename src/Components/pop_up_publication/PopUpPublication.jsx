@@ -67,7 +67,9 @@ const handleUpdatePublication = async () => {
     formData.append("publication[title]", updatedPublication.title);
     formData.append("publication[description]", updatedPublication.description);
     formData.append("publication[to_display]", updatedPublication.to_display);
-    formData.append("publication[publication_picture]", publicationPicture);
+    if (publicationPicture) {
+      formData.append("publication[publication_picture]", publicationPicture)
+    }
 
   try {
     const response = await axiosPrivate.patch(

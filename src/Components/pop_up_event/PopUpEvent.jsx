@@ -170,10 +170,12 @@ const PopUpEvent = ({
     formData.append("event[description]", description)
     formData.append("event[category]", category)
     formData.append("event[price]", price)
-    formData.append("event[sart_date]", startDate)
+    formData.append("event[start_date]", startDate)
     formData.append("event[end_date]", endDate)
     formData.append("event[location]", location)
-    formData.append("event[event_picture]", eventPicture)
+    if (eventPicture) {
+      formData.append("event[event_picture]", eventPicture);
+    }
 
     axiosPrivate
       .patch(
