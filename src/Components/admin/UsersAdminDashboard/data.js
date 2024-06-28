@@ -1,11 +1,11 @@
 import React from "react";
 const columns = [
   {name: "ID", uid: "id", sortable: true},
-  {name: "FIRST NAME", uid: "first_name", sortable: true},
-  {name: "LAST NAME", uid: "last_name", sortable: true},
+  {name: "PRENOM", uid: "first_name", sortable: true},
+  {name: "NOM", uid: "last_name", sortable: true},
   {name: "ROLE", uid: "role", sortable: true},
   {name: "EMAIL", uid: "email"},
-  {name: "SUB", uid: "is_subscriber"},
+  {name: "ADHERENT", uid: "is_subscriber"},
   {name: "ACTIONS", uid: "actions"},
 ];
 

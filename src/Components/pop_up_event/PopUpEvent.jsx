@@ -5,20 +5,40 @@ import { useAtom } from "jotai";
 import { currentUserAtom, bearerTokenAtom } from "../../atom/atoms";
 import { axiosPrivate } from "../../api/axios";
 import parse from "html-react-parser";
+import { format } from "date-fns";
+import defaultImage from "../../public/images/image_event.jpg";
+import { useNavigate } from "react-router-dom";
 
 const PopUpEvent = ({
   selectedEvent,
   closePoPup,
   isAttendee,
   setUserAttendance,
-  attendance
+  attendance,
 }) => {
   const [choice, setChoice] = useState(null);
   const [token, setToken] = useAtom(bearerTokenAtom);
   const [currentUser, setCurrentUser] = useAtom(currentUserAtom);
-  const [loading, setLoading] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [hasAvailableSpots, setHasAvailableSpots] = useState(true);
   const [message, setMessage] = useState(null);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const navigate = useNavigate();
+
+  // ELEMENT FOR UPDATE
+  const [category, setCategory] = useState(selectedEvent.category);
+  const [title, setTitle] = useState(selectedEvent.title);
+  const [startDate, setStartDate] = useState(
+    format(new Date(selectedEvent.start_date), "yyyy-MM-dd'T'HH:mm:ss")
+  );
+  const [endDate, setEndDate] = useState(
+    format(new Date(selectedEvent.end_date), "yyyy-MM-dd'T'HH:mm:ss")
+  );
+  const [price, setPrice] = useState(selectedEvent.price);
+  const [location, setLocation] = useState(selectedEvent.location);
+  const [description, setDescription] = useState(selectedEvent.description);
+  const [eventPicture, setEventPicture] = useState(null);
+  const [eventFile, setEventFile] = useState();
 
   // Ensure token and current user are set
   useEffect(() => {
@@ -35,7 +55,7 @@ const PopUpEvent = ({
     if (
       selectedEvent.event_instruments.length === 1 &&
       selectedEvent.event_instruments[0].instrument.name.toLowerCase() ===
-      "aucun"
+        "aucun"
     ) {
       return false;
     }
@@ -78,24 +98,32 @@ const PopUpEvent = ({
         // Popup: Désolé, quelqu'un s'est inscrit avant toi !
         console.log("Désolé, quelqu'un s'est inscrit avant toi !");
         // Show message on the screen
-        setMessage("<p className='text-danger-main'>Désolé, il semblerait que quelqu'un se soit inscrit avant vous ! Vous êtes en liste d'attente.</p>");
+        setMessage(
+          "<p className='text-danger-main'>Désolé, il semblerait que quelqu'un se soit inscrit avant vous ! Vous êtes en liste d'attente.</p>"
+        );
       } else if (!response.data.is_pending && !hasAvailableSpots) {
         // Popup: Bravo, une place c'est libérée au moment de ton inscription
-        console.log("Bravo, une place c'est libérée au moment de ton inscription !");
+        console.log(
+          "Bravo, une place c'est libérée au moment de ton inscription !"
+        );
         // Show message on the screen
-        setMessage("<p className='text-success-main'>Woaw ! Une place c'est libérée au moment de ton inscription !</p>");
+        setMessage(
+          "<p className='text-success-main'>Woaw ! Une place c'est libérée au moment de ton inscription !</p>"
+        );
       }
       await setUserAttendance(selectedEvent);
       setChoice(null); // Update attendance status after registration
-      setLoading(false);
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
   // Handle event unsubscription
   const handleUnsubscribe = async () => {
     setLoading(true);
+    console.log(selectedEvent)
     try {
       await Promise.all(
         attendance.map((att) =>
@@ -110,10 +138,10 @@ const PopUpEvent = ({
       );
       await setUserAttendance(selectedEvent);
       setChoice(null);
-      setLoading(false); // Update attendance status after unsubscription
-      
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false); // Update attendance status after unsubscription
     }
   };
 
@@ -132,27 +160,104 @@ const PopUpEvent = ({
     }
   }, [choice]);
 
+  const handleEdit = () => {
+    setIsUpdating(!isUpdating);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+
+    formData.append("event[title]", title)
+    formData.append("event[description]", description)
+    formData.append("event[category]", category)
+    formData.append("event[price]", price)
+    formData.append("event[start_date]", startDate)
+    formData.append("event[end_date]", endDate)
+    formData.append("event[location]", location)
+    if (eventPicture) {
+      formData.append("event[event_picture]", eventPicture);
+    }
+
+    axiosPrivate
+      .patch(
+        `/events/${selectedEvent.id}`,
+        formData,
+        {
+          headers: {
+            Authorization: token,
+            "Content-Type": "multipart/form-data",
+          },
+          withCredentials: true,
+        }
+      )
+      .then((response) => {
+        // Handle success if needed
+        console.log("Event updated successfully:", response.data);
+        handleEdit();
+        window.location.reload();
+      })
+      .catch((error) => {
+        // Handle error if needed
+        console.error("Error updating event:", error);
+      });
+  };
+
+  const handleDelete = async () => {
+    try {
+      axiosPrivate.delete(`/events/${selectedEvent.id}`, {
+        headers: {
+            'Authorization': token,
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true,
+        });
+      window.location.reload()
+      console.log("Event deleted successfully");
+    } catch (error) {
+      console.error("Error deleting the event: ", error);
+    }
+  }
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setEventPicture(file);
+    setEventFile(URL.createObjectURL(file));
+  };
+
   if (loading) {
     return <h1> IS LOADING</h1>;
   }
 
   return (
     <>
+    {!isUpdating ? (
       <div className="modal is-active">
         <div className="flex modal-content">
-          <div className="event_img bg-cover bg-center w-3/6 h-6/6 bg-no-repeat bg-[url('https://media.istockphoto.com/id/1667873018/fr/photo/gar%C3%A7on-jouant-de-la-batterie-dans-une-%C3%A9cole-de-musique.jpg?s=2048x2048&w=is&k=20&c=Bn0w595KUKm2zDPhSDREM4o9nd5wSc94vpd4ADxruRo=')]"></div>
+          <div className="flex items-center justify-center">
+            {selectedEvent.event_picture_url ? (
+              <img
+                src={`http://127.0.0.1:3000${selectedEvent.event_picture_url}`}
+                alt={title}
+                className=""
+              />
+            ) : (
+              <img src={defaultImage} alt="default image" className="" />
+            )}
+          </div>
           <div className="flex flex-col items-center w-4/6 gap-8 p-2 event_information">
             <div className="text-center title__event-container">
-              <h2 className="">{selectedEvent.category}</h2>
-              <p className="">{selectedEvent.title}</p>
+              <h2 className="">{category}</h2>
+              <p className="">{title}</p>
             </div>
             <div className="text-center pricing">
               <h2>Prix</h2>
-              <p>{selectedEvent.price} €</p>
+              <p>{price} €</p>
             </div>
             <div className="text-center event_description">
               <h2>Description</h2>
-              <p>{selectedEvent.description}</p>
+              <p>{description}</p>
             </div>
             <div className="text-center attendances">
               <h2>Liste des participants</h2>
@@ -169,16 +274,19 @@ const PopUpEvent = ({
                         {instrument.available_spots}/{instrument.total_spots}
                       </p>
                       {instrument.attendances
-                        .filter((attendee) => !attendee.is_pending) // Filtrer les attendances
+                        .filter((attendee) => !attendee.is_pending)
                         .map((attendee, attendeeIndex) => (
-                          <p key={attendeeIndex}>{attendee.attendee.first_name}</p>
+                          <p key={attendeeIndex}>
+                            {attendee.attendee.first_name}
+                          </p>
                         ))}
                     </div>
                   ))}
               </div>
               <p>Merci d'ajouter un dropdown menu avec les participants</p>
             </div>
-            {!isAttendee ? (
+            
+            {currentUser ? (!isAttendee ? (
               shouldDisplayInstruments() ? (
                 <div>
                   <h2>Choisissez un instrument</h2>
@@ -196,7 +304,10 @@ const PopUpEvent = ({
                               id={`instrument-${index}`}
                               name="instrument"
                               value={instrument.id}
-                              onClick={(e) => {setChoice(e.target.value); setHasAvailableSpots(true)}}
+                              onClick={(e) => {
+                                setChoice(e.target.value);
+                                setHasAvailableSpots(true);
+                              }}
                             />
                             <label htmlFor={`instrument-${index}`}>
                               {instrument.instrument.name}
@@ -206,7 +317,10 @@ const PopUpEvent = ({
                       <button
                         type="reset"
                         className="p-1 text-white rounded-full bg-danger-main"
-                        onClick={() => { setChoice(null); setHasAvailableSpots(true) }}
+                        onClick={() => {
+                          setChoice(null);
+                          setHasAvailableSpots(true);
+                        }}
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -240,7 +354,6 @@ const PopUpEvent = ({
                         Liste d'attente
                       </Button>
                     )}
-
                   </form>
                 </div>
               ) : (
@@ -254,15 +367,39 @@ const PopUpEvent = ({
             ) : (
               <Button
                 className="text-white bg-warning-main"
-                onClick={() => {handleUnsubscribe(); setChoice(null); setMessage(null)}}
+                onClick={() => {
+                  handleUnsubscribe();
+                  setChoice(null);
+                  setMessage(null);
+                }}
               >
                 Je me désinscris
               </Button>
+            )) : null}
+            
+            {(currentUser && (currentUser.role === "Admin" || currentUser.id === selectedEvent.creator_id)) && (
+              <div className="flex gap-5 adminBtn">
+                <Button
+                  className="font-bold text-white bg-primary-main"
+                  onClick={handleEdit}
+                >
+                  Edit
+                </Button>
+                <Button
+                  className="font-bold text-white bg-danger-main"
+                  onClick={() => {
+                    if (window.confirm("Es-tu sûr de vouloir supprimer cet évènement?")) {
+                      handleDelete();
+                    }
+                  }}
+                >
+                  Delete
+                </Button>
+              </div>
             )}
-          {message ? <div>{parse(message)}</div> : null}
+            {message ? <div>{parse(message)}</div> : null}
           </div>
           <button className="modal-close" onClick={closePoPup}>
-            {" "}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               x="0px"
@@ -281,6 +418,193 @@ const PopUpEvent = ({
           </button>
         </div>
       </div>
+      ) : (
+        <>
+          <div className="modal is-active">
+            <div className="flex flex-col items-center modal-content">
+              <div className="title_form">
+                <h2>MODIFIER ÉVÈNEMENT</h2>
+              </div>
+              <form onSubmit={handleSubmit}>
+                <div className="flex flex-col">
+                  {eventFile ? (
+                    <img
+                      className="w-full publication__img"
+                      src={eventFile}
+                      alt="Event Preview"
+                    />
+                  ) : selectedEvent.event_picture_url ? (
+                    <img
+                      src={`http://127.0.0.1:3000${selectedEvent.event_picture_url}`}
+                      alt={title}
+                      className=""
+                    />
+                  ) : (
+                    <img
+                      className="w-full publication__img"
+                      src={defaultImage}
+                      alt="default image"
+                    />
+                  )}
+                  <input
+                    type="file"
+                    onChange={handleFileChange}
+                    accept="image/*"
+                    className="px-4 py-2 my-2 text-center border rounded-md"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-x-8 gap-y-6">
+                  <div>
+                    <label
+                      htmlFor="category"
+                      className="block mb-2 text-sm font-medium text-center font-hind-vadodara text-grey-main dark:text-white"
+                    >
+                      Catégorie
+                    </label>
+                    <select
+                      name="category"
+                      id="category"
+                      value={category}
+                      onChange={(e) => setCategory(e.target.value)}
+                      className="bg-gray-50 border border-primary-main text-grey-main text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder="Catégorie de votre évènement"
+                      required
+                    >
+                      <option hidden value="">
+                        Choisissez une catégorie
+                      </option>
+                      <option value="Atelier">Atelier</option>
+                      <option value="Concert">Concert</option>
+                      <option value="Permanence">Permanence</option>
+                      <option value="Stage">Stage</option>
+                      <option value="Scène ouverte">Scène ouverte</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor="title"
+                      className="block mb-2 text-sm font-medium text-center font-hind-vadodara text-grey-main dark:text-white"
+                    >
+                      Titre
+                    </label>
+                    <input
+                      type="text"
+                      name="title"
+                      id="title"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      className="bg-gray-50 border border-primary-main text-grey-main text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder="Entre un titre pour l'évènement"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="start_date"
+                      className="block mb-2 text-sm font-medium text-center font-hind-vadodara text-grey-main dark:text-white"
+                    >
+                      Date de début
+                    </label>
+                    <input
+                      type="datetime-local"
+                      name="start_date"
+                      id="start_date"
+                      value={startDate}
+                      onChange={(e) => setStartDate(e.target.value)}
+                      className="bg-gray-50 border border-primary-main text-grey-main text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder="Date de début"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="end_date"
+                      className="block mb-2 text-sm font-medium text-center font-hind-vadodara text-grey-main dark:text-white"
+                    >
+                      Date de fin
+                    </label>
+                    <input
+                      type="datetime-local"
+                      name="end_date"
+                      id="end_date"
+                      value={endDate}
+                      onChange={(e) => setEndDate(e.target.value)}
+                      className="bg-gray-50 border border-primary-main text-grey-main text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder="Date de fin"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="price"
+                      className="block mb-2 text-sm font-medium text-center font-hind-vadodara text-grey-main dark:text-white"
+                    >
+                      Prix
+                    </label>
+                    <input
+                      type="number"
+                      name="price"
+                      id="price"
+                      value={price}
+                      onChange={(e) => setPrice(e.target.value)}
+                      className="bg-gray-50 border border-primary-main text-grey-main text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder="0 si gratuit"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="location"
+                      className="block mb-2 text-sm font-medium text-center font-hind-vadodara text-grey-main dark:text-white"
+                    >
+                      Lieu
+                    </label>
+                    <input
+                      type="text"
+                      name="location"
+                      id="location"
+                      value={location}
+                      onChange={(e) => setLocation(e.target.value)}
+                      className="bg-gray-50 border border-primary-main text-grey-main text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder="119 Bd de Sébastopol, 75002 Paris"
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="flex justify-center mt-5 flex-direction-column">
+                  <div className="w-full">
+                    <label
+                      htmlFor="description"
+                      className="block mb-2 text-sm font-medium text-center font-hind-vadodara text-grey-main dark:text-white"
+                    >
+                      Description
+                    </label>
+                    <textarea
+                      name="description"
+                      id="description"
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      className="bg-gray-50 border border-primary-main text-grey-main text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      placeholder="Ajoute une description"
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="flex justify-center">
+                <Button type="submit" className="m-5 bg-success-main">
+                  Accepter
+                </Button>
+                <Button onClick={handleEdit} className="m-5 bg-warning-main">
+                  Annuler
+                </Button>
+                </div>
+
+              </form>
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 };

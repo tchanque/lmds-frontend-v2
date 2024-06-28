@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { useAtom } from "jotai";
 import { currentUserAtom, bearerTokenAtom } from "../../atom/atoms";
 import { axiosPrivate } from "../../api/axios";
+import defaultImage from "../../public/images/image_event.jpg"
 
 const PopUpPublication = ({ selectedPublication, closePoPup}) => {
   const [token, setToken] = useAtom(bearerTokenAtom);
@@ -12,20 +13,27 @@ const PopUpPublication = ({ selectedPublication, closePoPup}) => {
   const [updatedPublication, setUpdatedPublication] = useState({
     title: selectedPublication.title,
     description: selectedPublication.description,
-    to_display: selectedPublication.to_display
+    to_display: selectedPublication.to_display,
+    publication_picture: selectedPublication.publication_picture_url
   });
   const [isUpdating, setIsUpdating] = useState(false);
+  const [publicationPicture, setPublicationPicture] = useState(null);
+  const [publicationFile, setPublicationFile] = useState();
+
   
   // Ensuring token and current user are set
-  useEffect(() => {
-    if (!token) {
-      setToken(bearerTokenAtom);
-    }
-    if (!currentUser) {
-      setCurrentUser(currentUserAtom);
-    }
-  }, [token, currentUser]);
+  // useEffect(() => {
+  //   if (!token) {
+  //     setToken(bearerTokenAtom);
+  //   }
+  //   if (!currentUser) {
+  //     setCurrentUser(currentUserAtom);
+  //   }
+  // }, [token, currentUser]);
+// I LET THIS HERE BECAUSE I'M NOT TOTALLY SURE. BUT WHEN I'M A GUEST AND I WANT TO SEE MORE FOR A POPUP, IT'S CREATE ME A CURRENT USER UNDIFENED
 
+
+  
   if (!selectedPublication) {
     return null;
   }
@@ -56,18 +64,22 @@ const handleDeletePublication = async () => {
 };
 
 const handleUpdatePublication = async () => {
+
+  const formData = new FormData();
+    
+    formData.append("publication[title]", updatedPublication.title);
+    formData.append("publication[description]", updatedPublication.description);
+    formData.append("publication[to_display]", updatedPublication.to_display);
+    if (publicationPicture) {
+      formData.append("publication[publication_picture]", publicationPicture)
+    }
+
   try {
     const response = await axiosPrivate.patch(
-      `/publications/${selectedPublication.id}`,
-      {
-        title: updatedPublication.title,
-        description: updatedPublication.description,
-        to_display: updatedPublication.to_display
-      },
-      {
+      `/publications/${selectedPublication.id}`, formData, {
         headers: {
           Authorization: `${token}`,
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/form-data",
         },
         withCredentials: true,
       }
@@ -81,11 +93,13 @@ const handleUpdatePublication = async () => {
       selectedPublication.title = response.data.title;
       selectedPublication.description = response.data.description;
       selectedPublication.to_display = response.data.to_display;
+      selectedPublication.publication_picture_url = response.data.publication_picture_url
 
       setUpdatedPublication({
         title: response.data.title,
         description: response.data.description,
-        to_display: response.data.to_display
+        to_display: response.data.to_display,
+        publication_picture: response.data.publication_picture_url
       });
      } else {
     closePoPup();
@@ -97,26 +111,52 @@ const handleUpdatePublication = async () => {
   }
 };
 
-const handleChange = (event) => {
-  const { name, value, type, checked } = event.target;
+const handleChange = (e) => {
+  const { name, value, type, checked } = e.target;
   setUpdatedPublication({
     ...updatedPublication,
     [name]: type === "checkbox" ? checked : value,
   });
 };
 
-
+const handleFileChange = (e) => {
+  const file = e.target.files[0];
+  setPublicationPicture(file);
+  setPublicationFile(URL.createObjectURL(file));
+};
 
   return (
     <>
       <div className="modal is-active">
         <div className="flex flex-col modal-content">
           <div className="mt-6">
-            <img
+            {publicationFile ? (
+              <img
               className="w-full publication__img"
-              src="https://cdn.pixabay.com/photo/2024/05/18/08/16/cat-8769861_1280.jpg"
+              src={publicationFile}
+              alt="Publication Preview"
+            />
+            ) : selectedPublication.publication_picture_url ? (
+              <img
+              className="w-full publication__img"
+              src={`http://127.0.0.1:3000${selectedPublication.publication_picture_url}`}
               alt="une image de chaton dodo"
             />
+            ) : (
+              <img
+              className="w-full publication__img"
+              src={defaultImage}
+              alt="default image"
+            />
+            )}
+            {isUpdating && (
+              <input
+              type="file"
+              onChange={handleFileChange}
+              accept="image/*"
+              className="px-4 py-2 my-2 border rounded-md"            
+              />   
+            )}
           </div>
           <div className="flex flex-col items-center gap-8 p-2">
             <div className="text-center ">
@@ -126,7 +166,7 @@ const handleChange = (event) => {
                   name="title"
                   value={updatedPublication.title}
                   onChange={handleChange}
-                  className="border-2 border-primary-main p-2 rounded-lg"
+                  className="p-2 border-2 rounded-lg border-primary-main"
                 />
               ) : (
                 <h2>{selectedPublication.title}</h2>
@@ -140,7 +180,7 @@ const handleChange = (event) => {
                   name="description"
                   value={updatedPublication.description}
                   onChange={handleChange}
-                  className="border-2 border-primary-main p-2 rounded-lg"
+                  className="p-2 border-2 rounded-lg border-primary-main"
                 />
               ) : (
                 <p>{selectedPublication.description}</p>
@@ -181,7 +221,7 @@ const handleChange = (event) => {
               ></path>
             </svg>
           </button>
-          { currentUser.role === "Admin" ? (
+          {currentUser && currentUser.role === "Admin" ? (
           <div className="flex justify-end gap-4 mt-4">
             {!isUpdating && (
               <Button

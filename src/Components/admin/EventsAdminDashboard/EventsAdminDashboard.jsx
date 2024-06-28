@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React from "react";
 import {
   Table,
   TableHeader,
@@ -19,6 +19,7 @@ import { SearchIcon } from "../UsersAdminDashboard/SearchIcon";
 import { ChevronDownIcon } from "../UsersAdminDashboard/ChevronDownIcon";
 import { columns } from "./data";
 import { capitalize } from "./utils";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import axios from "axios";
 import { axiosPrivate } from "../../../api/axios";
 import { useAtom } from "jotai";
@@ -28,12 +29,15 @@ import { useNavigate } from "react-router-dom";
 const INITIAL_VISIBLE_COLUMNS = [
   "id",
   "title",
-  "creator_id",
-  "to_display",
+  "category",
+  "price",
+  "location",
+  "start_date",
+  "end_date",
   "actions",
 ];
 
-const PublicationsAdminDashboard = () => {
+const EventsAdminDashboard = () => {
   const [filterValue, setFilterValue] = useState("");
   const [selectedKeys, setSelectedKeys] = useState(new Set([]));
   const [visibleColumns, setVisibleColumns] = useState(
@@ -45,47 +49,48 @@ const PublicationsAdminDashboard = () => {
     direction: "ascending",
   });
   const [page, setPage] = useState(1);
-  const [publications, setPublications] = useState([]);
-  const [token] = useAtom(bearerTokenAtom);
+  const [events, setEvents] = useState([]);
+  const [token, setToken] = useAtom(bearerTokenAtom);
+
+  const hasSearchFilter = Boolean(filterValue);
 
   const navigate = useNavigate();
 
-  const handleDropdownItemClick = (action, publicationId) => {
+  const handleDropdownItemClick = (action, eventId) => {
     switch (action) {
       case "view":
-        navigate(`/publications/${publicationId}`);
+        navigate(`/events/${eventId}`);
         break;
       case "delete":
-        deletePublicationData(publicationId);
+        deleteEventData(eventId);
         break;
       default:
         break;
     }
   };
 
-  const deletePublicationData = async (publicationId) => {
-    const confirmDeletion = window.confirm("Êtes-vous sûr de vouloir supprimer cette publication?");
+  const deleteEventData = async (eventId) => {
+    const confirmDeletion = window.confirm("Êtes-vous sûr de vouloir supprimer cet évènement?");
     if (!confirmDeletion) return;
-  
+
     try {
-      const response = await axiosPrivate.delete(`/publications/${publicationId}`, {
+      const response = await axiosPrivate.delete(`/events/${eventId}`, {
         headers: {
           Authorization: token,
           "Content-Type": "application/json",
         },
         withCredentials: true,
       });
-  
-      console.log("Publication supprimée avec succès", response);  
-      setPublications((prevPublications) => prevPublications.filter((publication) => publication.id !== publicationId));
+
+      setEvents((prevEvents) => prevEvents.filter((event) => event.id !== eventId));
     } catch (error) {
-      console.error("Erreur lors de la suppression de la publication", error);
+      console.error("Erreur lors de la suppression de l'évènement", error);
     }
   };
 
   useEffect(() => {
     axiosPrivate
-      .get("/publications", {
+      .get("/events", {
         headers: {
           Authorization: token,
           "Content-Type": "application/json",
@@ -93,39 +98,41 @@ const PublicationsAdminDashboard = () => {
         withCredentials: true,
       })
       .then((response) => {
-        setPublications(response.data);
+        setEvents(response.data);
       })
       .catch((error) => {
         console.error(error);
       });
-  }, []);
+  }, [token]);
 
   const headerColumns = useMemo(() => {
     if (visibleColumns === "all") return columns;
+
     return columns.filter((column) =>
       Array.from(visibleColumns).includes(column.uid)
     );
   }, [visibleColumns]);
 
   const filteredItems = useMemo(() => {
-    let filteredPublications = [...publications];
+    let filteredEvents = [...events];
 
-    if (filterValue) {
-      filteredPublications = filteredPublications.filter(
-        (publication) =>
-          publication.title.toLowerCase().includes(filterValue.toLowerCase()) ||
-          publication.creator.toLowerCase().includes(filterValue.toLowerCase())
+    if (hasSearchFilter) {
+      filteredEvents = filteredEvents.filter(
+        (event) =>
+          event.title.toLowerCase().includes(filterValue.toLowerCase()) ||
+          event.category.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
 
-    return filteredPublications;
-  }, [publications, filterValue]);
+    return filteredEvents;
+  }, [events, filterValue, hasSearchFilter]);
 
   const pages = Math.ceil(filteredItems.length / rowsPerPage);
 
   const items = useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
+
     return filteredItems.slice(start, end);
   }, [page, filteredItems, rowsPerPage]);
 
@@ -134,31 +141,27 @@ const PublicationsAdminDashboard = () => {
       const first = a[sortDescriptor.column];
       const second = b[sortDescriptor.column];
       const cmp = first < second ? -1 : first > second ? 1 : 0;
+
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
     });
   }, [sortDescriptor, items]);
 
-  const renderCell = useCallback((publication, columnKey) => {
-    const cellValue = publication[columnKey];
+  const renderCell = useCallback((event, columnKey) => {
+    const cellValue = event[columnKey];
 
     switch (columnKey) {
       case "title":
-        return publication.title;
-      case "creator.first_name":
-        return publication.creator_id.first_name;
-      case "creator_id":
-        return publication.creator_id;  
-      case "to_display":
-        return (
-          <Input
-            type="checkbox"
-            checked={cellValue}
-            onChange={() => handleToggleDisplay(publication.id, !cellValue)}
-            classNames={{
-              input: "w-6 h-6",
-            }}
-        />
-        );
+        return event.title;
+      case "category":
+        return event.category;
+      case "price":
+        return event.price;
+      case "location":
+        return event.location;
+      case "start_date":
+        return event.start_date;
+      case "end_date":
+        return event.end_date;
       case "actions":
         return (
           <div className="relative flex justify-start items-center gap-2">
@@ -169,7 +172,7 @@ const PublicationsAdminDashboard = () => {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem onClick={() => handleDropdownItemClick("delete", publication.id)}>Delete</DropdownItem>
+                <DropdownItem onClick={() => handleDropdownItemClick("delete", event.id)}>Delete</DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </div>
@@ -177,30 +180,7 @@ const PublicationsAdminDashboard = () => {
       default:
         return cellValue;
     }
-  }, []);
-
-  const handleToggleDisplay = async (publicationId, newValue) => {
-    try {
-      const response = await axiosPrivate.put(`/publications/${publicationId}`, {
-        to_display: newValue,
-      }, {
-        headers: {
-          Authorization: token,
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      });
-  
-      console.log("Publication mise à jour avec succès", response.data);
-      setPublications((prevPublications) =>
-        prevPublications.map((publication) =>
-          publication.id === publicationId ? { ...publication, to_display: newValue } : publication
-        )
-      );
-    } catch (error) {
-      console.error("Erreur lors de la mise à jour de la publication", error);
-    }
-  };
+  }, [handleDropdownItemClick]);
 
   const onNextPage = useCallback(() => {
     if (page < pages) {
@@ -240,10 +220,10 @@ const PublicationsAdminDashboard = () => {
           <Input
             isClearable
             className="w-full sm:max-w-[44%]"
-            placeholder="Rechercher par titre, créateur..."
+            placeholder="Search by titre, catégorie..."
             startContent={<SearchIcon />}
             value={filterValue}
-            onClear={() => onClear()}
+            onClear={onClear}
             onValueChange={onSearchChange}
           />
           <div className="flex gap-3 mr-5">
@@ -275,7 +255,7 @@ const PublicationsAdminDashboard = () => {
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total : {publications.length} actualités
+            Total : {events.length} évènements
           </span>
           <label className="flex items-center text-default-400 text-small mr-5">
             Lignes par page :
@@ -291,13 +271,7 @@ const PublicationsAdminDashboard = () => {
         </div>
       </div>
     );
-  }, [
-    filterValue,
-    visibleColumns,
-    onRowsPerPageChange,
-    publications.length,
-    onSearchChange,
-  ]);
+  }, [filterValue, visibleColumns, onRowsPerPageChange, events.length, onSearchChange, onClear]);
 
   const bottomContent = useMemo(() => {
     return (
@@ -305,7 +279,7 @@ const PublicationsAdminDashboard = () => {
         <span className="w-[30%] text-small text-default-400">
           {selectedKeys === "all"
             ? "All items selected"
-            : `${selectedKeys.size} sur ${filteredItems.length} selectionnées`}
+            : `${selectedKeys.size} sur ${filteredItems.length} selectionnés`}
         </span>
         <Pagination
           isCompact
@@ -323,7 +297,7 @@ const PublicationsAdminDashboard = () => {
             variant="flat"
             onPress={onPreviousPage}
           >
-            Precédent
+            Précedent
           </Button>
           <Button
             isDisabled={pages === 1}
@@ -364,7 +338,7 @@ const PublicationsAdminDashboard = () => {
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody emptyContent={"No publications found"} items={sortedItems}>
+      <TableBody emptyContent={"No evenements found"} items={sortedItems}>
         {(item) => (
           <TableRow key={item.id}>
             {(columnKey) => (
@@ -377,4 +351,4 @@ const PublicationsAdminDashboard = () => {
   );
 };
 
-export default PublicationsAdminDashboard;
+export default EventsAdminDashboard;
