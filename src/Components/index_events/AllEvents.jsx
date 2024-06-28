@@ -122,7 +122,7 @@ const AllEvents = () => {
             onDateChange={handleDateChange}
           />
         </div>
-        <div className="lg:col-span-3 w-full flex flex-col">
+        <div className="lg:col-span-3 flex flex-col">
           {filteredEvents.length === 0 ? (
             <h2>PAS D'EVENT</h2>
           ) : (

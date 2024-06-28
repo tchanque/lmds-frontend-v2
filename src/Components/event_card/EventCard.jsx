@@ -3,7 +3,7 @@ import { Button } from "@nextui-org/react";
 const EventCard = ({ event, formatDate, openPopUp }) => {
   return (
     <div className="flex items-center self-center justify-around gap-5 p-5 m-5 bg-white shadow h-72">
-      <div className="w-80">
+      <div className="">
         <img
           className=""
           src="https://media.istockphoto.com/id/1667873018/fr/photo/gar%C3%A7on-jouant-de-la-batterie-dans-une-%C3%A9cole-de-musique.jpg?s=2048x2048&w=is&k=20&c=Bn0w595KUKm2zDPhSDREM4o9nd5wSc94vpd4ADxruRo="
