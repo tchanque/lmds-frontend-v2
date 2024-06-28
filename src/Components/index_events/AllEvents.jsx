@@ -29,7 +29,6 @@ const AllEvents = () => {
 
   // Fetch all the events, when loading the page
   useEffect(() => {
-    if (token) {
       axiosPrivate
         .get("/events", {
           headers: {
@@ -43,8 +42,7 @@ const AllEvents = () => {
         .catch((error) => {
           console.error(error);
         });
-    }
-  }, [token]);
+  }, []);
 
   // Set the filtered events by default as all the events (when no dates are selected yet)
   useEffect(() => {
@@ -63,7 +61,7 @@ const AllEvents = () => {
   };
 
   const setUserAttendance = async (event) => {
-    if (event) {
+    if (event && currentUser) {
       try {
         const response = await axiosPrivate.get(`/events/${event.id}`, {
           headers: {
@@ -115,14 +113,14 @@ const AllEvents = () => {
 
   return (
     <>
-      <div className="grid grid-cols-1 justify-items-center lg:grid-cols-5 py-10">
+      <div className="grid grid-cols-1 py-10 justify-items-center lg:grid-cols-5">
         <div className="lg:col-span-2 lg:w-3/4">
           <CalendarEvent
             allEvents={allEvents}
             onDateChange={handleDateChange}
           />
         </div>
-        <div className="lg:col-span-3 flex flex-col gap-4 px-4">
+        <div className="flex flex-col gap-4 px-4 lg:col-span-3">
           {filteredEvents.length === 0 ? (
             <h2>PAS D'EVENT</h2>
           ) : (

@@ -22,15 +22,18 @@ const PopUpPublication = ({ selectedPublication, closePoPup}) => {
 
   
   // Ensuring token and current user are set
-  useEffect(() => {
-    if (!token) {
-      setToken(bearerTokenAtom);
-    }
-    if (!currentUser) {
-      setCurrentUser(currentUserAtom);
-    }
-  }, [token, currentUser]);
+  // useEffect(() => {
+  //   if (!token) {
+  //     setToken(bearerTokenAtom);
+  //   }
+  //   if (!currentUser) {
+  //     setCurrentUser(currentUserAtom);
+  //   }
+  // }, [token, currentUser]);
+// I LET THIS HERE BECAUSE I'M NOT TOTALLY SURE. BUT WHEN I'M A GUEST AND I WANT TO SEE MORE FOR A POPUP, IT'S CREATE ME A CURRENT USER UNDIFENED
 
+
+  
   if (!selectedPublication) {
     return null;
   }
@@ -151,7 +154,7 @@ const handleFileChange = (e) => {
               type="file"
               onChange={handleFileChange}
               accept="image/*"
-              className="my-2 px-4 py-2 border rounded-md"            
+              className="px-4 py-2 my-2 border rounded-md"            
               />   
             )}
           </div>
@@ -163,7 +166,7 @@ const handleFileChange = (e) => {
                   name="title"
                   value={updatedPublication.title}
                   onChange={handleChange}
-                  className="border-2 border-primary-main p-2 rounded-lg"
+                  className="p-2 border-2 rounded-lg border-primary-main"
                 />
               ) : (
                 <h2>{selectedPublication.title}</h2>
@@ -177,7 +180,7 @@ const handleFileChange = (e) => {
                   name="description"
                   value={updatedPublication.description}
                   onChange={handleChange}
-                  className="border-2 border-primary-main p-2 rounded-lg"
+                  className="p-2 border-2 rounded-lg border-primary-main"
                 />
               ) : (
                 <p>{selectedPublication.description}</p>
@@ -218,7 +221,7 @@ const handleFileChange = (e) => {
               ></path>
             </svg>
           </button>
-          { currentUser.role === "Admin" ? (
+          {currentUser && currentUser.role === "Admin" ? (
           <div className="flex justify-end gap-4 mt-4">
             {!isUpdating && (
               <Button
