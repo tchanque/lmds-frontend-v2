@@ -220,7 +220,7 @@ const EventsAdminDashboard = () => {
           <Input
             isClearable
             className="w-full sm:max-w-[44%]"
-            placeholder="Search by title, category..."
+            placeholder="Search by titre, catégorie..."
             startContent={<SearchIcon />}
             value={filterValue}
             onClear={onClear}
@@ -233,7 +233,7 @@ const EventsAdminDashboard = () => {
                   endContent={<ChevronDownIcon className="text-small" />}
                   variant="flat"
                 >
-                  Columns
+                  Colonnes
                 </Button>
               </DropdownTrigger>
               <DropdownMenu
@@ -255,10 +255,10 @@ const EventsAdminDashboard = () => {
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total {events.length} évènements
+            Total : {events.length} évènements
           </span>
           <label className="flex items-center text-default-400 text-small mr-5">
-            Rows per page:
+            Lignes par page :
             <select
               className="bg-transparent outline-none text-default-400 text-small"
               onChange={onRowsPerPageChange}
@@ -279,7 +279,7 @@ const EventsAdminDashboard = () => {
         <span className="w-[30%] text-small text-default-400">
           {selectedKeys === "all"
             ? "All items selected"
-            : `${selectedKeys.size} of ${filteredItems.length} selected`}
+            : `${selectedKeys.size} sur ${filteredItems.length} selectionnés`}
         </span>
         <Pagination
           isCompact
@@ -297,7 +297,7 @@ const EventsAdminDashboard = () => {
             variant="flat"
             onPress={onPreviousPage}
           >
-            Previous
+            Précedent
           </Button>
           <Button
             isDisabled={pages === 1}
@@ -305,7 +305,7 @@ const EventsAdminDashboard = () => {
             variant="flat"
             onPress={onNextPage}
           >
-            Next
+            Suivant
           </Button>
         </div>
       </div>
@@ -321,7 +321,6 @@ const EventsAdminDashboard = () => {
         wrapper: "max-h-[382px]",
       }}
       selectedKeys={selectedKeys}
-      selectionMode="multiple"
       sortDescriptor={sortDescriptor}
       topContent={topContent}
       topContentPlacement="outside"

@@ -28,6 +28,7 @@ import { useEffect } from "react";
 import { useAtom } from "jotai";
 import { bearerTokenAtom, popUpAdminFormAtom } from "../../../atom/atoms";
 import { useNavigate } from "react-router-dom";
+import "./usersAdminDashboard.css";
 
 const INITIAL_VISIBLE_COLUMNS = [
   "id",
@@ -176,7 +177,7 @@ const UsersAdminDashboard = () => {
           </div>
         );
         case "is_subscriber":
-          return cellValue ? "Yes" : "No";
+          return cellValue ? "Oui" : "Non";
       case "actions":
         return (
           <div className="relative flex justify-start items-center gap-2">
@@ -236,7 +237,7 @@ const UsersAdminDashboard = () => {
           <Input
             isClearable
             className="w-full sm:max-w-[44%]"
-            placeholder="Search by first_name, last_name, email..."
+            placeholder="Rechercher par prénom, nom, email..."
             startContent={<SearchIcon />}
             value={filterValue}
             onClear={onClear}
@@ -249,7 +250,7 @@ const UsersAdminDashboard = () => {
                   endContent={<ChevronDownIcon className="text-small" />}
                   variant="flat"
                 >
-                  Columns
+                  Colonnes
                 </Button>
               </DropdownTrigger>
               <DropdownMenu
@@ -272,16 +273,16 @@ const UsersAdminDashboard = () => {
               onClick={openPopup}
               endContent={<PlusIcon />}
             >
-              Add New
+              Créer
             </Button>
           </div>
         </div>
         <div className="flex justify-between items-center">
           <span className="text-default-400 text-small">
-            Total {users.length} users
+            Total : {users.length} membres
           </span>
           <label className="flex items-center text-default-400 text-small mr-5">
-            Rows per page:
+            Lignes par page :
             <select
               className="bg-transparent outline-none text-default-400 text-small"
               onChange={onRowsPerPageChange}
@@ -325,6 +326,7 @@ const UsersAdminDashboard = () => {
               key={column.uid}
               allowsSorting={column.uid === "name" || column.uid === "role"}
               maxWidth={column.uid === "actions" ? 50 : undefined}
+              className="text-center align-middle"
             >
               {column.name}
             </TableColumn>
@@ -332,7 +334,7 @@ const UsersAdminDashboard = () => {
         </TableHeader>
         <TableBody items={sortedItems}>
           {(item) => (
-            <TableRow key={item.id}>
+            <TableRow key={item.id} className="text-center align-middle">
               {(columnKey) => (
                 <TableCell>{renderCell(item, columnKey)}</TableCell>
               )}
