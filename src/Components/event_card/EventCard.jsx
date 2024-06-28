@@ -1,14 +1,24 @@
 import { Button } from "@nextui-org/react";
+import defaultImage from "../../public/images/image_event.jpg"
 
 const EventCard = ({ event, formatDate, openPopUp }) => {
   return (
     <div className="flex items-center self-center justify-around w-4/6 gap-5 p-5 m-5 bg-white shadow h-72">
       <div className="w-80">
+        {event.event_picture_url ? (
         <img
-          className=""
-          src="https://media.istockphoto.com/id/1667873018/fr/photo/gar%C3%A7on-jouant-de-la-batterie-dans-une-%C3%A9cole-de-musique.jpg?s=2048x2048&w=is&k=20&c=Bn0w595KUKm2zDPhSDREM4o9nd5wSc94vpd4ADxruRo="
-          alt="Event"
-        />
+        className=""
+        src={`http://127.0.0.1:3000${event.event_picture_url}`}
+        alt="Event"
+      />
+        ) : (
+        <img
+        className=""
+        src={defaultImage}
+        alt="Event"
+        />  
+        )}
+
       </div>
       <p className="flex self-start text-sm">{formatDate(event.start_date)}</p>
       <div className="flex flex-col items-center gap-0">

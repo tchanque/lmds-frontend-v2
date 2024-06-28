@@ -9,7 +9,7 @@ function Login() {
   const [password, setPassword] = useState("");
   const [token, setToken] = useAtom(bearerTokenAtom);
   const [currentUser, setCurrentUser] = useAtom(currentUserAtom);
-const navigate = useNavigate()
+  const navigate = useNavigate()
 
   const handleLogin = async (event) => {
     event.preventDefault();

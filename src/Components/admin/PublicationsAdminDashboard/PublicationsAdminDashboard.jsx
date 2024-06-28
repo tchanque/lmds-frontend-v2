@@ -66,7 +66,7 @@ const PublicationsAdminDashboard = () => {
   const deletePublicationData = async (publicationId) => {
     const confirmDeletion = window.confirm("Êtes-vous sûr de vouloir supprimer cette publication?");
     if (!confirmDeletion) return;
-
+  
     try {
       const response = await axiosPrivate.delete(`/publications/${publicationId}`, {
         headers: {
@@ -75,8 +75,8 @@ const PublicationsAdminDashboard = () => {
         },
         withCredentials: true,
       });
-
-      console.log("Publication supprimée avec succès", response);
+  
+      console.log("Publication supprimée avec succès", response);  
       setPublications((prevPublications) => prevPublications.filter((publication) => publication.id !== publicationId));
     } catch (error) {
       console.error("Erreur lors de la suppression de la publication", error);
@@ -147,14 +147,14 @@ const PublicationsAdminDashboard = () => {
       case "creator.first_name":
         return publication.creator_id.first_name;
       case "creator_id":
-        return publication.creator_id;
+        return publication.creator_id;  
       case "to_display":
         return (
           <Input
             type="checkbox"
             checked={cellValue}
             onChange={() => handleToggleDisplay(publication.id, !cellValue)}
-          />
+        />
         );
       case "actions":
         return (
@@ -187,7 +187,7 @@ const PublicationsAdminDashboard = () => {
         },
         withCredentials: true,
       });
-
+  
       console.log("Publication mise à jour avec succès", response.data);
       setPublications((prevPublications) =>
         prevPublications.map((publication) =>
