@@ -8,7 +8,7 @@ const EventCard = ({ event, formatDate, openPopUp }) => {
         {event.event_picture_url ? (
           <img
             className="w-full h-full object-cover"
-            src={`http://127.0.0.1:3000${event.event_picture_url}`}
+            src={event.event_picture_url}
             alt="Event"
           />
         ) : (
