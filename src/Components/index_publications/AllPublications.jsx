@@ -93,7 +93,7 @@ const formatDate = (date) => {
            {publication.publication_picture_url ? ( 
             <img
               className="w-full rounded-lg img-restrained"
-              src={`https://lmds-pictures-production.s3.eu-west-3.amazonaws.com${publication.publication_picture_url}`}
+              src={publication.publication_picture_url}
               alt={publication.title}
             />) : (
               <img
