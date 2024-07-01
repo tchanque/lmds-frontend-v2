@@ -246,7 +246,7 @@ const PopUpEvent = ({
               <img src={defaultImage} alt="default image" className="" />
             )}
           </div>
-          <div className="flex flex-col items-center justify-center gap-8 p-2 justi event_information">
+          <div className="flex flex-col items-center justify-center gap-8 p-2 event_information">
             <div className="text-center title__event-container">
               <h2 className="">{category}</h2>
               <p className="">{title}</p>
