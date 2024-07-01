@@ -95,7 +95,7 @@ const AdminRegistrationForm = () => {
         },
       })
       .then((response) => {
-        console.log("User created successfully:", response.data);
+        // console.log("User created successfully:", response.data);
         if (skills.length > 0) {
           skills.map((skillData) => {
             axiosPrivate
@@ -120,7 +120,7 @@ const AdminRegistrationForm = () => {
               )
               .then((response) => {
                 window.location.reload();
-                console.log(response);
+                // console.log(response);
               });
           });
         } else {
@@ -129,7 +129,7 @@ const AdminRegistrationForm = () => {
       })
       .catch((error) => {
         if (error.response) {
-          console.log(error.response);
+          // console.log(error.response);
         } else {
           console.error(error);
         }
@@ -160,7 +160,7 @@ const AdminRegistrationForm = () => {
                 ></path>
               </svg>
             </button>
-            <h1 className="text-xl font-bold font-Ubuntu leading-tight text-center tracking-tight text-primary-dark md:text-2xl dark:text-white">
+            <h1 className="text-xl font-bold leading-tight tracking-tight text-center font-Ubuntu text-primary-dark md:text-2xl dark:text-white">
               CRÉATION DE COMPTE
             </h1>
 
@@ -169,7 +169,7 @@ const AdminRegistrationForm = () => {
                 <div>
                   <label
                     htmlFor="email"
-                    className="block mb-2 font-hind-vadodara text-center text-sm font-medium text-grey-main dark:text-white"
+                    className="block mb-2 text-sm font-medium text-center font-hind-vadodara text-grey-main dark:text-white"
                   >
                     Email
                   </label>
@@ -187,7 +187,7 @@ const AdminRegistrationForm = () => {
                 <div>
                   <label
                     htmlFor="role"
-                    className="block mb-2 font-hind-vadodara text-center text-sm font-medium text-grey-main dark:text-white"
+                    className="block mb-2 text-sm font-medium text-center font-hind-vadodara text-grey-main dark:text-white"
                   >
                     Statut
                   </label>
@@ -209,7 +209,7 @@ const AdminRegistrationForm = () => {
                 <div>
                   <label
                     htmlFor="first_name"
-                    className="block mb-2 font-hind-vadodara text-center text-sm font-medium text-grey-main dark:text-white"
+                    className="block mb-2 text-sm font-medium text-center font-hind-vadodara text-grey-main dark:text-white"
                   >
                     Prénom
                   </label>
@@ -227,7 +227,7 @@ const AdminRegistrationForm = () => {
                 <div>
                   <label
                     htmlFor="name"
-                    className="block mb-2 font-hind-vadodara text-center text-sm font-medium text-grey-main dark:text-white"
+                    className="block mb-2 text-sm font-medium text-center font-hind-vadodara text-grey-main dark:text-white"
                   >
                     Nom
                   </label>
@@ -245,7 +245,7 @@ const AdminRegistrationForm = () => {
                 <div>
                   <label
                     htmlFor="isSubsciber"
-                    className="block mb-2 font-hind-vadodara text-center text-sm font-medium text-grey-main dark:text-white"
+                    className="block mb-2 text-sm font-medium text-center font-hind-vadodara text-grey-main dark:text-white"
                   >
                     Est adhérent ?
                   </label>
@@ -266,7 +266,7 @@ const AdminRegistrationForm = () => {
                 <div>
                   <label
                     htmlFor="subscriptionEndDate"
-                    className="block mb-2 font-hind-vadodara text-center text-sm font-medium text-grey-main dark:text-white"
+                    className="block mb-2 text-sm font-medium text-center font-hind-vadodara text-grey-main dark:text-white"
                   >
                     Fin de Souscription
                   </label>
@@ -282,11 +282,11 @@ const AdminRegistrationForm = () => {
                   />
                 </div>
               </div>
-              <div className="flex justify-evenly mt-5 gap-x-3">
+              <div className="flex mt-5 justify-evenly gap-x-3">
                 <div className="flex-grow">
                   <label
                     htmlFor="password"
-                    className="block mb-2 font-hind-vadodara text-center text-sm font-medium text-grey-main dark:text-white"
+                    className="block mb-2 text-sm font-medium text-center font-hind-vadodara text-grey-main dark:text-white"
                   >
                     Mot de passe
                   </label>

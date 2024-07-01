@@ -92,11 +92,11 @@ const PopUpEvent = ({
 
       // if response.data is-pending est true et que à l'inscription hasAvailableSpots est true : Popup : Désolé, quelqu'un s'est inscrit avant toi !
       // if response.data is-pending est false et que à l'inscription hasAvailableSpots est false : Popup : Bravo, une place c'est libérée au moment de ton inscription  !
-
-      console.log(response.data);
+// 
+      // console.log(response.data);
       if (response.data.is_pending && hasAvailableSpots) {
         // Popup: Désolé, quelqu'un s'est inscrit avant toi !
-        console.log("Désolé, quelqu'un s'est inscrit avant toi !");
+        // console.log("Désolé, quelqu'un s'est inscrit avant toi !");
         // Show message on the screen
         setMessage(
           "<p className='text-danger-main'>Désolé, il semblerait que quelqu'un se soit inscrit avant vous ! Vous êtes en liste d'attente.</p>"
@@ -104,7 +104,7 @@ const PopUpEvent = ({
       } else if (!response.data.is_pending && !hasAvailableSpots) {
         // Popup: Bravo, une place c'est libérée au moment de ton inscription
         console.log(
-          "Bravo, une place c'est libérée au moment de ton inscription !"
+          // "Bravo, une place c'est libérée au moment de ton inscription !"
         );
         // Show message on the screen
         setMessage(
@@ -123,7 +123,7 @@ const PopUpEvent = ({
   // Handle event unsubscription
   const handleUnsubscribe = async () => {
     setLoading(true);
-    console.log(selectedEvent)
+    // console.log(selectedEvent)
     try {
       await Promise.all(
         attendance.map((att) =>
@@ -194,7 +194,7 @@ const PopUpEvent = ({
       )
       .then((response) => {
         // Handle success if needed
-        console.log("Event updated successfully:", response.data);
+        // console.log("Event updated successfully:", response.data);
         handleEdit();
         window.location.reload();
       })
@@ -214,7 +214,7 @@ const PopUpEvent = ({
           withCredentials: true,
         });
       window.location.reload()
-      console.log("Event deleted successfully");
+      // console.log("Event deleted successfully");
     } catch (error) {
       console.error("Error deleting the event: ", error);
     }
@@ -234,7 +234,7 @@ const PopUpEvent = ({
     <>
     {!isUpdating ? (
       <div className="modal is-active">
-        <div className="flex modal-content">
+        <div className="flex justify-around modal-content">
           <div className="flex items-center justify-center">
             {selectedEvent.event_picture_url ? (
               <img
@@ -246,7 +246,7 @@ const PopUpEvent = ({
               <img src={defaultImage} alt="default image" className="" />
             )}
           </div>
-          <div className="flex flex-col items-center w-4/6 gap-8 p-2 event_information">
+          <div className="flex flex-col items-center justify-center gap-8 p-2 event_information">
             <div className="text-center title__event-container">
               <h2 className="">{category}</h2>
               <p className="">{title}</p>

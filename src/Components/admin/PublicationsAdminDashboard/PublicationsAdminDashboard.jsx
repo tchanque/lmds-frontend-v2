@@ -76,7 +76,7 @@ const PublicationsAdminDashboard = () => {
         withCredentials: true,
       });
   
-      console.log("Publication supprimée avec succès", response);  
+      // console.log("Publication supprimée avec succès", response);  
       setPublications((prevPublications) => prevPublications.filter((publication) => publication.id !== publicationId));
     } catch (error) {
       console.error("Erreur lors de la suppression de la publication", error);
@@ -161,7 +161,7 @@ const PublicationsAdminDashboard = () => {
         );
       case "actions":
         return (
-          <div className="relative flex justify-start items-center gap-2">
+          <div className="relative flex items-center justify-start gap-2">
             <Dropdown>
               <DropdownTrigger>
                 <Button isIconOnly variant="light">
@@ -191,7 +191,7 @@ const PublicationsAdminDashboard = () => {
         withCredentials: true,
       });
   
-      console.log("Publication mise à jour avec succès", response.data);
+      // console.log("Publication mise à jour avec succès", response.data);
       setPublications((prevPublications) =>
         prevPublications.map((publication) =>
           publication.id === publicationId ? { ...publication, to_display: newValue } : publication
@@ -236,7 +236,7 @@ const PublicationsAdminDashboard = () => {
   const topContent = useMemo(() => {
     return (
       <div className="flex flex-col gap-4 mt-5">
-        <div className="flex justify-between gap-3 items-end">
+        <div className="flex items-end justify-between gap-3">
           <Input
             isClearable
             className="w-full sm:max-w-[44%]"
@@ -273,11 +273,11 @@ const PublicationsAdminDashboard = () => {
             </Dropdown>
           </div>
         </div>
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between">
           <span className="text-default-400 text-small">
             Total : {publications.length} actualités
           </span>
-          <label className="flex items-center text-default-400 text-small mr-5">
+          <label className="flex items-center mr-5 text-default-400 text-small">
             Lignes par page :
             <select
               className="bg-transparent outline-none text-default-400 text-small"
@@ -301,7 +301,7 @@ const PublicationsAdminDashboard = () => {
 
   const bottomContent = useMemo(() => {
     return (
-      <div className="py-2 px-2 flex justify-between items-center mr-5">
+      <div className="flex items-center justify-between px-2 py-2 mr-5">
         <span className="w-[30%] text-small text-default-400">
           {selectedKeys === "all"
             ? "All items selected"

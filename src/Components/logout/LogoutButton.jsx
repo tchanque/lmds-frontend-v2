@@ -19,10 +19,12 @@ function LogoutButton() {
       localStorage.removeItem("token");
       setToken("");
       setUser(null);
-      console.log(response.data);
-      console.log("You are logged out");
+      // console.log(response.data);
+      // console.log("You are logged out");
     } catch (error) {
       console.error("Logout failed:", error);
+      setToken("");
+      setUser(null);
     }
   };
 

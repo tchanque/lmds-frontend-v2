@@ -53,7 +53,7 @@ const PublicationForm = () => {
         }
       )
       .then((response) => {
-        console.log("Publication created successfully:", response.data);
+        // console.log("Publication created successfully:", response.data);
         handleClosePopUpPublication();
         window.location.reload();
         }
@@ -92,12 +92,12 @@ const PublicationForm = () => {
                   ></path>
                 </svg>
               </button>
-              <h1 className="text-xl font-bold leading-tight tracking-tight text-center font-Ubuntu mb-8 text-primary-dark md:text-2xl dark:text-white">
+              <h1 className="mb-8 text-xl font-bold leading-tight tracking-tight text-center font-Ubuntu text-primary-dark md:text-2xl dark:text-white">
                 CRÉATION DE PUBLICATION
               </h1>
   
               <form onSubmit={handleSubmit}>
-              <div className="flex flex-col justify-center items-center mb-5">
+              <div className="flex flex-col items-center justify-center mb-5">
               {/* <img src={missingImage} alt="" /> */}
               <img src={publicationFile} alt="" />
               <input 

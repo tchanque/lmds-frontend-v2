@@ -31,7 +31,7 @@ const UserAgenda = ({ userId }) => {
           withCredentials: true,
         });
 
-        console.log("All Attendances:", attendancesResponse.data);
+        // console.log("All Attendances:", attendancesResponse.data);
  
 
         const userAttendances = attendancesResponse.data.filter((attendance) => { 
@@ -51,7 +51,7 @@ const UserAgenda = ({ userId }) => {
         const eventsResponses = await Promise.all(eventPromises);
         const eventsData = eventsResponses.map((response) => response.data);
 
-        console.log("Events Data:", eventsData);
+        // console.log("Events Data:", eventsData);
 
         setEvents(eventsData);
         setLoading(false);
@@ -113,7 +113,7 @@ const openPopUp = async (event) => {
   setUserAttendance(event);  // Pass the event directly
   setSelectedEvent(event);
   setShowPopup(true);
-  console.log(event)
+  // console.log(event)
 };
 
 // Close popup and reset selected event
@@ -140,8 +140,13 @@ useEffect(() => {
 
   return (
 <div>
-      <h1>My Events</h1>
-      <div>
+<div className="title_container">
+              <h2 className="font-bold leading-tight tracking-tight main_title font-Ubuntu text-primary-dark dark:text-white">
+                Mes évènements
+              </h2>
+              <div className="line_title"></div>
+              </div>
+      <div className="m-5">
         {events.map((event) => (
           <EventCard
             key={event.id}

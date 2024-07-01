@@ -170,8 +170,8 @@ const UsersAdminDashboard = () => {
       case "role":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{cellValue}</p>
-            <p className="text-bold text-tiny capitalize text-default-400">
+            <p className="capitalize text-bold text-small">{cellValue}</p>
+            <p className="capitalize text-bold text-tiny text-default-400">
               {user.team}
             </p>
           </div>
@@ -180,7 +180,7 @@ const UsersAdminDashboard = () => {
           return cellValue ? "Oui" : "Non";
       case "actions":
         return (
-          <div className="relative flex justify-start items-center gap-2">
+          <div className="relative flex items-center justify-start gap-2">
             <Dropdown>
               <DropdownTrigger>
                 <Button isIconOnly variant="light">
@@ -233,7 +233,7 @@ const UsersAdminDashboard = () => {
   const topContent = React.useMemo(() => {
     return (
       <div className="flex flex-col gap-4 mt-5">
-        <div className="flex justify-between gap-3 items-end">
+        <div className="flex items-end justify-between gap-3">
           <Input
             isClearable
             className="w-full sm:max-w-[44%]"
@@ -277,11 +277,11 @@ const UsersAdminDashboard = () => {
             </Button>
           </div>
         </div>
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between">
           <span className="text-default-400 text-small">
             Total : {users.length} membres
           </span>
-          <label className="flex items-center text-default-400 text-small mr-5">
+          <label className="flex items-center mr-5 text-default-400 text-small">
             Lignes par page :
             <select
               className="bg-transparent outline-none text-default-400 text-small"
@@ -306,7 +306,7 @@ const UsersAdminDashboard = () => {
   ]);
 
   return (
-    <div className="w-full flex flex-col">
+    <div className="flex flex-col w-full">
       {topContent}
       <Table
         aria-label="Users table"
@@ -346,7 +346,7 @@ const UsersAdminDashboard = () => {
         isCompact
         showControls
         showShadow
-        className="mt-4 self-end"
+        className="self-end mt-4"
         page={page}
         total={pages}
         onChange={setPage}
