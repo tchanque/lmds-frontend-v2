@@ -3,7 +3,6 @@ import "./index.css";
 import { useAtom } from "jotai";
 import { currentUserAtom } from "./atom/atoms";
 import Home from "./Pages/Home/Home";
-import Agenda from "./Pages/Agenda/Agenda";
 import Profile from "./Pages/Profile/Profile";
 import Register from "./Pages/Register/Register";
 import Login from "./Pages/Login/Login";
@@ -12,6 +11,7 @@ import Footer from "./Components/footer/Footer";
 import Cgu from "./Pages/Cgu/Cgu";
 import Mentions from "./Pages/Mentions/Mentions";
 import DashboardAdmin from "./Pages/Dashboard Admin/DashboardAdmin";
+import { useEffect } from "react";
 
 function App() {
   const [currentUser] = useAtom(currentUserAtom);
@@ -20,13 +20,19 @@ function App() {
     return currentUser && currentUser.role === "Admin";
   };
 
+  useEffect(() => {
+    if (!sessionStorage.getItem('AppOpened')) {
+      localStorage.clear();
+      sessionStorage.setItem('AppOpened', 'true');
+    }
+  },[])
+
   return (
     <>
       <BrowserRouter>
         <Nav />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/agenda/:id" element={<Agenda />} />
           <Route path="/users/:id" element={<Profile />} />
           <Route
             path="/profile"

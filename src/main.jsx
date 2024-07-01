@@ -7,7 +7,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <NextUIProvider>
       {/* Don't forget to add dark class with btn in main tag */}
-      <main className="light text-foreground h-screen">
+      <main className="h-screen light text-foreground">
         <App />
       </main>
     </NextUIProvider>

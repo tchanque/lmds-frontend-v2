@@ -185,24 +185,29 @@ function Profile() {
     <section className="h-full">
       <div className="title">
         {user.id === currentUser.id ? (
-          <h1>MON COMPTE</h1>         
+          <div className="p-2 title_container">
+              <h2 className="font-bold leading-tight tracking-tight main_title font-Ubuntu text-primary-dark dark:text-white">
+                Mon compte
+              </h2>
+              <div className="line_title"></div>
+              </div>
         ) : (
-          <h1>PROFIL MUSICIEN</h1>
+          <h1 className="mt-5 text-xl font-bold leading-tight tracking-tight text-center font-Ubuntu text-primary-dark md:text-2xl dark:text-white">PROFIL MUSICIEN</h1>
         )}
       </div>     
-      <div className="bg-white mx-13 my-15 p-10 rounded-lg grid grid-cols-1 gap-2 lg:grid-cols-3 lg:gap-2">
-        <div className="col-span-1 lg:col-span-1 flex flex-col justify-center items-center">
-          <div className="w-64 h-64 my-2 rounded-full overflow-hidden justify-center">
+      <div className="grid grid-cols-1 gap-2 p-10 bg-white rounded-lg mx-13 my-15 lg:grid-cols-3 lg:gap-2">
+        <div className="flex flex-col items-center justify-center col-span-1 lg:col-span-1">
+          <div className="justify-center w-64 h-64 my-2 overflow-hidden rounded-full">
             {user.profile_picture_url ? (
              <img
-             className="w-full h-full object-cover"
+             className="object-cover w-full h-full"
              src={avatarUrl}
              alt="Photo de profil"
              onClick={handleModifyPicture}
              /> 
             ) : (
               <img
-              className="w-full h-full object-cover"
+              className="object-cover w-full h-full"
               src={default_avatar}
               alt="Photo de profil"
               onClick={handleModifyPicture}
@@ -217,9 +222,9 @@ function Profile() {
               type="file"
               onChange={handleFileChange}
               accept="image/*"
-              className="my-2 px-4 py-2 border rounded-md"            
+              className="px-4 py-2 my-2 border rounded-md"            
               />
-              <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-md">
+              <button type="submit" className="px-4 py-2 text-white bg-blue-500 rounded-md">
               Valider
               </button>
             </form>
@@ -233,19 +238,19 @@ function Profile() {
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   placeholder="First Name"
-                  className="py-2 border rounded-md text-grey-main font-Ubuntu text-center"
+                  className="py-2 text-center border rounded-md text-grey-main font-Ubuntu"
                 />
                 <input
                   type="text"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                   placeholder="Last Name"
-                  className="py-2 border rounded-md text-grey-main font-Ubuntu text-center"
+                  className="py-2 text-center border rounded-md text-grey-main font-Ubuntu"
                 />
               </>
             ) : (
               <>
-                  <div className="flex flex-col justify-center items-center">
+                  <div className="flex flex-col items-center justify-center">
                     <p>{firstName}</p>
                     <p>{lastName}</p>
                   </div>
@@ -255,10 +260,10 @@ function Profile() {
           <p>{user.email}</p>
         </div>
           <div
-            className="col-span-1 lg:col-span-2 flex flex-col"
+            className="flex flex-col col-span-1 lg:col-span-2"
             id="secondSection"
           >
-            <div className="flex justify-evenly flex-wrap items-center">
+            <div className="flex flex-wrap items-center justify-evenly">
               {user.skills.map((skill, index) => (
                 <div
                   className="flex flex-col items-center"
@@ -270,21 +275,21 @@ function Profile() {
               ))}
             </div>
             <div
-              className="flex flex-col justify-center items-center flex-grow"
+              className="flex flex-col items-center justify-center flex-grow"
               id="descriptionSection"
             >
               <h4>Description</h4>
-              <div className="w-2/3 sm:w-full flex flex-grow items-center transition-all duration-300 ease-in-out">
+              <div className="flex items-center flex-grow w-2/3 transition-all duration-300 ease-in-out sm:w-full">
                 {modifyMenu ? (
                   <textarea
                     type="text"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Description"
-                    className="w-full h-full px-2 py-2 border rounded-md break-words text-grey-main text-center font-Ubuntu resize-none"
+                    className="w-full h-full px-2 py-2 text-center break-words border rounded-md resize-none text-grey-main font-Ubuntu"
                   />
                 ) : (
-                  <p className="w-full h-full px-2 py-2 text-center overflow-auto">
+                  <p className="w-full h-full px-2 py-2 overflow-auto text-center">
                     {description}
                   </p>
                 )}
@@ -341,26 +346,26 @@ function Profile() {
         {user.id === currentUser.id && ( // only the user can change its password
           <div
             id="passwordSection"
-            className="bg-white mx-13 my-15 p-10 rounded-lg"
+            className="p-10 bg-white rounded-lg mx-13 my-15"
           >
             <div className="flex flex-col items-center">
               <h4>Changer mon mot de passe</h4>
               <input
-                className="w-full sm:w-1/2 my-2 px-4 py-2 border rounded-md transition-all duration-300 ease-in-out"
+                className="w-full px-4 py-2 my-2 transition-all duration-300 ease-in-out border rounded-md sm:w-1/2"
                 type="password"
                 value={oldPassword}
                 onChange={(e) => setOldPassword(e.target.value)}
                 placeholder="Ancien mot de passe"
               />
               <input
-                className="w-full sm:w-1/2 my-2 px-4 py-2 border rounded-md transition-all duration-300 ease-in-out"
+                className="w-full px-4 py-2 my-2 transition-all duration-300 ease-in-out border rounded-md sm:w-1/2"
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 placeholder="Nouveau mot de passe"
               />
               <input
-                className="w-full sm:w-1/2 my-2 px-4 py-2 border rounded-md transition-all duration-300 ease-in-out"
+                className="w-full px-4 py-2 my-2 transition-all duration-300 ease-in-out border rounded-md sm:w-1/2"
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
@@ -376,10 +381,11 @@ function Profile() {
   
           </div>
         )}
-      <div id="agenda">
+
+    </section>
+    <div id="agenda">
     {user.id === currentUser.id && <UserAgenda userId={id} />}
     </div> 
-    </section>
     
     </>
   );

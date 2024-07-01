@@ -54,7 +54,7 @@ const handleDeletePublication = async () => {
         },
         withCredentials: true,
       });
-    console.log("Publication deleted:", response.data);
+    // console.log("Publication deleted:", response.data);
     closePoPup();
     window.location.reload();
   } catch (error) {
@@ -84,7 +84,7 @@ const handleUpdatePublication = async () => {
         withCredentials: true,
       }
     );
-    console.log("Publication updated:", response.data);
+    // console.log("Publication updated:", response.data);
 
     if (response.data.to_display === true) {
     setIsUpdating(false)

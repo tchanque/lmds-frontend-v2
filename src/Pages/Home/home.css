@@ -1,3 +1,21 @@
 .content {
   flex: 1;
 }
+
+.title_container{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1em;
+  width: 80%;
+}
+
+.main_title{
+  font-size: 3em;
+}
+
+.line_title{
+  width: 30%;
+  height: 3px;
+  background-color: #C9614F;
+}

@@ -89,7 +89,7 @@ const EventForm = () => {
         }
       )
       .then((response) => {
-        console.log("Event created successfully:", response.data);
+        // console.log("Event created successfully:", response.data);
         // creation of the event_instruments for each selected instrument
         if (eventInstruments.length > 0) {
           eventInstruments.map((eventInstrumentData) => {
@@ -118,7 +118,7 @@ const EventForm = () => {
               .then((response) => {
                 handleClosePopUpEvent();
                 window.location.reload();
-                console.log(response);
+                // console.log(response);
               });
           });
           // Creation of Aucun instrument if no instrument is selected
@@ -181,7 +181,7 @@ const EventForm = () => {
             </h1>
 
             <form onSubmit={handleSubmit}>
-            <div className="flex flex-col justify-center items-center mb-5">
+            <div className="flex flex-col items-center justify-center mb-5">
               {/* <img src={missingImage} alt="" /> */}
               <img src={eventFile} alt="" />
               <input 

@@ -21,10 +21,10 @@ function AllPublications() {
 
   useEffect(() => {
     if (token) {
-      console.log("This is your Token", token);
+      // console.log("This is your Token", token);
     }
     if (currentUser) {
-      console.log("This is your Current User", currentUser);
+      // console.log("This is your Current User", currentUser);
     }
   }, [token]);
 
@@ -38,7 +38,7 @@ function AllPublications() {
         withCredentials: true,
       })
       .then((response) => {
-        console.log(allPublications);
+        // console.log(allPublications);
         setAllPublications([...response.data]);
       })
       .catch((error) => {
