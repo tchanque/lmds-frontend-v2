@@ -23,6 +23,8 @@ function LogoutButton() {
       // console.log("You are logged out");
     } catch (error) {
       console.error("Logout failed:", error);
+      setToken("");
+      setUser(null);
     }
   };
 
