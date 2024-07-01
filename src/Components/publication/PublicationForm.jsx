@@ -38,8 +38,9 @@ const PublicationForm = () => {
     formData.append("publication[title]", title);
     formData.append("publication[description]", description);
     formData.append("publication[to_display]", toDisplay);
-    formData.append("publication[publication_picture]", publicationPicture);
-
+    if (publicationPicture) {
+      formData.append("publication[publication_picture]", publicationPicture);
+    }
 
     axiosPrivate
       .post(

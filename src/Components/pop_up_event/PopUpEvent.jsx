@@ -238,7 +238,7 @@ const PopUpEvent = ({
           <div className="flex items-center justify-center">
             {selectedEvent.event_picture_url ? (
               <img
-                src={`http://127.0.0.1:3000${selectedEvent.event_picture_url}`}
+                src={selectedEvent.event_picture_url}
                 alt={title}
                 className=""
               />

@@ -19,7 +19,7 @@ function Profile() {
   const [modifyMenu, setModifyMenu] = useState(false);
   const [modifyPicture, setModifyPicture] = useState(false);
   const [newPicture, setNewPicture] = useState(null);
-  const [avatarUrl, setAvatarUrl] = useState("http://127.0.0.1:3000")
+  const [avatarUrl, setAvatarUrl] = useState("");
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -46,7 +46,7 @@ function Profile() {
           setFirstName(response.data.first_name);
           setLastName(response.data.last_name);
           setDescription(response.data.description);
-          setAvatarUrl(`http://127.0.0.1:3000${response.data.profile_picture_url}`)
+          setAvatarUrl(response.data.profile_picture_url)
           setLoading(false);
         })
         .catch((error) => {
@@ -147,7 +147,7 @@ function Profile() {
       setUser(response.data);
       setCurrentUser(response.data);
       setModifyPicture(false);
-      setAvatarUrl(`http://127.0.0.1:3000${response.data.profile_picture_url}`)
+      setAvatarUrl(response.data.profile_picture_url)
     } catch (error) {
       if (error.response) {
         throw new Error(error.response.data.errors.join(', '));

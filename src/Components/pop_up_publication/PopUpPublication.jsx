@@ -139,8 +139,8 @@ const handleFileChange = (e) => {
             ) : selectedPublication.publication_picture_url ? (
               <img
               className="w-full publication__img"
-              src={`http://127.0.0.1:3000${selectedPublication.publication_picture_url}`}
-              alt="une image de chaton dodo"
+              src={selectedPublication.publication_picture_url}
+              alt=""
             />
             ) : (
               <img
