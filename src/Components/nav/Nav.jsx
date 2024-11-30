@@ -34,7 +34,7 @@ const Nav = () => {
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <a href="#events">
+          <a href="/#events">
             <p className="font-bold text-primary-dark">ÉVÈNEMENTS</p>
           </a>
         </NavbarItem>
@@ -43,7 +43,7 @@ const Nav = () => {
           <>
           <NavbarContent justify="center" className="hidden gap-10 g-5 sm:flex">
             <NavbarItem>
-              <Link to={{ pathname: `users/${currentUser.id}`, hash: "agenda " }}>
+              <Link to={`/users/${currentUser.id}#agenda`}>
                 <p className="font-bold text-primary-dark">AGENDA</p>
               </Link>
             </NavbarItem>

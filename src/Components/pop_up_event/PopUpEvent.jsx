@@ -28,11 +28,21 @@ const PopUpEvent = ({
   // ELEMENT FOR UPDATE
   const [category, setCategory] = useState(selectedEvent.category);
   const [title, setTitle] = useState(selectedEvent.title);
+  const formatDate = (date) => {
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+    };
+    return new Date(date).toLocaleDateString("fr-FR", options);
+  };
   const [startDate, setStartDate] = useState(
-    format(new Date(selectedEvent.start_date), "yyyy-MM-dd'T'HH:mm:ss")
+    formatDate(new Date(selectedEvent.start_date), "yyyy-MM-dd'T'HH:mm:ss")
   );
   const [endDate, setEndDate] = useState(
-    format(new Date(selectedEvent.end_date), "yyyy-MM-dd'T'HH:mm:ss")
+    formatDate(new Date(selectedEvent.end_date), "yyyy-MM-dd'T'HH:mm:ss")
   );
   const [price, setPrice] = useState(selectedEvent.price);
   const [location, setLocation] = useState(selectedEvent.location);
@@ -251,6 +261,10 @@ const PopUpEvent = ({
               <h2 className="">{category}</h2>
               <p className="">{title}</p>
             </div>
+            <div className="text-center date">
+              <h2>Date</h2>
+              <p>{startDate} - {endDate}</p>
+            </div>
             <div className="text-center pricing">
               <h2>Prix</h2>
               <p>{price} €</p>
@@ -258,6 +272,10 @@ const PopUpEvent = ({
             <div className="text-center event_description">
               <h2>Description</h2>
               <p>{description}</p>
+            </div>
+            <div className="text-center location">
+              <h2>Lieu</h2>
+              <p>{location}</p>
             </div>
             <div className="text-center attendances">
               <h2>Liste des participants</h2>
@@ -283,7 +301,6 @@ const PopUpEvent = ({
                     </div>
                   ))}
               </div>
-              <p>Merci d'ajouter un dropdown menu avec les participants</p>
             </div>
             
             {currentUser ? (!isAttendee ? (

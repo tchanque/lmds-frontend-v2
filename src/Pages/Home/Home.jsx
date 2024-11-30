@@ -78,7 +78,7 @@ const Home = () => {
         </div>
         <div className="flex justify-center gap-4 my-20">
           <div className="title_container">
-            <h2 className="font-bold leading-tight tracking-tight main_title font-Ubuntu text-primary-dark dark:text-white">
+            <h2 className="font-bold leading-tight tracking-tight main_title font-Ubuntu text-primary-dark dark:text-white" id="events">
               Événements
             </h2>
             <div className="line_title"></div>

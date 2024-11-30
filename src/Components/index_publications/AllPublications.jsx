@@ -82,12 +82,12 @@ const formatDate = (date) => {
     slidesToScroll: 1
   };
 
-
   return (
     <div className="max-w-screen-lg mx-auto">
       <Slider {...settings}>
         {allPublications
         .filter((publication) => publication.to_display)
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
         .map((publication) => (
           <div key={publication.id} className="relative">
            {publication.publication_picture_url ? ( 

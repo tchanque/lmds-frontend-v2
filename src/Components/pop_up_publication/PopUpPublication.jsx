@@ -20,7 +20,7 @@ const PopUpPublication = ({ selectedPublication, closePoPup}) => {
   const [publicationPicture, setPublicationPicture] = useState(null);
   const [publicationFile, setPublicationFile] = useState();
 
-  
+  // console.log("updatedPublication:", updatedPublication);
   // Ensuring token and current user are set
   // useEffect(() => {
   //   if (!token) {

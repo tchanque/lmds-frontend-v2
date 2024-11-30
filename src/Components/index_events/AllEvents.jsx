@@ -111,18 +111,23 @@ const AllEvents = () => {
     }
   }, [showPopup]);
 
+console.log(allEvents);
+
   return (
     <>
-      <div className="grid grid-cols-1 py-10 justify-items-center lg:grid-cols-5">
-        <div className="lg:col-span-2 lg:w-3/4">
+      <div className="flex flex-col items-center py-10">
+        {/* Section du calendrier centré */}
+        <div className="w-full max-w-lg">
           <CalendarEvent
             allEvents={allEvents}
             onDateChange={handleDateChange}
           />
         </div>
-        <div className="flex flex-col gap-4 px-4 lg:col-span-3">
+  
+        {/* Section des cartes d'événements en dessous, en grille */}
+        <div className="grid grid-cols-1 gap-8 px-4 mt-10 sm:grid-cols-2">
           {filteredEvents.length === 0 ? (
-            <h2>PAS D'EVENT</h2>
+            <h2 className="text-center col-span-full">PAS D'EVENT</h2>
           ) : (
             filteredEvents.map((event) => (
               <EventCard
@@ -133,20 +138,23 @@ const AllEvents = () => {
               />
             ))
           )}
-          {showPopup && selectedEvent && (
-            <PopUpEvent
-              selectedEvent={selectedEvent}
-              isVisible={showPopup}
-              closePoPup={closePopUp}
-              isAttendee={isAttendee}
-              setUserAttendance={setUserAttendance}
-              attendance={attendance}
-            />
-          )}
         </div>
+  
+        {/* Pop-up conditionnel */}
+        {showPopup && selectedEvent && (
+          <PopUpEvent
+            selectedEvent={selectedEvent}
+            isVisible={showPopup}
+            closePoPup={closePopUp}
+            isAttendee={isAttendee}
+            setUserAttendance={setUserAttendance}
+            attendance={attendance}
+          />
+        )}
       </div>
     </>
   );
+  
 };
 
 export default AllEvents;

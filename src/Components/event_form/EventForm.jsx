@@ -76,8 +76,9 @@ const EventForm = () => {
     formData.append("event[price]", price);
     formData.append("event[location]", location);
     formData.append("event[description]", description);
-    formData.append("event[event_picture]", eventPicture);
-    
+    if (eventPicture) {
+      formData.append("event[event_picture]", eventPicture);
+    }
     axiosPrivate
       .post(
         "/events", formData, {

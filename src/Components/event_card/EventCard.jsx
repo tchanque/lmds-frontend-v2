@@ -27,7 +27,7 @@ const EventCard = ({ event, formatDate, openPopUp }) => {
           <h5 className="text-base">{event.title}</h5>
         </div>
         <p className="flex-grow text-center">{event.description}</p>
-        <p className="flex justify-center">{event.creator_id}</p>
+        <p className="flex justify-center">{formatDate(event.start_date)}</p>
         <div className="flex flex-row justify-center gap-4">
           {event.event_instruments.map((eventInstrument, index) => (
             <div
