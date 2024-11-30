@@ -1,6 +1,7 @@
 import { useState } from "react";
 import './Register.css';
 import { axiosPrivate } from "../../api/axios";
+import { useNavigate } from "react-router-dom";
 
 function Register() {
   const [email, setEmail] = useState("");
@@ -10,6 +11,7 @@ function Register() {
   const [isSubscriber, setIsSubscriber] = useState(false);
   const [subscriptionEndDate, setSubscriptionEndDate] = useState("2999-12-31");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
 
   const handleSubmit = (e) => {
@@ -18,7 +20,7 @@ function Register() {
     axiosPrivate
     .post("/users", { user: { email: email, password: password, first_name: firstName, last_name: lastName, role: role, subscription_end_date: subscriptionEndDate, is_subscriber: isSubscriber } })
     .then((response) => {
-      // console.log(response);
+      navigate("/login");
     })
     .catch((error) => {
       if (error.response) {
